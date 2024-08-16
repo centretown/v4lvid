@@ -1,0 +1,14 @@
+{{ define "layout.controls" }}
+    <div id="controls" class="actionbar">
+
+    {{range .Controls}}
+        <button class="action" 
+            hx-put="{{.Url}}" hx-swap=none>
+            <span class="symbols">{{.Icon}}</span>
+        </button>
+
+    {{ end }}
+    
+    </div>
+
+{{ end }}

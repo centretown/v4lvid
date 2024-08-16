@@ -4,11 +4,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"text/template"
 	"v4lvid/video"
 )
 
+type ServerData struct {
+	Url      string
+	Controls []*Control
+}
+
 func Serve(vservers []*video.Server) {
 	const url = "192.168.0.7:9000"
+	data := &ServerData{
+		Url:      "http://192.168.0.7:9000/0/",
+		Controls: NexigoControls,
+	}
 
 	// mux := http.NewServeMux()
 
@@ -21,15 +31,11 @@ func Serve(vservers []*video.Server) {
 		go vserver.Serve()
 		log.Printf("Serving %s%s\n", url, path)
 	}
+
 	source := vservers[0].Source
-	webCam, isWebcam := source.(*video.Webcam)
+	webcam, isWebcam := source.(*video.Webcam)
 	if isWebcam {
-		handleCtl(webCam, "Zoom, Absolute", "/zoomin", "/zoomout", 1)
-		handleCtl(webCam, "Pan, Absolute", "/panright", "/panleft", 0)
-		handleCtl(webCam, "Tilt, Absolute", "/pandown", "/panup", 0)
-		handleCtl(webCam, "Brightness", "/brightnessup", "/brightnessdown", 10)
-		handleCtl(webCam, "Contrast", "/contrastup", "/contrastdown", 10)
-		handleCtl(webCam, "Saturation", "/saturationup", "/saturationdown", 10)
+		NewControlList(webcam, 0, data.Controls)
 	}
 
 	http.HandleFunc("/record", func(w http.ResponseWriter, r *http.Request) {
@@ -37,8 +43,14 @@ func Serve(vservers []*video.Server) {
 		vservers[0].RecordCmd(60)
 	})
 
+	fs := http.FileServer(http.Dir("www/"))
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "www/index.html")
+		// http.ServeFile(w, r, "www/index.html")
+		w.Header().Add("Cache-Control", "no-cache")
+		tmpl := template.Must(template.ParseGlob("www/*.html"))
+		tmpl.ExecuteTemplate(w, "index.html", data)
 	})
 
 	server := &http.Server{
@@ -48,10 +60,9 @@ func Serve(vservers []*video.Server) {
 	}
 
 	log.Fatal(server.ListenAndServe())
-
 }
 
-func handleCtl(webCam *video.Webcam, ctlKey, downUrl, upUrl string, step int32) {
+func handleCtl(webCam *video.Webcam, ctlKey, downUrl, upUrl string, multiplier int32) {
 	info, err := webCam.GetControlInfo(ctlKey)
 	if err != nil {
 		log.Println("Failed to handle", ctlKey, upUrl, downUrl)
@@ -62,9 +73,10 @@ func handleCtl(webCam *video.Webcam, ctlKey, downUrl, upUrl string, step int32) 
 		max                = info.Max
 		min                = info.Min
 		currentValue int32 = webCam.GetControlValue(ctlKey)
+		step               = info.Step
 	)
-	if step == 0 || (step >= info.Step && step%info.Step != 0) {
-		step = info.Step
+	if multiplier > 0 {
+		step *= multiplier
 	}
 
 	http.HandleFunc(upUrl, func(w http.ResponseWriter, r *http.Request) {
