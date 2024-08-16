@@ -2,11 +2,10 @@
     <div id="controls" class="actionbar">
 
     {{range .Controls}}
-        <button class="action" 
+        <button class="action"
             hx-put="{{.Url}}" hx-swap=none>
             <span class="symbols">{{.Icon}}</span>
         </button>
-
     {{ end }}
 
     <button class="action" 
