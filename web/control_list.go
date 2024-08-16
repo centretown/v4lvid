@@ -9,31 +9,32 @@ import (
 type ControlList struct {
 	webcam   *video.Webcam
 	Id       int
-	Controls []*Control
+	Controls []*ControlHandler
 }
 
-func NewControlList(webcam *video.Webcam, id int, controls []*Control) *ControlList {
+func NewControlList(webcam *video.Webcam, id int, controls []*ControlHandler) *ControlList {
 	ctlh := &ControlList{
 		webcam:   webcam,
 		Id:       id,
-		Controls: make([]*Control, 0, len(controls)),
+		Controls: make([]*ControlHandler, 0, len(controls)),
 	}
 	for _, ctl := range controls {
-		ctl.webcam = webcam
 		ctlh.AddControl(ctl)
-		http.Handle(ctl.Url, ctl)
 	}
 	return ctlh
 }
 
-func (ctlh *ControlList) AddControl(ctl *Control) {
+func (ctlh *ControlList) AddControl(ctl *ControlHandler) {
 	var err error
 	if ctl == nil {
 		log.Fatalln("AddControl control is nil")
 	}
-	ctlh.Controls = append(ctlh.Controls, ctl)
+	ctl.webcam = ctlh.webcam
 	ctl.Info, err = ctl.webcam.GetControlInfo(ctl.Key)
+
+	ctlh.Controls = append(ctlh.Controls, ctl)
 	if err != nil {
 		log.Println("AddControl", err)
 	}
+	http.Handle(ctl.Url, ctl)
 }

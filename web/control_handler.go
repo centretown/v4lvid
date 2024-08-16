@@ -8,7 +8,9 @@ import (
 	"github.com/korandiz/v4l"
 )
 
-type Control struct {
+var _ http.Handler = (*ControlHandler)(nil)
+
+type ControlHandler struct {
 	webcam     *video.Webcam
 	Key        string
 	Url        string
@@ -18,23 +20,7 @@ type Control struct {
 	Value      int32
 }
 
-func NewControl(webcam *video.Webcam, key, url string, multiplier int32) *Control {
-	ctl := &Control{
-		webcam:     webcam,
-		Key:        key,
-		Url:        url,
-		Multiplier: multiplier,
-	}
-	var err error
-	ctl.Info, err = ctl.webcam.GetControlInfo(ctl.Key)
-	if err != nil {
-		log.Println("NewControl", err)
-	}
-
-	return ctl
-}
-
-func (ctl *Control) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ctl *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handle", ctl.Key, ctl.Url)
 
 	var (

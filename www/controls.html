@@ -8,6 +8,12 @@
         </button>
 
     {{ end }}
+
+    <button class="action" 
+        hx-put="{{.Record.Url}}" hx-swap=none>
+        <span class="symbols">{{.Record.Icon}}</span>
+    </button>
+
     
     </div>
 

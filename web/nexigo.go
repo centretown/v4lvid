@@ -1,6 +1,6 @@
 package web
 
-var NexigoControls = []*Control{
+var NexigoControls = []*ControlHandler{
 	{Key: "Zoom, Absolute", Url: "/zoomin", Icon: "zoom_in", Multiplier: 1},
 	{Key: "Zoom, Absolute", Url: "/zoomout", Icon: "zoom_out", Multiplier: -1},
 
