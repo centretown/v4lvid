@@ -1,18 +1,26 @@
 {{ define "layout.controls" }}
     <div id="controls" class="actionbar">
 
-    {{range .Controls}}
-        <button class="action"
-            hx-put="{{.Url}}" hx-swap=none>
-            <span class="symbols">{{.Icon}}</span>
-        </button>
+    {{range .ControlHandlers}}
+        {{range .Controls}}
+            <button class="action"
+                hx-get="{{.Url}}" hx-swap=none>
+                <span class="symbols">{{.Icon}}</span>
+            </button>
+        {{ end }}
     {{ end }}
 
-    <button class="action" 
-        hx-put="{{.Record.Url}}" hx-swap=none>
-        <span class="symbols">{{.Record.Icon}}</span>
-    </button>
+        <button class="action" 
+            hx-put="{{.Record.Url}}" hx-swap=none>
+            <span class="symbols">{{.Record.Icon}}</span>
+        </button>
 
+        <div class="slidecontainer">
+        <input 
+            hx-get="/slider"
+            type="range" min="1" max="100" 
+            value="50" class="slider" id="myRange">
+        </div>
     
     </div>
 

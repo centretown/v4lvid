@@ -69,6 +69,14 @@ body {
   /*background-color: #333;*/
 }
 
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+.slider {
+  width: 100%; /* Width of the outside container */
+}
+
 .topnav a {
   color: rgba(0, 0, 0, 0.15);
   text-align: center;

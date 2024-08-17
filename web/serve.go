@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"text/template"
@@ -9,16 +10,16 @@ import (
 )
 
 type ServerData struct {
-	Url      string
-	Controls []*ControlHandler
-	Record   *RecordControlHandler
+	Url             string
+	ControlHandlers []*ControlHandler
+	Record          *RecordControlHandler
 }
 
 func Serve(vservers []*video.Server) {
 	const url = "192.168.0.7:9000"
 	data := &ServerData{
-		Url:      "http://192.168.0.7:9000/0/",
-		Controls: NexigoControls,
+		Url:             "http://192.168.0.7:9000/0/",
+		ControlHandlers: NexigoControls,
 		Record: &RecordControlHandler{
 			Server: vservers[0],
 			Url:    "/record",
@@ -35,7 +36,7 @@ func Serve(vservers []*video.Server) {
 		source := vserver.Source
 		webcam, isWebcam := source.(*video.Webcam)
 		if isWebcam {
-			NewControlList(webcam, 0, data.Controls)
+			NewControlList(webcam, 0, data.ControlHandlers)
 		}
 
 		go vserver.Serve()
@@ -43,6 +44,16 @@ func Serve(vservers []*video.Server) {
 	}
 
 	http.Handle(data.Record.Url, data.Record)
+
+	http.HandleFunc("/slider", func(w http.ResponseWriter, r *http.Request) {
+		b, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("body", r.RequestURI, err)
+			return
+		}
+		log.Println("body", string(b))
+		log.Println("requestUri", r.RequestURI)
+	})
 
 	fs := http.FileServer(http.Dir("www/"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

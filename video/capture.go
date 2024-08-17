@@ -26,14 +26,11 @@ func Capture(stop <-chan int, img <-chan []byte,
 		}
 	}()
 
-	go write(stop, img, writer)
-	log.Println("Starting ffmpeg process2")
 	done := make(chan error)
 	go func() {
 		err = ffmpeg.
 			Input("pipe:",
 				ffmpeg.KwArgs{
-					// "format":    "jpeg_pipe",
 					"format":    "jpeg_pipe",
 					"pix_fmt":   "yuv420p",
 					"framerate": fpss,
@@ -54,6 +51,9 @@ func Capture(stop <-chan int, img <-chan []byte,
 		done <- err
 		close(done)
 	}()
+
+	go write(stop, img, writer)
+	log.Println("Starting ffmpeg process2")
 
 }
 

@@ -1,7 +1,6 @@
 package video
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -204,9 +203,11 @@ func (cam *Webcam) LoadConfigs() (err error) {
 	cam.Configs, err = cam.Device.ListConfigs()
 	if err != nil {
 		log.Println("ListConfigs", err)
+		return err
 	}
+
 	for _, c := range cam.Configs {
-		fmt.Printf("%s %d %d %d\n", FourCC(c.Format), c.Width, c.Height, c.FPS.N)
+		log.Println(FourCC(c.Format), c.Width, c.Height, c.FPS.N)
 	}
 	return
 }

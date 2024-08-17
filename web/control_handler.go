@@ -10,27 +10,45 @@ import (
 
 var _ http.Handler = (*ControlHandler)(nil)
 
-type ControlHandler struct {
-	webcam     *video.Webcam
-	Key        string
+type Control struct {
 	Url        string
-	Multiplier int32
 	Icon       string
-	Info       v4l.ControlInfo
-	Value      int32
+	Multiplier int32
 }
 
-func (ctl *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("Handle", ctl.Key, ctl.Url)
+type ControlHandler struct {
+	webcam *video.Webcam
+	Key    string
 
-	var (
-		currentValue int32 = ctl.webcam.GetControlValue(ctl.Key)
-		step               = ctl.Info.Step * ctl.Multiplier
-	)
+	Info     v4l.ControlInfo
+	Value    int32
+	Controls []*Control
+	Map      map[string]*Control
+}
 
-	newValue := currentValue + step
-	if newValue >= ctl.Info.Min && newValue <= ctl.Info.Max {
-		currentValue = newValue
-		ctl.webcam.SetValue(ctl.Key, currentValue)
+func NewControlHandler(key string, ctls []*Control) *ControlHandler {
+	ctlh := &ControlHandler{
+		Key:      key,
+		Controls: ctls,
+		Map:      make(map[string]*Control),
+	}
+	for _, ctl := range ctls {
+		ctlh.Map[ctl.Url] = ctl
+	}
+	return ctlh
+}
+
+func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	ctl, ok := ctlh.Map[r.RequestURI]
+	if !ok {
+		log.Println("RequestURI not found", ctlh.Key, r.RequestURI)
+		return
+	}
+
+	log.Println("Handle", ctlh.Key, r.RequestURI)
+	newValue := ctlh.Value + ctlh.Info.Step*ctl.Multiplier
+	if newValue >= ctlh.Info.Min && newValue <= ctlh.Info.Max {
+		ctlh.Value = newValue
+		ctlh.webcam.SetValue(ctlh.Key, newValue)
 	}
 }
