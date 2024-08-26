@@ -1,6 +1,6 @@
 module v4lvid
 
-go 1.22.3
+go 1.23.0
 
 require (
 	github.com/google/uuid v1.1.1

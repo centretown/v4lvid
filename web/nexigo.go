@@ -1,44 +1,101 @@
 package web
 
-var NexigoControls = []*ControlHandler{
-	NewControlHandler("Zoom, Absolute", []*Control{
-		{Url: "/zoomin", Icon: "zoom_in", Multiplier: 1},
-		{Url: "/zoomout", Icon: "zoom_out", Multiplier: -1},
-	}),
+import "html/template"
 
-	NewControlHandler("Pan, Absolute", []*Control{
-		{Url: "/panleft", Icon: "arrow_back", Multiplier: -1},
-		{Url: "/panright", Icon: "arrow_forward", Multiplier: 1},
-	}),
+func NexigoControlList(tmpl *template.Template) (handlers []*V4lHandler) {
+	handlers = []*V4lHandler{
+		NewV4lHandler("Zoom, Absolute", []*V4lControl{
+			{url: "/zoomin", icon: "zoom_in", multiplier: 1},
+			{url: "/zoomout", icon: "zoom_out", multiplier: -1},
+		}, tmpl),
 
-	NewControlHandler("Tilt, Absolute", []*Control{
-		{Url: "/tiltup", Icon: "arrow_upward", Multiplier: 1},
-		{Url: "/tiltdown", Icon: "arrow_downward", Multiplier: -1},
-	}),
+		NewV4lHandler("Pan, Absolute", []*V4lControl{
+			{url: "/panleft", icon: "arrow_back", multiplier: -1},
+			{url: "/panright", icon: "arrow_forward", multiplier: 1},
+		}, tmpl),
 
-	NewControlHandler("Brightness", []*Control{
-		{Url: "/brightnessup", Icon: "brightness_high", Multiplier: 10},
-		{Url: "/brightnessdown", Icon: "brightness_low", Multiplier: -10},
-	}),
+		NewV4lHandler("Tilt, Absolute", []*V4lControl{
+			{url: "/tiltup", icon: "arrow_upward", multiplier: 1},
+			{url: "/tiltdown", icon: "arrow_downward", multiplier: -1},
+		}, tmpl),
 
-	NewControlHandler("Contrast", []*Control{
-		{Url: "/contrastup", Icon: "contrast_square", Multiplier: 10},
-		{Url: "/contrastdown", Icon: "exposure", Multiplier: -10},
-	}),
+		NewV4lHandler("Brightness", []*V4lControl{
+			{url: "/brightnessup", icon: "brightness_high", multiplier: 10},
+			{url: "/brightnessdown", icon: "brightness_low", multiplier: -10},
+		}, tmpl),
 
-	NewControlHandler("Saturation", []*Control{
-		{Url: "/saturationup", Icon: "backlight_high", Multiplier: 10},
-		{Url: "/saturationdown", Icon: "backlight_low", Multiplier: -10},
-	}),
+		NewV4lHandler("Contrast", []*V4lControl{
+			{url: "/contrastup", icon: "contrast_square", multiplier: 10},
+			{url: "/contrastdown", icon: "exposure", multiplier: -10},
+		}, tmpl),
 
-	// {Key: "Pan, Absolute", Url: "/panleft", Icon: "arrow_back", Multiplier: -1},
-	// {Key: "Pan, Absolute", Url: "/panright", Icon: "arrow_forward", Multiplier: 1},
-	// {Key: "Tilt, Absolute", Url: "/tiltup", Icon: "arrow_upward", Multiplier: -1},
-	// {Key: "Tilt, Absolute", Url: "/tiltdown", Icon: "arrow_downward", Multiplier: 1},
-	// {Key: "Brightness", Url: "/brightnessup", Icon: "brightness_high", Multiplier: 10},
-	// {Key: "Brightness", Url: "/brightnessdown", Icon: "brightness_low", Multiplier: -10},
-	// {Key: "Contrast", Url: "/contrastup", Icon: "contrast_square", Multiplier: 10},
-	// {Key: "Contrast", Url: "/contrastdown", Icon: "exposure", Multiplier: -10},
-	// {Key: "Saturation", Url: "/saturationup", Icon: "backlight_high", Multiplier: 10},
-	// {Key: "Saturation", Url: "/saturationdown", Icon: "backlight_low", Multiplier: -10},
+		NewV4lHandler("Saturation", []*V4lControl{
+			{url: "/saturationup", icon: "backlight_high", multiplier: 10},
+			{url: "/saturationdown", icon: "backlight_low", multiplier: -10},
+		}, tmpl),
+
+		// {Key: "Pan, Absolute", url: "/panleft", icon: "arrow_back", multiplier: -1},
+		// {Key: "Pan, Absolute", url: "/panright", icon: "arrow_forward", multiplier: 1},
+		// {Key: "Tilt, Absolute", url: "/tiltup", icon: "arrow_upward", multiplier: -1},
+		// {Key: "Tilt, Absolute", url: "/tiltdown", icon: "arrow_downward", multiplier: 1},
+		// {Key: "Brightness", url: "/brightnessup", icon: "brightness_high", multiplier: 10},
+		// {Key: "Brightness", url: "/brightnessdown", icon: "brightness_low", multiplier: -10},
+		// {Key: "Contrast", url: "/contrastup", icon: "contrast_square", multiplier: 10},
+		// {Key: "Contrast", url: "/contrastdown", icon: "exposure", multiplier: -10},
+		// {Key: "Saturation", url: "/saturationup", icon: "backlight_high", multiplier: 10},
+		// {Key: "Saturation", url: "/saturationdown", icon: "backlight_low", multiplier: -10},
+	}
+	return
+}
+func NexigoMenuList(tmpl *template.Template) (handlers []*V4lHandler) {
+	handlers = []*V4lHandler{
+		NewV4lHandler("Zoom, Absolute", []*V4lControl{
+			{url: "/zoommenu", icon: "search", multiplier: 1,
+				controls: []*V4lControl{
+					{url: "/zoomin", icon: "zoom_in", multiplier: 1},
+					{url: "/zoomout", icon: "zoom_out", multiplier: -1},
+				},
+			}}, tmpl),
+		NewV4lHandler("Pan, Absolute", []*V4lControl{
+			{url: "/panmenu", icon: "arrows_outward", multiplier: 1,
+				controls: []*V4lControl{
+					{url: "/panleft", icon: "arrow_back", multiplier: -1},
+					{url: "/panright", icon: "arrow_forward", multiplier: 1},
+				},
+			}}, tmpl),
+		NewV4lHandler("Tilt, Absolute", []*V4lControl{
+			{url: "/tiltmenu", icon: "height", multiplier: 1,
+				controls: []*V4lControl{
+					{url: "/tiltup", icon: "arrow_upward", multiplier: 1},
+					{url: "/tiltdown", icon: "arrow_downward", multiplier: -1},
+				},
+			}}, tmpl),
+
+		NewV4lHandler("Brightness", []*V4lControl{
+			{url: "/brightnessup", icon: "brightness_high", multiplier: 10},
+			{url: "/brightnessdown", icon: "brightness_low", multiplier: -10},
+		}, tmpl),
+
+		NewV4lHandler("Contrast", []*V4lControl{
+			{url: "/contrastup", icon: "contrast_square", multiplier: 10},
+			{url: "/contrastdown", icon: "exposure", multiplier: -10},
+		}, tmpl),
+
+		NewV4lHandler("Saturation", []*V4lControl{
+			{url: "/saturationup", icon: "backlight_high", multiplier: 10},
+			{url: "/saturationdown", icon: "backlight_low", multiplier: -10},
+		}, tmpl),
+
+		// {Key: "Pan, Absolute", url: "/panleft", icon: "arrow_back", multiplier: -1},
+		// {Key: "Pan, Absolute", url: "/panright", icon: "arrow_forward", multiplier: 1},
+		// {Key: "Tilt, Absolute", url: "/tiltup", icon: "arrow_upward", multiplier: -1},
+		// {Key: "Tilt, Absolute", url: "/tiltdown", icon: "arrow_downward", multiplier: 1},
+		// {Key: "Brightness", url: "/brightnessup", icon: "brightness_high", multiplier: 10},
+		// {Key: "Brightness", url: "/brightnessdown", icon: "brightness_low", multiplier: -10},
+		// {Key: "Contrast", url: "/contrastup", icon: "contrast_square", multiplier: 10},
+		// {Key: "Contrast", url: "/contrastdown", icon: "exposure", multiplier: -10},
+		// {Key: "Saturation", url: "/saturationup", icon: "backlight_high", multiplier: 10},
+		// {Key: "Saturation", url: "/saturationdown", icon: "backlight_low", multiplier: -10},
+	}
+	return
 }

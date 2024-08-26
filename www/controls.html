@@ -1,27 +1,63 @@
-{{ define "layout.controls" }}
-    <div id="controls" class="actionbar">
+
+{{ define "layout.menu" }}
+    <div id="menu" class="topnav">
+        <button class="action"
+            hx-get="/togglemenu" hx-swap="outerHTML">
+            <span class="symbols">menu_open</span>
+        </button>
+    </div>
+
+    {{ template "layout.items" . }}
+    <div id="items"></div>
+
+{{ end }}
+
+{{ define "layout.bar" }}
+    <button class="action" 
+        hx-get="{{.Url}}" hx-swap="outerHTML" 
+        hx-target="#menu">
+        <span class="symbols">pan_zoom</span>
+    </button>
+{{ end }}
+
+{{ define "layout.item" }}
+    <div class="actionbar">
+    {{range .Controls}}
+        <button class="action" 
+            hx-get="{{.Url}}" hx-swap="outerHTML" 
+            hx-target="#response-div">
+            <span class="symbols">{{.Icon}}</span> 
+        </button>
+    {{ end }}
+    </div>
+{{ end }}
+
+{{ define "layout.items" }}
+    <div id="controls" class="menubar">
 
     {{range .ControlHandlers}}
         {{range .Controls}}
-            <button class="action"
-                hx-get="{{.Url}}" hx-swap=none>
-                <span class="symbols">{{.Icon}}</span>
+           <button class="action" 
+                hx-get="{{.Url}}" hx-swap="outerHTML" 
+                hx-target="#response-div">
+                <span class="symbols">{{.Icon}}</span> 
             </button>
         {{ end }}
     {{ end }}
 
         <button class="action" 
+            hx-put="/resetcontrols" hx-swap=none>
+            <span class="symbols">reset_settings</span>
+        </button>
+
+        <button class="action" 
             hx-put="{{.Record.Url}}" hx-swap=none>
             <span class="symbols">{{.Record.Icon}}</span>
         </button>
-
-        <div class="slidecontainer">
-        <input 
-            hx-get="/slider"
-            type="range" min="1" max="100" 
-            value="50" class="slider" id="myRange">
-        </div>
     
+        
+        <div id="response-div"></div>
+
     </div>
 
 {{ end }}
