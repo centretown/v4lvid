@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
-	"github.com/google/uuid"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
 
@@ -25,7 +25,7 @@ func Capture(stop <-chan int, img <-chan []byte,
 			log.Fatal(err)
 		}
 	}()
-
+	fname, _ := NextFileName(VideoBase, "mp4")
 	done := make(chan error)
 	go func() {
 		err = ffmpeg.
@@ -36,7 +36,7 @@ func Capture(stop <-chan int, img <-chan []byte,
 					"framerate": fpss,
 					"s":         fmt.Sprintf("%dx%d", width, height),
 				}).
-			Output("./output/"+NextFileName("mp4"),
+			Output(fname,
 				ffmpeg.KwArgs{
 					"pix_fmt": "yuv420p",
 					"vf":      "scale=1280:-1",
@@ -58,9 +58,6 @@ func Capture(stop <-chan int, img <-chan []byte,
 }
 
 func write(done <-chan int, imgCh <-chan []byte, writer io.WriteCloser) {
-	log.Println("ffmpeg write")
-
-	const COLOR_WIDTH = 4
 
 	var (
 		count      int
@@ -88,7 +85,10 @@ func write(done <-chan int, imgCh <-chan []byte, writer io.WriteCloser) {
 
 	var buf []byte
 
+	time.Sleep(time.Second * 1)
+
 	for {
+		// time.Sleep(time.Millisecond * 2)
 		select {
 		case buf = <-imgCh:
 			err = writePixels(buf)
@@ -106,9 +106,9 @@ func write(done <-chan int, imgCh <-chan []byte, writer io.WriteCloser) {
 	}
 }
 
-func NextFileName(ext string) string {
-	var namePrefix = "capture"
-	id := uuid.New()
-	name := fmt.Sprintf("%s_%s.%s", namePrefix, id.String(), ext)
-	return name
-}
+// func NextFileName(ext string) string {
+// 	var namePrefix = "capture"
+// 	id := uuid.New()
+// 	name := fmt.Sprintf("%s_%s.%s", namePrefix, id.String(), ext)
+// 	return name
+// }

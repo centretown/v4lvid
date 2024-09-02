@@ -17,7 +17,7 @@ var _ MenuItem = (*V4lControl)(nil)
 func (handler *V4lControl) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
-func NewControl(url string, icon string, multiplier int32, controls []*V4lControl) (ctrl *V4lControl) {
+func NewV4lControl(url string, icon string, multiplier int32, controls []*V4lControl) (ctrl *V4lControl) {
 	ctrl = &V4lControl{
 		url:        url,
 		icon:       icon,
