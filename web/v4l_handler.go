@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"v4lvid/video"
+	"v4lvid/camera"
 
 	"github.com/korandiz/v4l"
 )
@@ -14,7 +14,7 @@ var _ http.Handler = (*V4lHandler)(nil)
 // var _ MenuItem = (*V4lHandler)(nil)
 
 type V4lHandler struct {
-	webcam *video.Webcam
+	webcam *camera.Webcam
 	Key    string
 
 	Info     v4l.ControlInfo

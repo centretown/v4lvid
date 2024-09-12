@@ -3,16 +3,16 @@ package web
 import (
 	"log"
 	"net/http"
-	"v4lvid/video"
+	"v4lvid/camera"
 )
 
 type ControlList struct {
-	webcam   *video.Webcam
+	webcam   *camera.Webcam
 	Id       int
 	Handlers []*V4lHandler
 }
 
-func NewControlList(webcam *video.Webcam, id int, handlers []*V4lHandler) *ControlList {
+func NewControlList(webcam *camera.Webcam, id int, handlers []*V4lHandler) *ControlList {
 	ctll := &ControlList{
 		webcam:   webcam,
 		Id:       id,

@@ -5,16 +5,16 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"v4lvid/video"
+	"v4lvid/camera"
 )
 
 var _ http.Handler = (*HandleRecord)(nil)
 
 type HandleRecord struct {
-	vserve *video.Server
+	vserve *camera.Server
 }
 
-func NewHandleRecord(vserve *video.Server) *HandleRecord {
+func NewHandleRecord(vserve *camera.Server) *HandleRecord {
 	hr := &HandleRecord{
 		vserve: vserve,
 	}
@@ -48,14 +48,14 @@ func (hr *HandleRecord) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		cmd     video.ServerCmd
+		cmd     camera.ServerCmd
 		message string
 	)
 	if hr.vserve.Recording {
-		cmd.Action = video.RECORD_STOP
+		cmd.Action = camera.RECORD_STOP
 		message = "stop"
 	} else {
-		cmd.Action = video.RECORD_START
+		cmd.Action = camera.RECORD_START
 		message = fmt.Sprintln("record for", duration, "seconds")
 	}
 

@@ -1,4 +1,4 @@
-package video
+package camera
 
 type Hook interface {
 	Update(img any)

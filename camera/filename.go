@@ -1,10 +1,11 @@
-package video
+package camera
 
 import (
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,7 +19,7 @@ func NextFileName(parent, ext string) (string, error) {
 	u := time.Now()
 	foldername := u.Format("2006-01-02")
 
-	path, err := filepath.Abs(parent + foldername)
+	path, err := filepath.Abs(filepath.Join(parent, foldername))
 	if err != nil {
 		return path, err
 	}
@@ -29,7 +30,8 @@ func NextFileName(parent, ext string) (string, error) {
 		return foldername, err
 	}
 
-	filename := u.Format("15:04:05-0700")
+	filename := u.Format("15:04:05-0700") + "-"
+	filename = strings.ReplaceAll(filename, ":", "_")
 	id := uuid.New()
 	name := fmt.Sprintf("%s%s.%s", filename, id.String(), ext)
 	path = filepath.Join(path, name)

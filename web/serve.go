@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"v4lvid/video"
+	"v4lvid/camera"
 )
 
 type ServerData struct {
@@ -16,10 +16,10 @@ type ServerData struct {
 	HasControls     bool
 }
 
-func Serve(vservers []*video.Server) (data *ServerData) {
-	const url = "192.168.0.7:9000"
+func Serve(vservers []*camera.Server) (data *ServerData) {
+	const url = "192.168.10.7:9000"
 	data = &ServerData{
-		Url: "http://192.168.0.7:9000/0/",
+		Url: "http://192.168.10.7:9000/0/",
 		Record: &RecordControlHandler{
 			Server: vservers[0],
 			Url:    "/record",
@@ -31,17 +31,14 @@ func Serve(vservers []*video.Server) (data *ServerData) {
 	if err != nil {
 		log.Fatalln("Parse", err)
 	}
-	// data.ControlHandlers = NexigoControlList(data.Template)
 	data.ControlHandlers = NexigoControlList(data.Template)
-
-	// mux := http.NewServeMux()
 
 	for i, vserver := range vservers {
 		path := fmt.Sprintf("/%d/", i)
 		http.Handle(path, vserver.StreamHook.Stream)
 
 		source := vserver.Source
-		webcam, isWebcam := source.(*video.Webcam)
+		webcam, isWebcam := source.(*camera.Webcam)
 		if isWebcam {
 			ctll := NewControlList(webcam, 0, data.ControlHandlers)
 			http.HandleFunc("/resetcontrols",

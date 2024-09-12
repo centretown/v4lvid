@@ -1,4 +1,4 @@
-package video
+package camera
 
 import (
 	"log"
@@ -48,18 +48,19 @@ type Server struct {
 
 	Filters []Hook
 
-	HideMain  bool
-	HideThumb bool
-	HideAll   bool
-	Busy      bool
+	HideMain    bool
+	HideThumb   bool
+	HideAll     bool
+	Busy        bool
+	Unavailable bool
 
 	Recording  bool
 	recordStop time.Time
-	buffer     []byte
+	// buffer     []byte
 
 	captureCount int64
-	captureTotal int64
-	captureEnd   time.Time
+	// captureTotal int64
+	// captureEnd   time.Time
 
 	captureStop   chan int
 	captureSource chan []byte
@@ -182,7 +183,7 @@ func (vs *Server) Serve() {
 	}
 
 	if !vs.Source.IsOpened() {
-		log.Fatal("source not opened")
+		log.Println("Unable to serve", vs.Source.Path(), "The camera is unavailable.")
 		return
 	}
 
@@ -236,7 +237,12 @@ func (vs *Server) Serve() {
 			if vs.Source.IsOpened() {
 				vs.Source.Close()
 			}
-			vs.Open()
+			err = vs.Open()
+			if err != nil {
+				log.Println("Unable to open",
+					vs.Source.Path(), "The camera is unavailable.")
+				return
+			}
 			continue
 		}
 		delay = delayNormal

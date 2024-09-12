@@ -1,4 +1,4 @@
-package video
+package camera
 
 import (
 	"github.com/mattn/go-mjpeg"
