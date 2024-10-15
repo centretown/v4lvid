@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	base := flag.String("base", "./output/", "Video file base folder")
+	base := flag.String("base", "/mnt/molly/output/", "Video file base folder")
 	// base = flag.String("b", "./output/", "Video file base folder")
 	flag.Parse()
 

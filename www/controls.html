@@ -1,63 +1,86 @@
 
 {{ define "layout.menu" }}
-    <div id="menu" class="topnav">
-        <button class="action"
-            hx-get="/togglemenu" hx-swap="outerHTML">
-            <span class="symbols">menu_open</span>
-        </button>
-    </div>
-
-    {{ template "layout.items" . }}
-    <div id="items"></div>
-
-{{ end }}
-
-{{ define "layout.bar" }}
-    <button class="action" 
-        hx-get="{{.Url}}" hx-swap="outerHTML" 
-        hx-target="#menu">
-        <span class="symbols">pan_zoom</span>
+<div id="menu" class="topnav">
+    <button class="action"
+        hx-get="/camera" 
+        hx-swap="innerHTML"
+        hx-target="#slot">
+        <span class="symbols">photo_camera</span>
     </button>
+    <button class="action"
+        hx-get="/sun" 
+        hx-swap="innerHTML"
+        hx-target="#slot">
+        <span class="symbols">solar_power</span>
+    </button>
+    <button class="action"
+        hx-get="/weather" 
+        hx-swap="innerHTML"
+        hx-target="#slot">
+        <span class="symbols">partly_cloudy_day</span>
+    </button>
+    <div id="slot" class="slot"></div>
+</div>
 {{ end }}
 
-{{ define "layout.item" }}
-    <div class="actionbar">
-    {{range .Controls}}
+{{ define "layout.hello" }}
+<div class="action">
+HELLO
+</div>
+{{ end }}
+
+
+{{ define "layout.sun" }}
+    <div class="sun">
+        <ol>
+        {{range .}}
+            <li>{{.ShortName}} {{.FormatTime}}</li>
+        {{end}}
+        </ol>
+    </div>
+{{ end }}
+
+{{ define "layout.weather" }}
+    <div class="sun">
+    <ul>
+        <h3>{{.Attributes.Name}} {{.State}}</h3> 
+        <li>Temperature: <span>{{.Attributes.Temperature}} {{.Attributes.TemperatureUnit}}</span></li>
+        <li>Humidity: <span>{{.Attributes.Humidity}} %</span></li>
+        <li>Wind Speed: <span>{{.Attributes.WindSpeed}} {{.Attributes.WindSpeedUnit}}</span></li>
+        <li>Wind Bearing: <span>{{.Attributes.WindBearing}}</span></li>
+        <li>Cloud Coverage: <span>{{.Attributes.CloudCoverage}} %</span></li>
+        <li>Pressure: <span>{{.Attributes.Pressure}} {{.Attributes.PressureUnit}}</span></li>
+        <li>Dew Point: <span>{{.Attributes.DewPoint}} {{.Attributes.TemperatureUnit}}</span></li>
+        <p>{{.Attributes.Attribution}}</p>
+        <div>Last Updated: <span>{{.FormatTime}}</span></div>
+    </ul>
+    </div>
+{{ end }}
+
+
+{{ define "layout.items" }}
+
+    {{range .ControlHandlers}}
+        {{range .Controls}}
         <button class="action" 
             hx-get="{{.Url}}" hx-swap="outerHTML" 
             hx-target="#response-div">
             <span class="symbols">{{.Icon}}</span> 
         </button>
-    {{ end }}
-    </div>
-{{ end }}
-
-{{ define "layout.items" }}
-    <div id="controls" class="menubar">
-
-    {{range .ControlHandlers}}
-        {{range .Controls}}
-           <button class="action" 
-                hx-get="{{.Url}}" hx-swap="outerHTML" 
-                hx-target="#response-div">
-                <span class="symbols">{{.Icon}}</span> 
-            </button>
         {{ end }}
     {{ end }}
 
-        <button class="action" 
-            hx-put="/resetcontrols" hx-swap=none>
-            <span class="symbols">reset_settings</span>
-        </button>
+    <button class="action" 
+        hx-put="/resetcontrols" hx-swap=none>
+        <span class="symbols">reset_settings</span>
+    </button>
 
-        <button class="action" 
-            hx-put="{{.Record.Url}}" hx-swap=none>
-            <span class="symbols">{{.Record.Icon}}</span>
-        </button>
+    <button class="action" 
+        hx-put="{{.Record.Url}}" hx-swap=none>
+        <span class="symbols">{{.Record.Icon}}</span>
+    </button>
+
     
-        
-        <div id="response-div"></div>
-
-    </div>
+    <div id="response-div"></div>
 
 {{ end }}

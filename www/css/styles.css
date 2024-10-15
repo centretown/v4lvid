@@ -24,54 +24,58 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 .symbols  {
-    font-size: 2.5rem;
+  font-size: 2.5rem;
 }
 
 .source {
-    position: absolute; 
-    top: 0px;
-    left:0px;
-    width:100%;
+  position: absolute; 
+  top: 0px;
+  left:0px;
+  width:100%;
 }
 
 .source > img {
-    width: 100%;
+  width: 100%;
 }
 
 .action {
-    position: relative;
-    padding: 4px;
-    margin: 2px;
-    width: 80px;
-    background-color: rgba(0, 0, 0, 0.15);
-    color: rgba(128, 255, 15, 0.40);
+  padding: 4px;
+  margin: 2px;
+  width: 80;
+  background-color: rgba(0, 0, 0, 0.15);
+  color: rgba(128, 255, 15, 0.40);
 }
 
-.action:hover, .action:focus {
-    background-color: rgba(0, 0, 0, 1);
-    color: rgba(0, 255, 255, 1);
+.sun {
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.15);
+  color: rgba(128, 255, 15, 0.40);
 }
 
-.actionbar {
-    position: fixed; 
-    top: 6rem;
-    left: 2rem;
+li {
+  margin-bottom: 1rem;
 }
 
-.menubar {
-    position: fixed; 
-    top: 0rem;
-    left: 5rem;
-    width: 100%;
+.action:hover, .action:focus, .sun:hover {
+  background-color: rgba(0, 0, 0, 1);
+  color: rgba(0, 255, 255, 1);
 }
 
 .topnav {
-  position: fixed; 
-  top: 0rem;
-  left: 0rem;
+  position: fixed;
+  margin: 10px;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.15);
-  /*background-color: #333;*/
+}
+
+#overlay {
+  width: 100%;
+  z-index: 9;
+}
+
+.slot {
+  margin-top: 1.5rem;
+  margin-left: 3rem;
 }
 
 @keyframes fade-out {
