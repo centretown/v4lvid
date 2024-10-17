@@ -91,9 +91,6 @@ type Light struct {
 type Number struct {
 	Entity[NumberAttributes]
 }
-type Wifi struct {
-	Entity[SensorAttributes]
-}
 type AnyData struct {
 	Entity[any]
 }
@@ -101,12 +98,16 @@ type Zone struct {
 	Entity[ZoneAttributes]
 }
 
-func (dst *Entity[T]) Copy(src *Entity[json.RawMessage]) {
-	dst.EntityID = src.EntityID
-	dst.State = src.State
-	dst.LastChanged = src.LastChanged
-	dst.LastUpdated = src.LastUpdated
-	dst.LastReported = src.LastReported
-	dst.Context = src.Context
-	json.Unmarshal(src.Attributes, &dst.Attributes)
+func (ent *Entity[T]) Copy(src *Entity[json.RawMessage]) {
+	ent.EntityID = src.EntityID
+	ent.State = src.State
+	ent.LastChanged = src.LastChanged
+	ent.LastUpdated = src.LastUpdated
+	ent.LastReported = src.LastReported
+	ent.Context = src.Context
+	json.Unmarshal(src.Attributes, &ent.Attributes)
+}
+
+func (ent *Entity[T]) FormatTime() string {
+	return ent.LastUpdated.Local().Format(ShortTime)
 }

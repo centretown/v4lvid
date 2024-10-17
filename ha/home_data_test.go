@@ -44,8 +44,8 @@ func testPrefixWifi(t *testing.T, data *HomeData) {
 			t.Log(list[i])
 		}
 	}
-	show(ListEntitiesWithPrefix("sensor.wifi", data.EntityKeys))
-	show(ListEntitiesWithPrefix("sensor.sun_next", data.EntityKeys))
+	show(ListEntitiesLike("sensor.wifi", data.EntityKeys))
+	show(ListEntitiesLike("sensor.sun_next", data.EntityKeys))
 }
 
 func testBuildEntities(t *testing.T, data *HomeData) {

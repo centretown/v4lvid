@@ -5,10 +5,19 @@
   font-weight: 100 700;
   src: url(symbols.woff2) format('woff2');
 }
+
+:root {
+  --bgOpaque: rgba(0, 0, 0, .7);
+  --bgTransparent: rgba(0, 0, 0, 0.15);
+  --fgBright: rgba(0, 255, 255, 1);
+  --fgDim: rgba(128, 255, 0, 0.5);
+}
+
 body {
   font-family: sans-serif;
 }
-.material-symbols-outlined, .symbols {
+
+.material-symbols-outlined, .symbols, .symbols-small {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
@@ -23,8 +32,12 @@ body {
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+
 .symbols  {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
+}
+.symbols-small  {
+  font-size: 1rem;
 }
 
 .source {
@@ -42,44 +55,61 @@ body {
   padding: 4px;
   margin: 2px;
   width: 80;
-  background-color: rgba(0, 0, 0, 0.15);
-  color: rgba(128, 255, 15, 0.40);
+  background-color: var(--bgTransparent);
+  color: var(--fgDim);
 }
 
 .sun {
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.15);
-  color: rgba(128, 255, 15, 0.40);
+  padding-top: .1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  background-color: var(--bgOpaque);
+  color: var(--fgBright);
+  animation-name: fade-in-slow;
+  animation-timing-function: ease-out;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+}
+
+.hide {
+  display: none;
 }
 
 li {
-  margin-bottom: 1rem;
+  font-size: .85rem;
+  margin-bottom: .25rem;
 }
 
-.action:hover, .action:focus, .sun:hover {
-  background-color: rgba(0, 0, 0, 1);
-  color: rgba(0, 255, 255, 1);
+.header {
+  padding-top: .6rem;
+}
+
+.action:hover, .action:focus {
+  opacity: 1; 
+  background-color: var(--bgOpaque);
+  color: var(--fgBright);
 }
 
 .topnav {
   position: fixed;
-  margin: 10px;
+  margin: .6rem;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.15);
 }
 
-#overlay {
-  width: 100%;
-  z-index: 9;
+.note {
+  font-size: .6rem;
 }
 
 .slot {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   margin-left: 3rem;
+  width: 25rem;
+  overflow: wrap;
 }
 
 @keyframes fade-out {
-  0%  { opacity: 1; }
+  0% { opacity: 1; }
   50% { opacity: 0.5; }
   75% { opacity: 0.4; }
   85% { opacity: 0.3; }
@@ -88,9 +118,19 @@ li {
   100% { opacity: 0; }
 }
 
+@keyframes fade-in-slow {
+  0% { opacity: .1; }
+  70% { opacity: .5; }
+  75% { opacity: .55; }
+  80% { opacity: .60; }
+  85% { opacity: .65; }
+  90% { opacity: .70; }
+  100% { opacity: .75; }
+}
+
 .fade-it {
     animation-name: fade-out;
-    animation-timing-function: ease-in;
+    animation-timing-function: linear;
     animation-duration: 2500ms;
     animation-fill-mode: forwards;
 }

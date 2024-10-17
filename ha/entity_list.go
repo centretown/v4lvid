@@ -46,9 +46,9 @@ import (
 // 	"sensor.sun_next_dusk",
 // }
 
-func ListEntitiesWithPrefix(prefix string, sortedKeys []string) (list []string) {
+func ListEntitiesLike(prefix string, sortedKeys []string) (list []string) {
 	compare := func(s string) bool {
-		return strings.HasPrefix(s, prefix)
+		return strings.Contains(s, prefix)
 	}
 
 	index := slices.IndexFunc(sortedKeys, compare)

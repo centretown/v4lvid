@@ -27,7 +27,7 @@ func (tss *TimeStampSensor) FormatTime() string {
 }
 
 func (data *HomeData) SunTimes() (suntimes []*TimeStampSensor) {
-	sunlist := ListEntitiesWithPrefix("sensor.sun_next", data.EntityKeys)
+	sunlist := ListEntitiesLike("sensor.sun_next", data.EntityKeys)
 	suntimes = make([]*TimeStampSensor, 0, len(sunlist))
 	for _, s := range sunlist {
 		sensor := &TimeStampSensor{}

@@ -1,13 +1,10 @@
 package websock
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"io"
 	"log"
-	"net"
-	"time"
 
 	"github.com/coder/websocket"
 )
@@ -49,37 +46,14 @@ func NewWebSockClient() (*WebSockClient, error) {
 	return client, err
 }
 
-const BUFFER_SIZE = 1024 * 32
-
-func (client *WebSockClient) Read() ([]byte, error) {
-	var readBuffer []byte = make([]byte, BUFFER_SIZE)
-	log.Println("READING")
-
-	// _, rdrConn, err := client.conn.Reader(client.ctx)
-	typ, rdrConn, err := client.conn.Reader(client.ctx)
+func (client *WebSockClient) Read() (buf []byte, err error) {
+	// waits until something is there
+	_, rdrConn, err := client.conn.Reader(client.ctx)
 	if err != nil {
+		log.Println("Reader", err)
 		return nil, err
 	}
-
-	log.Println("Type", typ)
-	rdr := bufio.NewReaderSize(rdrConn, BUFFER_SIZE)
-
-	for {
-		// _, err := rdr.Peek(1)
-		count, err := rdr.Read(readBuffer)
-		if err != nil && err != io.EOF {
-			log.Println("read error", err)
-			return nil, err
-		}
-
-		if count > 0 {
-			log.Println("read count", count)
-			return readBuffer[:count], nil
-		}
-
-		time.Sleep(time.Millisecond)
-	}
-
+	return io.ReadAll(rdrConn)
 }
 
 func (client *WebSockClient) WriteCommand(cmd string) error {
@@ -99,30 +73,4 @@ func (client *WebSockClient) WriteCommandID(cmd string) (id int, err error) {
 	}
 	client.MessageID += 1
 	return
-}
-
-func listen() {
-	// Listen on TCP port 2000 on all available unicast and
-	// anycast IP addresses of the local system.
-	l, err := net.Listen("tcp", ":2000")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer l.Close()
-	for {
-		// Wait for a connection.
-		conn, err := l.Accept()
-		if err != nil {
-			log.Fatal(err)
-		}
-		// Handle the connection in a new goroutine.
-		// The loop then returns to accepting, so that
-		// multiple connections may be served concurrently.
-		go func(c net.Conn) {
-			// Echo all incoming data.
-			io.Copy(c, c)
-			// Shut down the connection.
-			c.Close()
-		}(conn)
-	}
 }

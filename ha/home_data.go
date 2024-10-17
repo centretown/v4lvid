@@ -23,10 +23,11 @@ type HomeData struct {
 	EntityKeys []string
 
 	Err           error
-	monitoring    bool
+	Monitoring    bool
 	stop          chan int
 	loadStatesID  int
 	subscriptions map[string][]*Subscription
+	eventsID      int
 	sock          *websock.WebSockClient
 }
 
@@ -87,12 +88,12 @@ func (data *HomeData) EntityList(filters ...string) (list []string) {
 	return
 }
 
-func (data *HomeData) CallService(cmd string) {
-	data.sock.WriteCommandID(cmd)
-}
+// func (data *HomeData) CallService(cmd string) {
+// 	data.sock.WriteCommandID(cmd)
+// }
 
 func (data *HomeData) StopMonitor() {
-	if data.monitoring {
+	if data.Monitoring {
 		log.Println("StopMonitor")
 		data.stop <- 1
 	}
@@ -160,53 +161,38 @@ func (data *HomeData) BuildEntities() (err error) {
 	return
 }
 
-func (data *HomeData) Monitor() error {
-
-	defer func() {
-		if data.Err != nil {
-			log.Println("Monitor", data.Err)
-		}
-	}()
-
-	data.sock, data.Err = websock.NewWebSockClient()
-	if data.Err != nil {
-		return data.Err
-	}
-
-	// authorize
-
-	go data.monitor()
-
-	data.loadStatesID, _ = data.sock.WriteCommandID(StatesCommand)
-	// data.loaded.AddListener(binding.NewDataListener(func() {
-	// 	isLoaded, _ := data.loaded.Get()
-	// 	if isLoaded {
-	// 		data.eventsID, data.Err = data.sock.WriteID(subscribe)
-	// 		if data.Err != nil {
-	// 			return
-	// 		}
-	// 	}
-	// }))
-	return data.Err
-}
-
-func (data *HomeData) monitor() {
+func (data *HomeData) Monitor() {
 	log.Println("monitor")
 	var (
 		errCount int
 		delay    time.Duration = time.Millisecond * 5
+		err      error
 	)
-	data.monitoring = true
+
+	data.Monitoring = false
+	data.loadStatesID, err = data.sock.WriteCommandID(StatesCommand)
+	if err != nil {
+		log.Println("StatesCommand", err)
+		return
+	}
+	data.Monitoring = true
+
+	data.eventsID, err = data.sock.WriteCommandID(SubscribeCommand)
+	if err != nil {
+		log.Println("SubscribeCommand", err)
+		return
+	}
+
 	for {
 		time.Sleep(delay)
 
 		select {
 		case <-data.stop:
 			log.Println("STOP RECEIVED")
-			data.monitoring = false
+			data.Monitoring = false
 			return
-		default:
 
+		default:
 			buf, err := data.sock.Read()
 			if err != nil {
 				errCount++
@@ -217,7 +203,10 @@ func (data *HomeData) monitor() {
 				continue
 			}
 			errCount = 0
-			data.ParseResponse(buf)
+			if len(buf) > 0 {
+				log.Println("buffer in", len(buf))
+				go data.ParseResponse(buf)
+			}
 		}
 	}
 }

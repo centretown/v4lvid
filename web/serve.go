@@ -15,6 +15,7 @@ type ServerData struct {
 	Record          *RecordControlHandler
 	Template        *template.Template
 	HasControls     bool
+	Home            *ha.HomeData
 }
 
 func Serve(vservers []*camera.Server) (data *ServerData) {
@@ -52,56 +53,12 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 		log.Printf("Serving %s%s\n", url, path)
 	}
 
-	home := initializeHome()
+	handleCameras(data)
 
-	var (
-		camera_active  bool
-		sun_active     bool
-		weather_active bool
-	)
-
-	http.HandleFunc("/camera",
-		func(w http.ResponseWriter, r *http.Request) {
-			if camera_active {
-				camera_active = false
-				return
-			}
-			w.Header().Add("Cache-Control", "no-cache")
-			// err := data.Template.ExecuteTemplate(w, "layout.items", data)
-			err := data.Template.Lookup("layout.items").Execute(w, data)
-			if err != nil {
-				log.Fatal("/camera", err)
-			}
-			camera_active = true
-		})
-	http.HandleFunc("/sun",
-		func(w http.ResponseWriter, r *http.Request) {
-			if sun_active {
-				sun_active = false
-				return
-			}
-			w.Header().Add("Cache-Control", "no-cache")
-			sensors := home.SunTimes()
-			err := data.Template.Lookup("layout.sun").Execute(w, sensors)
-			if err != nil {
-				log.Fatal("/sun", err)
-			}
-			sun_active = true
-		})
-	http.HandleFunc("/weather",
-		func(w http.ResponseWriter, r *http.Request) {
-			if weather_active {
-				weather_active = false
-				return
-			}
-			w.Header().Add("Cache-Control", "no-cache")
-			forecast := home.Forecast()
-			err := data.Template.Lookup("layout.weather").Execute(w, forecast)
-			if err != nil {
-				log.Fatal("/sun", err)
-			}
-			weather_active = true
-		})
+	data.Home, err = initializeHome()
+	if err == nil {
+		handleHome(data)
+	}
 
 	http.Handle(data.Record.Url, data.Record)
 
@@ -126,23 +83,77 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 	return
 }
 
-func initializeHome() *ha.HomeData {
-	home := ha.NewHomeData()
-	ok, err := home.Authorize()
+func initializeHome() (home *ha.HomeData, err error) {
+	var ok bool
+	home = ha.NewHomeData()
+	ok, err = home.Authorize()
 	if err != nil {
-		log.Fatal("authorize", err)
+		log.Println("authorize", err)
+		return
 	}
 	if !ok {
-		log.Fatal("not authorized")
-
+		err = fmt.Errorf("not authorized")
+		log.Println(err)
+		return
 	}
+
 	log.Println("Authorized HA")
 
 	err = home.BuildEntities()
 	if err != nil {
-		log.Fatal("BuildEntities", err)
+		log.Println("BuildEntities", err)
+		return
+
 	}
 	log.Println("Build Entities")
 
-	return home
+	go home.Monitor()
+	if home.Monitoring {
+		log.Println("Monitor Entity States")
+	}
+
+	return
+}
+
+func handleCameras(data *ServerData) {
+	http.HandleFunc("/camera",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Cache-Control", "no-cache")
+			err := data.Template.Lookup("layout.controls").Execute(w, data)
+			if err != nil {
+				log.Fatal("/camera", err)
+			}
+		})
+}
+
+func handleHome(data *ServerData) {
+	home := data.Home
+
+	http.HandleFunc("/sun",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Cache-Control", "no-cache")
+			sensors := home.SunTimes()
+			err := data.Template.Lookup("layout.sun").Execute(w, sensors)
+			if err != nil {
+				log.Fatal("/sun", err)
+			}
+		})
+	http.HandleFunc("/weather",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Cache-Control", "no-cache")
+			forecast := home.Forecast()
+			err := data.Template.Lookup("layout.weather").Execute(w, forecast)
+			if err != nil {
+				log.Fatal("/sun", err)
+			}
+		})
+	http.HandleFunc("/wifi",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Cache-Control", "no-cache")
+			sensors := home.WifiSensors()
+			err := data.Template.Lookup("layout.wifi").Execute(w, sensors)
+			if err != nil {
+				log.Fatal("/wifi", err)
+			}
+		})
 }
