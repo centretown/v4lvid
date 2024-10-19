@@ -3,22 +3,49 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Centretown - Dave's Place</title>
+    <title>Dave's Window</title>
 
     <meta name="author" content="Centretown">
-    <meta name="description" content="View Centretown from Dave's place.">
+    <meta name="description" content="Dave's Window">
     <meta name="viewport" content="width=device-width">
 
     <script src="static/js/htmx.js"></script>
     <script src="static/js/ws.js"></script>
 
     <link rel="stylesheet" href="static/css/styles.css" />
+    <script>
+        const blank = "blank";
+        var currentAction = blank;
+        var hideActions = true;
+        function doAction(action) {
+            if (currentAction === action) {
+                htmx.swap("#slot", "", {swapStyle: 'innerHTML'});
+                currentAction = blank;
+            } else {
+                htmx.trigger("#"+action, "click");
+                currentAction = action;
+            }
+        }
+        function toggleMenu(id) {
+            if (hideActions) {
+                hideActions = false;
+                htmx.removeClass("#"+id,"hide")
+            } else {
+                hideActions = true;
+                htmx.addClass("#"+id,"hide")
+            }
+        }
+    </script>
 </head>
 
 <body>
 
-{{ template "layout.source" . }}
-{{ template "layout.menu" . }}
+<div class="source">
+    <img id="source" src="{{.Url}}">
+</div>
+
+{{ template "layout.actions" . }}
 
 </body>
+
 </html>

@@ -88,9 +88,9 @@ func (data *HomeData) EntityList(filters ...string) (list []string) {
 	return
 }
 
-// func (data *HomeData) CallService(cmd string) {
-// 	data.sock.WriteCommandID(cmd)
-// }
+func (data *HomeData) CallService(cmd string) {
+	data.sock.WriteCommandID(cmd)
+}
 
 func (data *HomeData) StopMonitor() {
 	if data.Monitoring {

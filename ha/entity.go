@@ -21,17 +21,6 @@ type Consumer interface {
 	Copy(src *Entity[json.RawMessage])
 }
 
-type LightAttributes struct {
-	Name       string    `json:"friendly_name" yaml:"friendly_name"`
-	Brightness int       `json:"brightness" yaml:"brightness"`
-	ColorMode  string    `json:"color_mode" yaml:"color_mode"`
-	Effect     string    `json:"effect" yaml:"effect"`
-	EffectList []string  `json:"effect_list" yaml:"effect_list"`
-	ColorRGB   []uint8   `json:"rgb_color" yaml:"rgb_color"`
-	ColorXY    []float64 `json:"xy_color" yaml:"xy_color"`
-	ColorHS    []float64 `json:"hs_color" yaml:"hs_color"`
-}
-
 type NumberAttributes struct {
 	Min   float64 `json:"min" yaml:"min"`
 	Max   float64 `json:"max" yaml:"max"`
@@ -85,9 +74,6 @@ type TimeStampAttributes struct {
 	Name        string `json:"friendly_name" yaml:"friendly_name"`
 }
 
-type Light struct {
-	Entity[LightAttributes]
-}
 type Number struct {
 	Entity[NumberAttributes]
 }

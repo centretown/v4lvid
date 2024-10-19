@@ -1,7 +1,7 @@
 
 {{ define "layout.controls" }}
     <div class="sun">
-        <h3><span class="symbols">settings_video_camera</span>Camera Settings</h3> 
+        <h3><span class="symbols">settings_video_camera</span> Camera Settings</h3> 
 
         {{range .ControlHandlers}}
             {{range .Controls}}
@@ -13,15 +13,6 @@
             {{ end }}
         {{ end }}
 
-        <button class="action" 
-            hx-put="/resetcontrols" hx-swap=none>
-            <span class="symbols">reset_settings</span>
-        </button>
-
-        <button class="action" 
-            hx-put="{{.Record.Url}}" hx-swap=none>
-            <span class="symbols">{{.Record.Icon}}</span>
-        </button>
     </div>
 
     
