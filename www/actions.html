@@ -32,7 +32,7 @@
 
 {{ define "layout.sun" }}
     <div class="sun">
-        <h3><span class="symbols">wb_twilight</span> Next Sun</h3> 
+        <h3><span class="symbols">wb_twilight</span> <span class="title">Next Sun</span></h3> 
         <ol>
         {{range .}}
             <li>{{.ShortName}} {{.FormatTime}}</li>
@@ -44,13 +44,17 @@
 {{ define "layout.wifi" }}
     <div class="sun">
     <h3><span class="symbols">wifi</span> WIFI Signals</h3> 
-    {{range .}}
-        <div class="header"><span class="symbols-small">wifi</span> {{.Attributes.Name}}</div> 
-        <ul>
-            <li>Strength {{.State}}</li>
-        </ul>
-        <div class="note">Last Updated: <span>{{.FormatTime}}</span></div>
-    {{end}}
+        <div class="grid-container">
+        {{range .}}
+        <div>
+            <div class="header"><span class="symbols-small">wifi</span> {{.Attributes.Name}}</div> 
+            <ul>
+                <li>Strength {{.State}} {{.Attributes.Units}}</li>
+            </ul>
+            <div class="note">Last Updated: <span>{{.FormatTime}}</span></div>
+        </div>
+        {{end}}
+        </div>
     </div>
 {{ end }}
 
@@ -61,7 +65,8 @@
             <li>Temperature: <span>{{.Attributes.Temperature}} {{.Attributes.TemperatureUnit}}</span></li>
             <li>Humidity: <span>{{.Attributes.Humidity}} %</span></li>
             <li>Wind Speed: <span>{{.Attributes.WindSpeed}} {{.Attributes.WindSpeedUnit}}</span></li>
-            <li>Wind Bearing: <span>{{.Attributes.WindBearing}}</span></li>
+            {{$deg:="\u00b0"}}
+            <li>Wind Bearing: <span>{{.Attributes.WindBearing}} {{$deg}}</span></li>
             <li>Cloud Coverage: <span>{{.Attributes.CloudCoverage}} %</span></li>
             <li>Pressure: <span>{{.Attributes.Pressure}} {{.Attributes.PressureUnit}}</span></li>
             <li>Dew Point: <span>{{.Attributes.DewPoint}} {{.Attributes.TemperatureUnit}}</span></li>

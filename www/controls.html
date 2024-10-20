@@ -1,7 +1,10 @@
 
 {{ define "layout.controls" }}
     <div class="sun">
-        <h3><span class="symbols">settings_video_camera</span> Camera Settings</h3> 
+        <h3>
+            <span class="symbols">settings_video_camera</span>
+            <span class="title">Camera Settings</span>
+        </h3> 
 
         {{range .ControlHandlers}}
             {{range .Controls}}

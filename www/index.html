@@ -11,36 +11,14 @@
 
     <script src="static/js/htmx.js"></script>
     <script src="static/js/ws.js"></script>
+    <script src="static/js/index.js"></script>
 
     <link rel="stylesheet" href="static/css/styles.css" />
-    <script>
-        const blank = "blank";
-        var currentAction = blank;
-        var hideActions = true;
-        function doAction(action) {
-            if (currentAction === action) {
-                htmx.swap("#slot", "", {swapStyle: 'innerHTML'});
-                currentAction = blank;
-            } else {
-                htmx.trigger("#"+action, "click");
-                currentAction = action;
-            }
-        }
-        function toggleMenu(id) {
-            if (hideActions) {
-                hideActions = false;
-                htmx.removeClass("#"+id,"hide")
-            } else {
-                hideActions = true;
-                htmx.addClass("#"+id,"hide")
-            }
-        }
-    </script>
 </head>
 
 <body>
 
-<div class="source">
+<div class="source" hx-on:click="clickSource()">
     <img id="source" src="{{.Url}}">
 </div>
 

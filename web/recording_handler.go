@@ -7,16 +7,16 @@ import (
 	"v4lvid/camera"
 )
 
-var _ http.Handler = (*RecordControlHandler)(nil)
+var _ http.Handler = (*RecordingHandler)(nil)
 
-type RecordControlHandler struct {
+type RecordingHandler struct {
 	Server    *camera.Server
 	Url       string
 	Icon      string
 	recording bool
 }
 
-func (ctl *RecordControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ctl *RecordingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !ctl.recording {
 		log.Printf("recording...")
 		ctl.recording = true

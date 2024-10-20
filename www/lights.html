@@ -1,48 +1,59 @@
 {{ define "layout.lights" }}
 <div class="sun">
-    <h3><span class="symbols">backlight_high</span> LED Lights</h3> 
+    <h3>
+        <span class="symbols">backlight_high</span> 
+        <span class="title">LED Lights</span>
+    </h3> 
     {{range .}}
         <div class="header">
-            <span class="symbols-small">backlight_high</span> {{.Attributes.Name}}</div> 
+            <span class="symbols-small">backlight_high</span>
+            <span class="title">{{.Attributes.Name}}</span>
+        </div> 
         <div class="form-label">
-            <label for="lstate">State</label>
+            <label for="lstate">State
                 {{$on:="on"}}
                 <input hx-post="/light/state" hx-swap="none"
                     hx-vals='{"id": "{{.EntityID}}"}'
                     name="state"
-                    id="lstate" class="form-input" type="checkbox" {{if eq .State $on}}checked{{end}}>
+                    id="lstate" class="form-input" type="checkbox" 
+                    {{if eq .State $on}}checked{{end}}>
             </label>
         </div>
             
         <div class="form-label">
-            <label for="lbright">Brightness</label>
-            <input hx-post="/light/brightness" hx-swap="none"
-                hx-vals='{"id": "{{.EntityID}}"}'
-                name="brightness"
-                id="lbright" class="form-input" 
-                type="range" min="0" max="255" 
-                value="{{.Attributes.Brightness}}" />
+            <label for="lbright">Brightness
+                <input hx-post="/light/brightness" hx-swap="none"
+                    hx-vals='{"id": "{{.EntityID}}"}'
+                    name="brightness"
+                    id="lbright" class="form-input" 
+                    type="range" min="0" max="255" 
+                    value="{{.Attributes.Brightness}}" />
+            </label>
         </div>
             
         <div class="form-label">
-            <label for="lcolor">Color</label>
-            <input hx-post="/light/color" hx-swap="none" 
-                hx-vals='{"id": "{{.EntityID}}"}'
-                name="rgb_color"
-                id="lcolor"  class="form-input" 
-                type="color" value="{{.HexColor}}" />
+            <label for="lcolor">Color
+                <input hx-post="/light/color" hx-swap="none" 
+                    hx-vals='{"id": "{{.EntityID}}"}'
+                    name="rgb_color"
+                    id="lcolor"  class="form-input" 
+                    type="color" value="{{.HexColor}}" />
+            </label>
         </div>
         <div class="form-label">
-            <label for="leffect">Effect</label>
-            <select hx-post="/light/effect" hx-swap="none" 
-                hx-vals='{"id": "{{.EntityID}}"}'
-                name="effect"
-                id="leffect" class="form-input">
-            {{$eff:=.Attributes.Effect}}
-            {{range .Attributes.EffectList}}
-                <option class="form-option" value="{{.}}" {{if eq $eff .}}selected{{end}}>{{.}}</option>
-            {{end}}
-            </select>
+            <label for="leffect">Effect
+                <select hx-post="/light/effect" hx-swap="none" 
+                    hx-vals='{"id": "{{.EntityID}}"}'
+                    name="effect"
+                    id="leffect" class="form-input">
+                {{$eff:=.Attributes.Effect}}
+                {{range .Attributes.EffectList}}
+                    <option class="form-option" value="{{.}}"
+                        {{if eq $eff .}}selected{{end}}>{{.}}
+                    </option>
+                {{end}}
+                </select>
+            </label>
         </div>
         <div class="note">Last Updated: <span>{{.FormatTime}}</span></div>
     {{end}}

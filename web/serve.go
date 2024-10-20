@@ -23,18 +23,19 @@ type Action struct {
 type ServerData struct {
 	Url             string
 	ControlHandlers []*V4lHandler
-	Record          *RecordControlHandler
-	Template        *template.Template
-	HasControls     bool
-	Home            *ha.HomeData
+	Record          *RecordingHandler
 	Actions         []Action
+
+	template *template.Template
+	home     *ha.HomeData
 }
 
 func Serve(vservers []*camera.Server) (data *ServerData) {
-	const url = "192.168.10.7:9000"
+	const httpUrl = "192.168.10.7:9000"
+	const wsUrl = "192.168.10.7:9900"
 	data = &ServerData{
 		Url: "http://192.168.10.7:9000/0/",
-		Record: &RecordControlHandler{
+		Record: &RecordingHandler{
 			Server: vservers[0],
 			Url:    "/record",
 			Icon:   "radio_button_checked",
@@ -47,12 +48,15 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 			{Name: "lights", Icon: "backlight_high"},
 		},
 	}
-	var err error
-	data.Template, err = template.ParseGlob("www/*.html")
+	var (
+		err     error
+		pattern = "www/*.html"
+	)
+	data.template, err = template.ParseGlob(pattern)
 	if err != nil {
-		log.Fatalln("Parse", err)
+		log.Fatalln("ParseGlob", pattern, err)
 	}
-	data.ControlHandlers = NexigoControlList(data.Template)
+	data.ControlHandlers = NexigoControlList(data.template)
 
 	for i, vserver := range vservers {
 		path := fmt.Sprintf("/%d/", i)
@@ -69,14 +73,18 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 		}
 
 		go vserver.Serve()
-		log.Printf("Serving %s%s\n", url, path)
+		log.Printf("Serving %s%s\n", httpUrl, path)
 	}
 
 	handleCameras(data)
 
-	data.Home, err = setupHomeData()
+	data.home, err = setupHomeData()
 	if err == nil {
-		handleHome(data)
+		http.HandleFunc("/sun", handleSun(data))
+		http.HandleFunc("/weather", handleWeather(data))
+		http.HandleFunc("/wifi", handleWifi(data))
+		http.HandleFunc("/lights", handleLights(data))
+		handleLightProperties(data.home)
 	}
 
 	http.Handle(data.Record.Url, data.Record)
@@ -89,25 +97,33 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		data.Template.ExecuteTemplate(w, "index.html", data)
+		data.template.ExecuteTemplate(w, "index.html", data)
 	})
 
-	server := &http.Server{
-		Addr:         url,
+	httpServer := &http.Server{
+		Addr:         httpUrl,
 		ReadTimeout:  0,
 		WriteTimeout: 0,
 	}
 
-	errc := make(chan error, 1)
+	httpErr := make(chan error, 1)
 	go func() {
-		errc <- server.ListenAndServe()
+		httpErr <- httpServer.ListenAndServe()
+	}()
+
+	wsServer := NewSocketServer(wsUrl)
+	wsErr := make(chan error, 1)
+	go func() {
+		wsErr <- wsServer.Run()
 	}()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
 	select {
-	case err := <-errc:
-		log.Printf("failed to serve: %v", err)
+	case err := <-httpErr:
+		log.Printf("failed to serve http: %v", err)
+	case err := <-wsErr:
+		log.Printf("failed to serve websockets: %v", err)
 	case sig := <-sigs:
 		log.Printf("terminating: %v", sig)
 	}
@@ -116,7 +132,8 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 		time.Second)
 	defer cancel()
 
-	server.Shutdown(ctx)
+	httpServer.Shutdown(ctx)
+	wsServer.server.Shutdown(ctx)
 	return
 }
 
@@ -156,56 +173,57 @@ func handleCameras(data *ServerData) {
 	http.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
-			err := data.Template.Lookup("layout.controls").Execute(w, data)
+			err := data.template.Lookup("layout.controls").Execute(w, data)
 			if err != nil {
 				log.Fatal("/camera", err)
 			}
 		})
 }
 
-func handleHome(data *ServerData) {
-	home := data.Home
-
-	http.HandleFunc("/sun",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("Cache-Control", "no-cache")
-			sensors := home.SunTimes()
-			err := data.Template.Lookup("layout.sun").Execute(w, sensors)
-			if err != nil {
-				log.Fatal("/sun", err)
-			}
-		})
-	http.HandleFunc("/weather",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("Cache-Control", "no-cache")
-			forecast := home.Forecast()
-			err := data.Template.Lookup("layout.weather").Execute(w, forecast)
-			if err != nil {
-				log.Fatal("/sun", err)
-			}
-		})
-	http.HandleFunc("/wifi",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("Cache-Control", "no-cache")
-			sensors := home.WifiSensors()
-			err := data.Template.Lookup("layout.wifi").Execute(w, sensors)
-			if err != nil {
-				log.Fatal("/wifi", err)
-			}
-		})
-	http.HandleFunc("/lights",
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Add("Cache-Control", "no-cache")
-			lights := home.LedLights()
-			err := data.Template.Lookup("layout.lights").Execute(w, lights)
-			if err != nil {
-				log.Fatal("/lights", err)
-			}
-		})
-	handleLights(data.Home)
+func handleSun(data *ServerData) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		sensors := data.home.SunTimes()
+		err := data.template.Lookup("layout.sun").Execute(w, sensors)
+		if err != nil {
+			log.Fatal("/sun", err)
+		}
+	}
 }
 
-func handleLights(home *ha.HomeData) {
+func handleWeather(data *ServerData) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		forecast := data.home.Forecast()
+		err := data.template.Lookup("layout.weather").Execute(w, forecast)
+		if err != nil {
+			log.Fatal("/sun", err)
+		}
+	}
+}
+
+func handleWifi(data *ServerData) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		sensors := data.home.WifiSensors()
+		err := data.template.Lookup("layout.wifi").Execute(w, sensors)
+		if err != nil {
+			log.Fatal("/wifi", err)
+		}
+	}
+}
+func handleLights(data *ServerData) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		lights := data.home.LedLights()
+		err := data.template.Lookup("layout.lights").Execute(w, lights)
+		if err != nil {
+			log.Fatal("/lights", err)
+		}
+	}
+}
+
+func handleLightProperties(home *ha.HomeData) {
 	readBody := func(r *http.Request) (id string, key string, val string) {
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {

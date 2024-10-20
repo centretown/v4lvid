@@ -73,6 +73,11 @@ body {
   animation-fill-mode: forwards;
 }
 
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
 @keyframes fade-in-slow {
   0% { opacity: .1; }
   70% { opacity: .5; }
@@ -118,12 +123,16 @@ li {
 
 .form-label {
   font-size: .85rem;
-  margin: 1rem;
+  margin: 1.5rem;
 }
 
 .form-option {
   background-color: black;
   color: var(--fgOut);
+}
+
+.title {
+  margin-left: .2rem;
 }
 
 .actions-right {
