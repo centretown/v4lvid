@@ -5,12 +5,17 @@ import (
 	"log"
 	"path/filepath"
 	"v4lvid/camera"
+	"v4lvid/config"
 	"v4lvid/web"
 )
 
 func main() {
-	base := flag.String("base", "/mnt/molly/output/", "Video file base folder")
-	// base = flag.String("b", "./output/", "Video file base folder")
+	// cfg := &config.DefaultConfig
+	cfg, err := config.Load("config.json")
+	if err != nil {
+		log.Fatal("config.Load", err)
+	}
+	base := flag.String("output", cfg.Output, "Output folder")
 	flag.Parse()
 
 	if len(*base) > 0 {
@@ -24,31 +29,5 @@ func main() {
 		log.Println("video.VideoBase", camera.VideoBase)
 	}
 
-	webcam := camera.NewWebcam("/dev/video0")
-	config := &camera.VideoConfig{
-		Codec:  "MJPG",
-		Width:  1920,
-		Height: 1080,
-		FPS:    30,
-	}
-	iconfig := &camera.VideoConfig{
-		Codec:  "MJPG",
-		Width:  1024,
-		Height: 768,
-		FPS:    2,
-	}
-	cserve := camera.NewVideoServer(webcam, config)
-	err := webcam.Open(config)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	ipcam := camera.NewIpcam("http://192.168.10.30:8080")
-	iserve := camera.NewVideoServer(ipcam, iconfig)
-	err = ipcam.Open(iconfig)
-	if err != nil {
-		log.Println(err)
-	}
-
-	web.Serve([]*camera.Server{cserve, iserve})
+	web.Serve(cfg)
 }

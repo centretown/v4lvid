@@ -25,7 +25,6 @@ func (ctl *RecordingHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			log.Println("timer finished", ctl.recording)
 			ctl.recording = false
 		})
-
 	} else {
 		ctl.Server.StopRecordCmd()
 		ctl.recording = false

@@ -1,0 +1,139 @@
+{
+  "Output": "/mnt/molly/output/",
+  "Cameras": [
+    {
+      "CameraType": 0,
+      "Path": "/dev/video0",
+      "Codec": "MJPG",
+      "Width": 1920,
+      "Height": 1080,
+      "FPS": 30
+    },
+    {
+      "CameraType": 1,
+      "Path": "http://192.168.10.30:8080",
+      "Codec": "MJPG",
+      "Width": 1024,
+      "Height": 768,
+      "FPS": 2
+    }
+  ],
+  "HttpUrl": "192.168.10.7:9000",
+  "Actions": [
+    {
+      "Name": "camera",
+      "Icon": "settings_video_camera"
+    },
+    {
+      "Name": "sun",
+      "Icon": "wb_twilight"
+    },
+    {
+      "Name": "weather",
+      "Icon": "routine"
+    },
+    {
+      "Name": "wifi",
+      "Icon": "network_wifi"
+    },
+    {
+      "Name": "lights",
+      "Icon": "backlight_high"
+    }
+  ],
+  "WsUrl": "192.168.10.7:9900",
+  "Drivers": {
+    "uvcvideo": [
+      {
+        "Key": "Zoom, Absolute",
+        "Controls": [
+          {
+            "Url": "/zoomin",
+            "Icon": "zoom_in",
+            "Multiplier": 1
+          },
+          {
+            "Url": "/zoomout",
+            "Icon": "zoom_out",
+            "Multiplier": -1
+          }
+        ]
+      },
+      {
+        "Key": "Pan, Absolute",
+        "Controls": [
+          {
+            "Url": "/panleft",
+            "Icon": "arrow_back",
+            "Multiplier": -1
+          },
+          {
+            "Url": "/panright",
+            "Icon": "arrow_forward",
+            "Multiplier": 1
+          }
+        ]
+      },
+      {
+        "Key": "Tilt, Absolute",
+        "Controls": [
+          {
+            "Url": "/tiltup",
+            "Icon": "arrow_upward",
+            "Multiplier": 1
+          },
+          {
+            "Url": "/tiltdown",
+            "Icon": "arrow_downward",
+            "Multiplier": -1
+          }
+        ]
+      },
+      {
+        "Key": "Brightness",
+        "Controls": [
+          {
+            "Url": "/brightnessup",
+            "Icon": "brightness_high",
+            "Multiplier": 10
+          },
+          {
+            "Url": "/brightnessdown",
+            "Icon": "brightness_low",
+            "Multiplier": -10
+          }
+        ]
+      },
+      {
+        "Key": "Contrast",
+        "Controls": [
+          {
+            "Url": "/contrastup",
+            "Icon": "contrast_square",
+            "Multiplier": 10
+          },
+          {
+            "Url": "/contrastdown",
+            "Icon": "exposure",
+            "Multiplier": -10
+          }
+        ]
+      },
+      {
+        "Key": "Saturation",
+        "Controls": [
+          {
+            "Url": "/saturationup",
+            "Icon": "backlight_high",
+            "Multiplier": 10
+          },
+          {
+            "Url": "/saturationdown",
+            "Icon": "backlight_low",
+            "Multiplier": -10
+          }
+        ]
+      }
+    ]
+  }
+}

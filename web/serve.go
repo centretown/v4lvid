@@ -12,106 +12,64 @@ import (
 	"strings"
 	"time"
 	"v4lvid/camera"
+	"v4lvid/config"
 	"v4lvid/ha"
 )
 
-type Action struct {
-	Name string
-	Icon string
-}
-
 type ServerData struct {
-	Url             string
-	ControlHandlers []*V4lHandler
-	Record          *RecordingHandler
-	Actions         []Action
-
-	template *template.Template
-	home     *ha.HomeData
+	WebcamUrl string
+	cfg       *config.Config
+	Actions   []*config.Action
+	// WebcamServers  []*camera.Server
+	WebcamHandlers []*WebcamHandler
+	Recorder       *RecordingHandler
+	mux            *http.ServeMux
+	template       *template.Template
+	home           *ha.HomeData
 }
 
-func Serve(vservers []*camera.Server) (data *ServerData) {
-	const httpUrl = "192.168.10.7:9000"
-	const wsUrl = "192.168.10.7:9900"
+func Serve(cfg *config.Config) (data *ServerData) {
+	webcamServers := cfg.NewCameraServers()
 	data = &ServerData{
-		Url: "http://192.168.10.7:9000/0/",
-		Record: &RecordingHandler{
-			Server: vservers[0],
+		WebcamUrl: "http://192.168.10.7:9000/0/",
+		Actions:   cfg.Actions,
+		Recorder: &RecordingHandler{
+			Server: webcamServers[0],
 			Url:    "/record",
 			Icon:   "radio_button_checked",
 		},
-		Actions: []Action{
-			{Name: "camera", Icon: "settings_video_camera"},
-			{Name: "sun", Icon: "wb_twilight"},
-			{Name: "weather", Icon: "routine"},
-			{Name: "wifi", Icon: "wifi"},
-			{Name: "lights", Icon: "backlight_high"},
-		},
+		mux:  &http.ServeMux{},
+		home: ha.NewHomeData(),
+		cfg:  cfg,
 	}
 	var (
-		err     error
-		pattern = "www/*.html"
+		err        error
+		httpServer = &http.Server{
+			Handler:      data.mux,
+			Addr:         cfg.HttpUrl,
+			ReadTimeout:  0,
+			WriteTimeout: 0,
+		}
 	)
+
+	const pattern = "www/*.html"
 	data.template, err = template.ParseGlob(pattern)
 	if err != nil {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
-	data.ControlHandlers = NexigoControlList(data.template)
 
-	for i, vserver := range vservers {
-		path := fmt.Sprintf("/%d/", i)
-		http.Handle(path, vserver.StreamHook.Stream)
-
-		source := vserver.Source
-		webcam, isWebcam := source.(*camera.Webcam)
-		if isWebcam {
-			ctll := NewControlList(webcam, 0, data.ControlHandlers)
-			http.HandleFunc("/resetcontrols",
-				func(w http.ResponseWriter, r *http.Request) {
-					ctll.ResetControls()
-				})
-		}
-
-		go vserver.Serve()
-		log.Printf("Serving %s%s\n", httpUrl, path)
-	}
-
+	serveCameras(data, cfg, webcamServers)
 	handleCameras(data)
-
-	data.home, err = setupHomeData()
-	if err == nil {
-		http.HandleFunc("/sun", handleSun(data))
-		http.HandleFunc("/weather", handleWeather(data))
-		http.HandleFunc("/wifi", handleWifi(data))
-		http.HandleFunc("/lights", handleLights(data))
-		handleLightProperties(data.home)
-	}
-
-	http.Handle(data.Record.Url, data.Record)
-
-	fs := http.FileServer(http.Dir("www/"))
-	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Cache-Control", "no-cache")
-		http.StripPrefix("/static/", fs).ServeHTTP(w, r)
-	})
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Cache-Control", "no-cache")
-		data.template.ExecuteTemplate(w, "index.html", data)
-	})
-
-	httpServer := &http.Server{
-		Addr:         httpUrl,
-		ReadTimeout:  0,
-		WriteTimeout: 0,
-	}
+	serveHomeData(data)
+	handleHomeData(data)
+	handleFiles(data)
 
 	httpErr := make(chan error, 1)
 	go func() {
 		httpErr <- httpServer.ListenAndServe()
 	}()
 
-	wsServer := NewSocketServer(wsUrl)
+	wsServer := NewSocketServer(cfg.WsUrl)
 	wsErr := make(chan error, 1)
 	go func() {
 		wsErr <- wsServer.Run()
@@ -137,9 +95,64 @@ func Serve(vservers []*camera.Server) (data *ServerData) {
 	return
 }
 
-func setupHomeData() (home *ha.HomeData, err error) {
+func handleFiles(data *ServerData) {
+	data.mux.Handle(data.Recorder.Url, data.Recorder)
+
+	fs := http.FileServer(http.Dir("www/"))
+	data.mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		http.StripPrefix("/static/", fs).ServeHTTP(w, r)
+	})
+
+	data.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		data.template.ExecuteTemplate(w, "index.html", data)
+	})
+
+	data.mux.HandleFunc("/filesave", func(w http.ResponseWriter, r *http.Request) {
+		err := config.Save(data.cfg, "config.json")
+		if err != nil {
+			log.Println("filesave", err)
+			return
+		}
+		// buf, err := json.MarshalIndent(data.cfg, "", "  ")
+
+		// f, err := os.Create("config.json")
+		// if err != nil {
+		// 	log.Println("filesave", err)
+		// 	return
+		// }
+		// defer f.Close()
+		// f.Write(buf)
+		// log.Println(string(buf))
+	})
+}
+
+func serveCameras(data *ServerData, cfg *config.Config, camServers []*camera.Server) {
+	data.WebcamHandlers = NexigoControlList(cfg, data.template)
+
+	for i, camServer := range camServers {
+		path := fmt.Sprintf("/%d/", i)
+		data.mux.Handle(path, camServer.Stream())
+
+		source := camServer.Source
+		webcam, isWebcam := source.(*camera.Webcam)
+		if isWebcam {
+			ctll := NewControlList(data.mux, webcam, 0, data.WebcamHandlers)
+			data.mux.HandleFunc("/resetcontrols",
+				func(w http.ResponseWriter, r *http.Request) {
+					ctll.ResetControls()
+				})
+		}
+
+		go camServer.Serve()
+		log.Printf("Serving %s\n", path)
+	}
+}
+
+func serveHomeData(data *ServerData) (err error) {
+	home := data.home
 	var ok bool
-	home = ha.NewHomeData()
 	ok, err = home.Authorize()
 	if err != nil {
 		log.Println("authorize", err)
@@ -169,8 +182,17 @@ func setupHomeData() (home *ha.HomeData, err error) {
 	return
 }
 
+func handleHomeData(data *ServerData) {
+	mux := data.mux
+	mux.HandleFunc("/sun", handleSun(data))
+	mux.HandleFunc("/weather", handleWeather(data))
+	mux.HandleFunc("/wifi", handleWifi(data))
+	mux.HandleFunc("/lights", handleLights(data))
+	handleLightProperties(data)
+}
+
 func handleCameras(data *ServerData) {
-	http.HandleFunc("/camera",
+	data.mux.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
 			err := data.template.Lookup("layout.controls").Execute(w, data)
@@ -197,7 +219,7 @@ func handleWeather(data *ServerData) func(http.ResponseWriter, *http.Request) {
 		forecast := data.home.Forecast()
 		err := data.template.Lookup("layout.weather").Execute(w, forecast)
 		if err != nil {
-			log.Fatal("/sun", err)
+			log.Fatal("/weather", err)
 		}
 	}
 }
@@ -223,7 +245,8 @@ func handleLights(data *ServerData) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func handleLightProperties(home *ha.HomeData) {
+func handleLightProperties(data *ServerData) {
+	home := data.home
 	readBody := func(r *http.Request) (id string, key string, val string) {
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -245,7 +268,7 @@ func handleLightProperties(home *ha.HomeData) {
 		return
 	}
 
-	http.HandleFunc("/light/state",
+	data.mux.HandleFunc("/light/state",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/state")
 			id, key, _ := readBody(r)
@@ -256,14 +279,14 @@ func handleLightProperties(home *ha.HomeData) {
 			}
 		})
 
-	http.HandleFunc("/light/brightness",
+	data.mux.HandleFunc("/light/brightness",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/brightness")
 			id, key, val := readBody(r)
 			home.CallService(LightCmd(id, ServiceData{Key: key, Value: val}))
 		})
 
-	http.HandleFunc("/light/color",
+	data.mux.HandleFunc("/light/color",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/color")
 			id, key, val := readBody(r)
@@ -278,7 +301,7 @@ func handleLightProperties(home *ha.HomeData) {
 			}
 		})
 
-	http.HandleFunc("/light/effect",
+	data.mux.HandleFunc("/light/effect",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/effect")
 			id, key, val := readBody(r)

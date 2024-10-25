@@ -7,31 +7,35 @@
         <span id="leftmenu" class="hide">
             {{range .Actions}}  
                 <div id="{{.Name}}" class="hide"
-                    hx-get="/{{.Name}}" hx-swap="innerHTML" hx-target="#slot">
+                    hx-get="/{{.Name}}" hx-swap="innerHTML" hx-target="#slot-left">
                 </div>
                 <button class="action" hx-on:click="doAction('{{.Name}}')">
                     <span class="symbols">{{.Icon}}</span>
                 </button>
             {{ end }}
-            <div id="slot" class="slot"></div>
+            <div id="slot-left" class="slot-left"></div>
         </span>
     </div>
     <div class="actions-right">
+        <button class="action" 
+            hx-put="/filesave" hx-swap=none>
+            <span class="symbols">file_save</span>
+        </button>
         <button class="action" 
             hx-put="/resetcontrols" hx-swap=none>
             <span class="symbols">reset_settings</span>
         </button>
 
         <button class="action" 
-            hx-put="{{.Record.Url}}" hx-swap=none>
-            <span class="symbols">{{.Record.Icon}}</span>
+            hx-put="{{.Recorder.Url}}" hx-swap=none>
+            <span class="symbols">{{.Recorder.Icon}}</span>
         </button>
     </div>
 </div>
 {{ end }}
 
 {{ define "layout.sun" }}
-    <div class="sun">
+    <div class="content">
         <h3><span class="symbols">wb_twilight</span> <span class="title">Next Sun</span></h3> 
         <ol>
         {{range .}}
@@ -42,16 +46,14 @@
 {{ end }}
 
 {{ define "layout.wifi" }}
-    <div class="sun">
-    <h3><span class="symbols">wifi</span> WIFI Signals</h3> 
+    <div class="content">
+    <h3><span class="symbols">network_wifi</span> WIFI Signals</h3> 
         <div class="grid-container">
         {{range .}}
         <div>
-            <div class="header"><span class="symbols-small">wifi</span> {{.Attributes.Name}}</div> 
-            <ul>
-                <li>Strength {{.State}} {{.Attributes.Units}}</li>
-            </ul>
-            <div class="note">Last Updated: <span>{{.FormatTime}}</span></div>
+            <div><span class="symbols-small">{{.SignalIcon}}</span> {{.Attributes.Name}}</div> 
+            <div class="form-label">{{.State}} {{.Attributes.Units}}</div>
+            <div class="note">Last Update: <span>{{.FormatTime}}</span></div>
         </div>
         {{end}}
         </div>
@@ -59,18 +61,14 @@
 {{ end }}
 
 {{ define "layout.weather" }}
-    <div class="sun">
+    <div class="content">
         <h3><span class="symbols">{{.Icon}}</span> {{.Attributes.Name}} {{.State}}</h3> 
-        <ul>
-            <li>Temperature: <span>{{.Attributes.Temperature}} {{.Attributes.TemperatureUnit}}</span></li>
-            <li>Humidity: <span>{{.Attributes.Humidity}} %</span></li>
-            <li>Wind Speed: <span>{{.Attributes.WindSpeed}} {{.Attributes.WindSpeedUnit}}</span></li>
-            {{$deg:="\u00b0"}}
-            <li>Wind Bearing: <span>{{.Attributes.WindBearing}} {{$deg}}</span></li>
-            <li>Cloud Coverage: <span>{{.Attributes.CloudCoverage}} %</span></li>
-            <li>Pressure: <span>{{.Attributes.Pressure}} {{.Attributes.PressureUnit}}</span></li>
-            <li>Dew Point: <span>{{.Attributes.DewPoint}} {{.Attributes.TemperatureUnit}}</span></li>
-        </ul>
-        <div class="note">{{.Attributes.Attribution}} Last Updated: <span>{{.FormatTime}}</span></div>
+        {{range .Properties}}
+        <div class="form-label">
+            <span class="symbols-small">{{.Icon}}</span>
+            <span>{{.Label}} {{.Value}} {{.Units}}</span>
+        </div>
+        {{end}}
+        <div class="note">{{.Attributes.Attribution}} Last Update: <span>{{.FormatTime}}</span></div>
     </div>
 {{ end }}

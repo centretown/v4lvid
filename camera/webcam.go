@@ -17,7 +17,6 @@ type Webcam struct {
 	Buffer   []byte
 	Controls map[string]v4l.ControlInfo
 	Configs  []v4l.DeviceConfig
-	// Config     v4l.DeviceConfig
 	isOpened bool
 }
 
@@ -41,6 +40,7 @@ func (cam *Webcam) Config() *VideoConfig {
 
 func (cam *Webcam) Open(config *VideoConfig) error {
 
+	cam.isOpened = false
 	device, err := v4l.Open(cam.path)
 	if err != nil {
 		log.Println("Open", cam.path, err)
@@ -54,6 +54,9 @@ func (cam *Webcam) Open(config *VideoConfig) error {
 		log.Println("DeviceInfo", cam.path, err)
 		return err
 	}
+
+	log.Printf("DeviceName:'%s' DriverName: '%s'\n",
+		cam.Info.DeviceName, cam.Info.DriverName)
 
 	err = cam.LoadConfigs()
 	if err != nil {
@@ -79,9 +82,9 @@ func (cam *Webcam) Open(config *VideoConfig) error {
 	// cam.SetControl("Tilt, Absolute", 0)
 	// cam.SetControl("Zoom, Absolute", 10)
 
-	err = cam.SetConfig(config)
+	err = cam.Configure(config)
 	if err != nil {
-		log.Println("SetConfig", cam.path, err)
+		log.Println("Configure", cam.path, err)
 		return err
 	}
 
@@ -106,13 +109,13 @@ func (cam *Webcam) Open(config *VideoConfig) error {
 	return nil
 }
 
-func (cam *Webcam) SetConfig(videoParams *VideoConfig) (err error) {
+func (cam *Webcam) Configure(videoConfig *VideoConfig) (err error) {
 	cam.Device.TurnOff()
 
 	preferred := &v4l.DeviceConfig{
-		Format: ToFourCC(videoParams.Codec),
-		Width:  videoParams.Width, Height: videoParams.Height,
-		FPS: v4l.Frac{N: videoParams.FPS, D: 1},
+		Format: ToFourCC(videoConfig.Codec),
+		Width:  videoConfig.Width, Height: videoConfig.Height,
+		FPS: v4l.Frac{N: videoConfig.FPS, D: 1},
 	}
 
 	err = cam.Device.SetConfig(*cam.findConfig(preferred))
@@ -142,21 +145,6 @@ func (cam *Webcam) GetConfig() (config v4l.DeviceConfig) {
 	config, _ = cam.Device.GetConfig()
 	return
 }
-
-// CID=9963776, Name=Brightness, Type=int, Default=128, Max=255, Min=0, Step=1
-// CID=9963777, Name=Contrast, Type=int, Default=128, Max=255, Min=0, Step=1
-// CID=9963778, Name=Saturation, Type=int, Default=128, Max=255, Min=0, Step=1
-// CID=9963788, Name=White Balance, Automatic, Type=bool, Default=1, Max=1, Min=0, Step=1
-// CID=9963795, Name=Gain, Type=int, Default=5, Max=100, Min=0, Step=1
-// CID=9963800, Name=Power Line Frequency, Type=enum, Default=1, Max=2, Min=0, Step=1
-// CID=9963802, Name=White Balance Temperature, Type=int, Default=4650, Max=6500, Min=2600, Step=1
-// CID=9963803, Name=Sharpness, Type=int, Default=128, Max=255, Min=0, Step=1
-// CID=10094849, Name=Auto Exposure, Type=enum, Default=0, Max=3, Min=0, Step=1
-// CID=10094850, Name=Exposure Time, Absolute, Type=int, Default=100, Max=6500, Min=0, Step=1
-// CID=10094856, Name=Pan, Absolute, Type=int, Default=0, Max=36000, Min=-36000, Step=3600
-// CID=10094857, Name=Tilt, Absolute, Type=int, Default=0, Max=36000, Min=-36000, Step=3600
-// CID=10094860, Name=Focus, Automatic Continuous, Type=bool, Default=0, Max=1, Min=0, Step=1
-// CID=10094861, Name=Zoom, Absolute, Type=int, Default=10, Max=20, Min=10, Step=1
 
 func (cam *Webcam) GetControlInfo(key string) (info v4l.ControlInfo, err error) {
 	control, ok := cam.Controls[strings.ToLower(key)]

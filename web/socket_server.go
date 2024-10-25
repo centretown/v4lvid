@@ -17,19 +17,23 @@ import (
 type SocketServer struct {
 	server *http.Server
 	url    string
+	mux    *http.ServeMux
 }
 
 func NewSocketServer(url string) *SocketServer {
 	wss := &SocketServer{
 		url: url,
+		mux: &http.ServeMux{},
 		server: &http.Server{
-			Handler: echoServer{
-				logf: log.Printf,
-			},
 			ReadTimeout:  0,
 			WriteTimeout: 0,
 		},
 	}
+	wss.server.Handler = wss.mux
+	echoServer := &EchoServer{
+		logf: log.Printf,
+	}
+	wss.mux.HandleFunc("/echo", echoServer.ServeHTTP)
 	return wss
 }
 
@@ -44,12 +48,12 @@ func (wss *SocketServer) Run() error {
 	return wss.server.Serve(l)
 }
 
-type echoServer struct {
+type EchoServer struct {
 	// logf controls where logs are sent.
 	logf func(f string, v ...interface{})
 }
 
-func (s echoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (s EchoServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c, err := websocket.Accept(w, r, &websocket.AcceptOptions{
 		Subprotocols: []string{"echo"},
 	})
@@ -105,12 +109,9 @@ func echo(c *websocket.Conn, l *rate.Limiter) error {
 		return fmt.Errorf("failed to io.ReadAll: %w", err)
 	}
 
-	s := fmt.Sprintf("%s recieved", string(buf))
-
-	// _, err = io.Copy(w, r)
-	_, err = w.Write([]byte(s))
+	_, err = w.Write(buf)
 	if err != nil {
-		return fmt.Errorf("failed to io.Copy: %w", err)
+		return fmt.Errorf("failed to io.Write: %w", err)
 	}
 
 	err = w.Close()

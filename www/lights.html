@@ -1,26 +1,29 @@
 {{ define "layout.lights" }}
-<div class="sun">
+<div class="content">
     <h3>
         <span class="symbols">backlight_high</span> 
-        <span class="title">LED Lights</span>
+        <span>LED Lights</span>
     </h3> 
+    {{$on:="on"}}
     {{range .}}
         <div class="header">
             <span class="symbols-small">backlight_high</span>
-            <span class="title">{{.Attributes.Name}}</span>
+            <span>{{.Attributes.Name}}</span>
         </div> 
         <div class="form-label">
+            <span class="symbols-small">power_settings_new</span>
             <label for="lstate">State
-                {{$on:="on"}}
-                <input hx-post="/light/state" hx-swap="none"
-                    hx-vals='{"id": "{{.EntityID}}"}'
-                    name="state"
+                <input 
                     id="lstate" class="form-input" type="checkbox" 
+                    name="state"
+                    hx-post="/light/state" hx-swap="none"
+                    hx-vals='{"id": "{{.EntityID}}"}'
                     {{if eq .State $on}}checked{{end}}>
             </label>
         </div>
             
         <div class="form-label">
+            <span class="symbols-small">light_mode</span>
             <label for="lbright">Brightness
                 <input hx-post="/light/brightness" hx-swap="none"
                     hx-vals='{"id": "{{.EntityID}}"}'
@@ -32,6 +35,7 @@
         </div>
             
         <div class="form-label">
+            <span class="symbols-small">palette</span>
             <label for="lcolor">Color
                 <input hx-post="/light/color" hx-swap="none" 
                     hx-vals='{"id": "{{.EntityID}}"}'
@@ -41,6 +45,7 @@
             </label>
         </div>
         <div class="form-label">
+            <span class="symbols-small">flare</span>
             <label for="leffect">Effect
                 <select hx-post="/light/effect" hx-swap="none" 
                     hx-vals='{"id": "{{.EntityID}}"}'
@@ -55,7 +60,7 @@
                 </select>
             </label>
         </div>
-        <div class="note">Last Updated: <span>{{.FormatTime}}</span></div>
+        <div class="note">Last Update: <span>{{.FormatTime}}</span></div>
     {{end}}
 </div>
 {{ end }}

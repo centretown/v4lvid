@@ -1,12 +1,34 @@
 package ha
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 type Wifi struct {
 	Entity[SensorAttributes]
 }
 
-// const doorWifi = "sensor.doorstop_wifi"
+func (wifi *Wifi) SignalIcon() string {
+	signal := -100
+	count, _ := fmt.Sscan(wifi.State, &signal)
+	if count == 0 {
+		return "signal_wifi_bad"
+	}
+	if signal < -67 {
+		return "signal_wifi_0_bar"
+	}
+	if signal < -60 {
+		return "network_wifi_1_bar"
+	}
+	if signal < -50 {
+		return "network_wifi_2_bar"
+	}
+	if signal < -40 {
+		return "network_wifi_3_bar"
+	}
+	return "network_wifi"
+}
 
 func (data *HomeData) WifiSensors() (wifis []*Wifi) {
 	ids := ListEntitiesLike("wifi", data.EntityKeys)

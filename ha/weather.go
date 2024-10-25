@@ -41,3 +41,36 @@ func (wthr *Weather) Icon() (icon string) {
 	icon = "routine"
 	return
 }
+
+type WeatherProperties struct {
+	Icon  string
+	Label string
+	Value any
+	Units string
+}
+
+func (wthr *Weather) Properties() []WeatherProperties {
+	return []WeatherProperties{
+		{Label: "Temperature", Icon: "device_thermostat",
+			Units: wthr.Attributes.TemperatureUnit,
+			Value: wthr.Attributes.Temperature},
+		{Label: "Humidity", Icon: "humidity_percentage",
+			Units: "%",
+			Value: wthr.Attributes.Humidity},
+		{Label: "Wind Speed", Icon: "air",
+			Units: wthr.Attributes.WindSpeedUnit,
+			Value: wthr.Attributes.WindSpeed},
+		{Label: "Wind Bearing", Icon: "explore",
+			Units: "\u00b0",
+			Value: wthr.Attributes.WindBearing},
+		{Label: "Cloud Coverage", Icon: "cloud",
+			Units: "%",
+			Value: wthr.Attributes.CloudCoverage},
+		{Label: "Pressure", Icon: "compare_arrows",
+			Units: wthr.Attributes.PressureUnit,
+			Value: wthr.Attributes.Pressure},
+		{Label: "Dew Point", Icon: "dew_point",
+			Units: wthr.Attributes.PrecipitationUnit,
+			Value: wthr.Attributes.DewPoint},
+	}
+}

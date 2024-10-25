@@ -1,11 +1,20 @@
 package camera
 
+type CameraType int
+
+const (
+	V4L_CAMERA CameraType = iota
+	IP_CAMERA
+)
+
 // {"Format":1448695129,"Width":1280,"Height":720,"FPS":{"N":10,"D":1}}
 type VideoConfig struct {
-	Codec  string
-	Width  int
-	Height int
-	FPS    uint32
+	CameraType CameraType
+	Path       string
+	Codec      string
+	Width      int
+	Height     int
+	FPS        uint32
 }
 
 type VideoSource interface {
@@ -14,5 +23,4 @@ type VideoSource interface {
 	IsOpened() bool
 	Close()
 	Read() ([]byte, error)
-	Config() *VideoConfig
 }

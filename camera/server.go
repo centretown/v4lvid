@@ -2,6 +2,7 @@ package camera
 
 import (
 	"log"
+	"net/http"
 	"time"
 )
 
@@ -41,12 +42,12 @@ type Server struct {
 	Source VideoSource
 	Config *VideoConfig
 
-	Quit chan int
-	Cmd  chan ServerCmd
+	quit chan int
+	cmd  chan ServerCmd
 
-	StreamHook *StreamHook
+	streamHook *StreamHook
 
-	Filters []Hook
+	filters []Hook
 
 	HideMain    bool
 	HideThumb   bool
@@ -71,10 +72,10 @@ func NewVideoServer(source VideoSource, config *VideoConfig) *Server {
 	cam := &Server{
 		Source:        source,
 		Config:        config,
-		Quit:          make(chan int),
-		Cmd:           make(chan ServerCmd),
-		StreamHook:    NewStreamHook(),
-		Filters:       make([]Hook, 0),
+		quit:          make(chan int),
+		cmd:           make(chan ServerCmd),
+		streamHook:    NewStreamHook(),
+		filters:       make([]Hook, 0),
 		captureStop:   make(chan int),
 		captureSource: make(chan []byte),
 	}
@@ -82,15 +83,11 @@ func NewVideoServer(source VideoSource, config *VideoConfig) *Server {
 	return cam
 }
 
-func (vs *Server) GetSource() VideoSource {
-	return vs.Source
-}
-
 func (vs *Server) AddFilter(filter Hook) {
-	vs.Filters = append(vs.Filters, filter)
+	vs.filters = append(vs.filters, filter)
 }
 func (vs *Server) Command(cmd ServerCmd) {
-	vs.Cmd <- cmd
+	vs.cmd <- cmd
 }
 
 func (vs *Server) RecordCmd(seconds int) {
@@ -99,6 +96,10 @@ func (vs *Server) RecordCmd(seconds int) {
 
 func (vs *Server) StopRecordCmd() {
 	vs.Command(ServerCmd{Action: RECORD_STOP, Value: true})
+}
+
+func (vs *Server) Stream() http.Handler {
+	return vs.streamHook.Stream
 }
 
 func (vs *Server) Open() (err error) {
@@ -137,7 +138,7 @@ func (vs *Server) startRecording(duration int) {
 
 	vs.Recording = true
 	vs.captureCount = 0
-	config := vs.Source.Config()
+	config := vs.Config
 
 	go Capture(vs.captureStop, vs.captureSource,
 		config.Width, config.Height, config.FPS)
@@ -210,9 +211,9 @@ func (vs *Server) Serve() {
 		time.Sleep(delay)
 
 		select {
-		case <-vs.Quit:
+		case <-vs.quit:
 			return
-		case cmd = <-vs.Cmd:
+		case cmd = <-vs.cmd:
 			vs.doCmd(cmd)
 			continue
 		default:
@@ -247,7 +248,7 @@ func (vs *Server) Serve() {
 		}
 		delay = delayNormal
 		retry = 0
-		vs.StreamHook.Update(buf)
+		vs.streamHook.Update(buf)
 
 		// fmt.Println(len(buf), "BYTES READ")
 

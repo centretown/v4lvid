@@ -29,7 +29,7 @@ func TestServer(t *testing.T) {
 	go server.Serve()
 
 	time.Sleep(1 * time.Second)
-	server.Quit <- 1
+	server.quit <- 1
 
 	time.Sleep(100 * time.Millisecond)
 	if server.Source.IsOpened() {

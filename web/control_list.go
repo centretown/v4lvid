@@ -9,22 +9,22 @@ import (
 type ControlList struct {
 	webcam   *camera.Webcam
 	Id       int
-	Handlers []*V4lHandler
+	Handlers []*WebcamHandler
 }
 
-func NewControlList(webcam *camera.Webcam, id int, handlers []*V4lHandler) *ControlList {
+func NewControlList(mux *http.ServeMux, webcam *camera.Webcam, id int, handlers []*WebcamHandler) *ControlList {
 	ctll := &ControlList{
 		webcam:   webcam,
 		Id:       id,
-		Handlers: make([]*V4lHandler, 0, len(handlers)),
+		Handlers: make([]*WebcamHandler, 0, len(handlers)),
 	}
 	for _, ctl := range handlers {
-		ctll.AddHandler(ctl)
+		ctll.AddHandler(mux, ctl)
 	}
 	return ctll
 }
 
-func (ctll *ControlList) AddHandler(ctlh *V4lHandler) {
+func (ctll *ControlList) AddHandler(mux *http.ServeMux, ctlh *WebcamHandler) {
 	var err error
 	if ctlh == nil {
 		log.Fatalln("AddControl control is nil")
@@ -39,7 +39,7 @@ func (ctll *ControlList) AddHandler(ctlh *V4lHandler) {
 	}
 
 	for _, ctl := range ctlh.Controls {
-		http.Handle(ctl.url, ctlh)
+		mux.Handle(ctl.Url, ctlh)
 	}
 
 }

@@ -20,7 +20,7 @@ func TestWebcam(t *testing.T) {
 	t.Logf("Codec:%s %dx%d @%d\n", FourCC(config.Format),
 		config.Width, config.Height, config.FPS)
 
-	err = webcam.SetConfig(&VideoConfig{
+	err = webcam.Configure(&VideoConfig{
 		Codec:  "YUYV",
 		Width:  1260,
 		Height: 720,

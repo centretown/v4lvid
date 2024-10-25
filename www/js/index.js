@@ -3,7 +3,7 @@ var currentAction = blank;
 var hideActions = true;
 function doAction(action) {
     if (currentAction === action) {
-        htmx.swap("#slot", "", {swapStyle: 'innerHTML'});
+        htmx.swap("#slot-left", "", {swapStyle: 'innerHTML'});
         currentAction = blank;
     } else {
         htmx.trigger("#"+action, "click");
