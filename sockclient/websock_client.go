@@ -1,4 +1,4 @@
-package websock
+package sockclient
 
 import (
 	"context"
@@ -19,11 +19,7 @@ const (
 	dial = "ws://melon:8123/api/websocket"
 )
 
-//	var upgrader = ws.Upgrader{
-//		ReadBufferSize:  1024,
-//		WriteBufferSize: 1024,
-//	}
-type WebSockClient struct {
+type SockClient struct {
 	conn      *websocket.Conn
 	ctx       context.Context
 	MessageID int
@@ -32,10 +28,10 @@ type WebSockClient struct {
 	Buffer    chan []byte
 }
 
-func NewWebSockClient() (*WebSockClient, error) {
+func NewSockClient() (*SockClient, error) {
 	ctx := context.Background()
 	dialer := &websocket.Dialer{
-		ReadBufferSize: 10_000,
+		ReadBufferSize: 16_000,
 	}
 	// conn, resp, err := websocket.DefaultDialer.Dial(dial, nil)
 	conn, resp, err := dialer.DialContext(ctx, dial, nil)
@@ -44,7 +40,7 @@ func NewWebSockClient() (*WebSockClient, error) {
 	}
 
 	log.Println("Dial", resp.Status)
-	client := &WebSockClient{
+	client := &SockClient{
 		ctx:       ctx,
 		conn:      conn,
 		Quit:      make(chan int),
@@ -54,7 +50,7 @@ func NewWebSockClient() (*WebSockClient, error) {
 	return client, err
 }
 
-func (client *WebSockClient) Read() (buf []byte, err error) {
+func (client *SockClient) Read() (buf []byte, err error) {
 	// waits until something is there
 	_, rdrConn, err := client.conn.NextReader()
 	if err != nil {
@@ -68,7 +64,7 @@ func (client *WebSockClient) Read() (buf []byte, err error) {
 	return
 }
 
-func (client *WebSockClient) WriteCommand(cmd string) error {
+func (client *SockClient) WriteCommand(cmd string) error {
 	w, err := client.conn.NextWriter(websocket.TextMessage)
 	if err != nil {
 		log.Println("WriteCommand NextWriter", cmd, err)
@@ -80,7 +76,7 @@ func (client *WebSockClient) WriteCommand(cmd string) error {
 	return err
 }
 
-func (client *WebSockClient) WriteCommandID(cmd string) (id int, err error) {
+func (client *SockClient) WriteCommandID(cmd string) (id int, err error) {
 	id = client.MessageID
 	message := fmt.Sprintf(cmd, id)
 	var w io.WriteCloser

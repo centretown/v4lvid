@@ -14,6 +14,7 @@ import (
 	"v4lvid/camera"
 	"v4lvid/config"
 	"v4lvid/ha"
+	"v4lvid/sockserve"
 )
 
 type ServerData struct {
@@ -26,6 +27,7 @@ type ServerData struct {
 	mux            *http.ServeMux
 	template       *template.Template
 	home           *ha.HomeData
+	Sock           *sockserve.SockServer
 }
 
 func Serve(cfg *config.Config) (data *ServerData) {
@@ -57,6 +59,12 @@ func Serve(cfg *config.Config) (data *ServerData) {
 	if err != nil {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
+	data.Sock = sockserve.NewSockServer(data.template)
+	data.Sock.Run()
+
+	data.mux.HandleFunc("/events", data.Sock.Events)
+	data.mux.HandleFunc("/webhook", data.Sock.Webhook)
+	data.mux.HandleFunc("/wsstatus", data.Sock.Status)
 
 	serveCameras(data, cfg, webcamServers)
 	handleCameras(data)
@@ -68,12 +76,6 @@ func Serve(cfg *config.Config) (data *ServerData) {
 	go func() {
 		httpErr <- httpServer.ListenAndServe()
 	}()
-
-	// wsServer := NewSocketServer(data, cfg)
-	// wsErr := make(chan error, 1)
-	// go func() {
-	// 	wsErr <- wsServer.Run()
-	// }()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)

@@ -1,4 +1,4 @@
-package websock
+package sockclient
 
 import (
 	"bytes"

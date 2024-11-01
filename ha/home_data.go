@@ -8,7 +8,7 @@ import (
 	"slices"
 	"strings"
 	"time"
-	"v4lvid/websock"
+	"v4lvid/sockclient"
 )
 
 const (
@@ -28,7 +28,7 @@ type HomeData struct {
 	loadStatesID  int
 	subscriptions map[string][]*Subscription
 	eventsID      int
-	sock          *websock.WebSockClient
+	sock          *sockclient.SockClient
 }
 
 func NewHomeData() *HomeData {
@@ -39,7 +39,7 @@ func NewHomeData() *HomeData {
 	}
 
 	var err error
-	data.sock, err = websock.NewWebSockClient()
+	data.sock, err = sockclient.NewSockClient()
 	if err != nil {
 		log.Println("NewHomeData", err)
 	}
@@ -106,7 +106,7 @@ func (data *HomeData) Authorize() (ok bool, err error) {
 		max    = 4
 	)
 
-	cmd := fmt.Sprintf(AuthCommand, websock.Token)
+	cmd := fmt.Sprintf(AuthCommand, sockclient.Token)
 
 	for i := 0; i < max && !ok; i += 1 {
 		err = data.sock.WriteCommand(cmd)

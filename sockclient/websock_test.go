@@ -1,4 +1,4 @@
-package websock
+package sockclient
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func TestAuthorize(t *testing.T) {
-	client, err := NewWebSockClient()
+	client, err := NewSockClient()
 	if err != nil {
 		t.Fatal(err)
 	}

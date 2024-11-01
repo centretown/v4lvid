@@ -105,6 +105,12 @@ h3 {
 .slot-right {
 }
 
+.status {
+  position: fixed;
+  top: 6rem;
+  right: 1rem;
+}
+
 .content {
   padding-top: .1rem;
   padding-left: 1rem;

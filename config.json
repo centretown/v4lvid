@@ -40,10 +40,6 @@
     {
       "Name": "lights",
       "Icon": "backlight_high"
-    },
-    {
-      "Name": "echo",
-      "Icon": "mic"
     }
   ],
   "Drivers": {
