@@ -84,9 +84,9 @@ h3 {
 .action {
   padding: 4px;
   margin: 2px;
-  width: 80;
   background-color: var(--bgTransparent);
   color: var(--fgDim);
+  border-radius: .35rem;
 }
 
 .action:hover, .action:focus {
@@ -102,6 +102,9 @@ h3 {
   overflow: wrap;
 }
 
+.slot-right {
+}
+
 .content {
   padding-top: .1rem;
   padding-left: 1rem;
@@ -113,6 +116,7 @@ h3 {
   animation-timing-function: ease-out;
   animation-duration: 1000ms;
   animation-fill-mode: forwards;
+  border-radius: 1rem;
 }
 
 .grid-container {

@@ -1,0 +1,12 @@
+{{ define "layout.echo" }}
+<div class = "content"
+    hx-ext="ws" ws-connect="ws:192.168.10.7:9900/echo">
+    {{/* hx-target="#notifications" hx-swap="innerHtml"> */}}
+    <div id="notifications">notifications</div>
+    <div id="echo-room">echo_room</div>
+    <form id="form" ws-send hx-target="#echo-room" hx-swap="beforeend">
+        <input name="message">
+        <button type="submit">Send</button>
+    </form>
+</div>
+{{ end }}

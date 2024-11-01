@@ -130,7 +130,6 @@ func (data *HomeData) Authorize() (ok bool, err error) {
 }
 
 func (data *HomeData) BuildEntities() (err error) {
-
 	data.loadStatesID, err = data.sock.WriteCommandID(StatesCommand)
 	if err != nil {
 		log.Println("BuildEntities", err)
@@ -140,6 +139,7 @@ func (data *HomeData) BuildEntities() (err error) {
 		buf []byte
 	)
 
+	log.Println("BuildEntities Loop")
 	for {
 		buf, err = data.sock.Read()
 		if err != nil && err != io.EOF {
@@ -153,6 +153,7 @@ func (data *HomeData) BuildEntities() (err error) {
 				log.Println("COUNT", len(buf), len(data.Entities))
 				break
 			}
+			log.Println(len(buf), string(buf))
 		}
 		time.Sleep(time.Millisecond)
 	}
@@ -175,6 +176,7 @@ func (data *HomeData) Monitor() {
 		log.Println("StatesCommand", err)
 		return
 	}
+	log.Println("StatesCommand")
 	data.Monitoring = true
 
 	data.eventsID, err = data.sock.WriteCommandID(SubscribeCommand)
@@ -182,6 +184,7 @@ func (data *HomeData) Monitor() {
 		log.Println("SubscribeCommand", err)
 		return
 	}
+	log.Println("SubscribeCommand")
 
 	for {
 		time.Sleep(delay)
@@ -204,7 +207,6 @@ func (data *HomeData) Monitor() {
 			}
 			errCount = 0
 			if len(buf) > 0 {
-				log.Println("buffer in", len(buf))
 				go data.ParseResponse(buf)
 			}
 		}

@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"github.com/coder/websocket"
+	"github.com/gorilla/websocket"
 )
 
 const (
@@ -19,6 +19,10 @@ const (
 	dial = "ws://melon:8123/api/websocket"
 )
 
+//	var upgrader = ws.Upgrader{
+//		ReadBufferSize:  1024,
+//		WriteBufferSize: 1024,
+//	}
 type WebSockClient struct {
 	conn      *websocket.Conn
 	ctx       context.Context
@@ -30,7 +34,11 @@ type WebSockClient struct {
 
 func NewWebSockClient() (*WebSockClient, error) {
 	ctx := context.Background()
-	conn, resp, err := websocket.Dial(ctx, dial, nil)
+	dialer := &websocket.Dialer{
+		ReadBufferSize: 10_000,
+	}
+	// conn, resp, err := websocket.DefaultDialer.Dial(dial, nil)
+	conn, resp, err := dialer.DialContext(ctx, dial, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -48,28 +56,44 @@ func NewWebSockClient() (*WebSockClient, error) {
 
 func (client *WebSockClient) Read() (buf []byte, err error) {
 	// waits until something is there
-	_, rdrConn, err := client.conn.Reader(client.ctx)
+	_, rdrConn, err := client.conn.NextReader()
 	if err != nil {
-		log.Println("Reader", err)
+		log.Println("NextReader", err)
 		return nil, err
 	}
-	return io.ReadAll(rdrConn)
+	buf, err = io.ReadAll(rdrConn)
+	if err != nil {
+		log.Println("ReadAll", err)
+	}
+	return
 }
 
 func (client *WebSockClient) WriteCommand(cmd string) error {
-	err := client.conn.Write(client.ctx, websocket.MessageText, []byte(cmd))
+	w, err := client.conn.NextWriter(websocket.TextMessage)
 	if err != nil {
-		log.Println("Write", cmd, err)
+		log.Println("WriteCommand NextWriter", cmd, err)
+		return err
 	}
+	defer w.Close()
+	_, err = w.Write([]byte(cmd))
+	log.Println("Write", cmd, err)
 	return err
 }
 
 func (client *WebSockClient) WriteCommandID(cmd string) (id int, err error) {
 	id = client.MessageID
 	message := fmt.Sprintf(cmd, id)
-	err = client.conn.Write(client.ctx, websocket.MessageText, []byte(message))
+	var w io.WriteCloser
+	w, err = client.conn.NextWriter(websocket.TextMessage)
+	if err != nil {
+		log.Println("WriteCommandID NextWriter", message, err)
+		return
+	}
+	defer w.Close()
+	_, err = w.Write([]byte(message))
 	if err != nil {
 		log.Println("WriteID", message, err)
+		return
 	}
 	client.MessageID += 1
 	return

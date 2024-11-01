@@ -1,5 +1,4 @@
 {{ define "layout.actions" }}
-<div>
     <div class="actions">
         <button class="action" hx-on:click="toggleMenu('leftmenu')" hx-swap=none>
             <span class="symbols">menu</span>
@@ -17,21 +16,19 @@
         </span>
     </div>
     <div class="actions-right">
-        <button class="action" 
-            hx-put="/filesave" hx-swap=none>
-            <span class="symbols">file_save</span>
-        </button>
-        <button class="action" 
-            hx-put="/resetcontrols" hx-swap=none>
-            <span class="symbols">reset_settings</span>
-        </button>
+        <span id="rightmenu">
+            <button class="action" 
+                hx-put="/resetcontrols" hx-swap=none>
+                <span class="symbols">reset_settings</span>
+            </button>
 
-        <button class="action" 
-            hx-put="{{.Recorder.Url}}" hx-swap=none>
-            <span class="symbols">{{.Recorder.Icon}}</span>
-        </button>
+            <button class="action" 
+                hx-put="{{.Recorder.Url}}" hx-swap=none>
+                <span class="symbols">{{.Recorder.Icon}}</span>
+            </button>
+            <div id="slot-right" class="slot-right"></div>
+        </span>
     </div>
-</div>
 {{ end }}
 
 {{ define "layout.sun" }}

@@ -6,7 +6,7 @@ import (
 	"v4lvid/config"
 )
 
-func NexigoControlList(cfg *config.Config, tmpl *template.Template) (handlers []*WebcamHandler) {
+func CreateNexigoHandlers(cfg *config.Config, tmpl *template.Template) (handlers []*WebcamHandler) {
 	handlers = make([]*WebcamHandler, 0)
 	const key = "uvcvideo"
 	driver, ok := cfg.Drivers[key]

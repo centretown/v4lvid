@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"time"
+	"v4lvid/config"
 
 	"golang.org/x/time/rate"
 
@@ -20,9 +21,9 @@ type SocketServer struct {
 	mux    *http.ServeMux
 }
 
-func NewSocketServer(url string) *SocketServer {
+func NewSocketServer(data *ServerData, cfg *config.Config) *SocketServer {
 	wss := &SocketServer{
-		url: url,
+		url: cfg.WsUrl,
 		mux: &http.ServeMux{},
 		server: &http.Server{
 			ReadTimeout:  0,
@@ -33,8 +34,20 @@ func NewSocketServer(url string) *SocketServer {
 	echoServer := &EchoServer{
 		logf: log.Printf,
 	}
-	wss.mux.HandleFunc("/echo", echoServer.ServeHTTP)
+	wss.mux.HandleFunc("/echo", handleEcho(data, echoServer))
+	// wss.mux.HandleFunc("/chat", handleChat(data, echoServer))
 	return wss
+}
+
+func handleEcho(data *ServerData, echoServer *EchoServer) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		err := data.template.Lookup("layout.echo").Execute(w, data)
+		if err != nil {
+			log.Fatal("/chat", err)
+		}
+		echoServer.ServeHTTP(w, r)
+	}
 }
 
 func (wss *SocketServer) Run() error {
@@ -113,7 +126,7 @@ func echo(c *websocket.Conn, l *rate.Limiter) error {
 	if err != nil {
 		return fmt.Errorf("failed to io.Write: %w", err)
 	}
-
+	log.Println(string(buf))
 	err = w.Close()
 	return err
 }

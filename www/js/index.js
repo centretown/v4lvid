@@ -1,27 +1,27 @@
 const blank = "blank";
-var currentAction = blank;
-var hideActions = true;
+var leftAction = blank;
+var hideLeft = true;
 function doAction(action) {
-    if (currentAction === action) {
+    if (leftAction === action) {
         htmx.swap("#slot-left", "", {swapStyle: 'innerHTML'});
-        currentAction = blank;
+        leftAction = blank;
     } else {
         htmx.trigger("#"+action, "click");
-        currentAction = action;
+        leftAction = action;
     }
 }
 function toggleMenu(id) {
-    if (hideActions) {
-        hideActions = false;
+    if (hideLeft) {
+        hideLeft = false;
         htmx.removeClass("#"+id,"hide")
     } else {
-        hideActions = true;
+        hideLeft = true;
         htmx.addClass("#"+id,"hide")
     }
 }
 
 function clickSource() {
-    if (currentAction !== blank) {
-        doAction(currentAction)
+    if (leftAction !== blank) {
+        doAction(leftAction)
     }
 }

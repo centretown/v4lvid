@@ -1,5 +1,7 @@
 {
   "Output": "/mnt/molly/output/",
+  "HttpUrl": "192.168.10.7:9000",
+  "WsUrl": "192.168.10.7:9900",
   "Cameras": [
     {
       "CameraType": 0,
@@ -18,7 +20,6 @@
       "FPS": 2
     }
   ],
-  "HttpUrl": "192.168.10.7:9000",
   "Actions": [
     {
       "Name": "camera",
@@ -39,9 +40,12 @@
     {
       "Name": "lights",
       "Icon": "backlight_high"
+    },
+    {
+      "Name": "echo",
+      "Icon": "mic"
     }
   ],
-  "WsUrl": "192.168.10.7:9900",
   "Drivers": {
     "uvcvideo": [
       {

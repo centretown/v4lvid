@@ -69,19 +69,19 @@ func Serve(cfg *config.Config) (data *ServerData) {
 		httpErr <- httpServer.ListenAndServe()
 	}()
 
-	wsServer := NewSocketServer(cfg.WsUrl)
-	wsErr := make(chan error, 1)
-	go func() {
-		wsErr <- wsServer.Run()
-	}()
+	// wsServer := NewSocketServer(data, cfg)
+	// wsErr := make(chan error, 1)
+	// go func() {
+	// 	wsErr <- wsServer.Run()
+	// }()
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
 	select {
 	case err := <-httpErr:
 		log.Printf("failed to serve http: %v", err)
-	case err := <-wsErr:
-		log.Printf("failed to serve websockets: %v", err)
+	// case err := <-wsErr:
+	// 	log.Printf("failed to serve websockets: %v", err)
 	case sig := <-sigs:
 		log.Printf("terminating: %v", sig)
 	}
@@ -91,7 +91,7 @@ func Serve(cfg *config.Config) (data *ServerData) {
 	defer cancel()
 
 	httpServer.Shutdown(ctx)
-	wsServer.server.Shutdown(ctx)
+	// wsServer.server.Shutdown(ctx)
 	return
 }
 
@@ -115,21 +115,20 @@ func handleFiles(data *ServerData) {
 			log.Println("filesave", err)
 			return
 		}
-		// buf, err := json.MarshalIndent(data.cfg, "", "  ")
-
-		// f, err := os.Create("config.json")
-		// if err != nil {
-		// 	log.Println("filesave", err)
-		// 	return
-		// }
-		// defer f.Close()
-		// f.Write(buf)
-		// log.Println(string(buf))
 	})
+
+	data.mux.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Cache-Control", "no-cache")
+		err := data.template.Lookup("layout.echo").Execute(w, data)
+		if err != nil {
+			log.Fatal("/echo", err)
+		}
+	})
+
 }
 
 func serveCameras(data *ServerData, cfg *config.Config, camServers []*camera.Server) {
-	data.WebcamHandlers = NexigoControlList(cfg, data.template)
+	data.WebcamHandlers = CreateNexigoHandlers(cfg, data.template)
 
 	for i, camServer := range camServers {
 		path := fmt.Sprintf("/%d/", i)
@@ -175,9 +174,11 @@ func serveHomeData(data *ServerData) (err error) {
 	log.Println("Build Entities")
 
 	go home.Monitor()
+
 	if home.Monitoring {
 		log.Println("Monitor Entity States")
 	}
+	log.Println("Monitoring")
 
 	return
 }

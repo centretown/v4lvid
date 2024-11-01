@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/coder/websocket v1.8.12
 	github.com/google/uuid v1.1.1
+	github.com/gorilla/websocket v1.5.3
 	github.com/korandiz/v4l v1.1.0
 	github.com/mattn/go-mjpeg v0.0.3
 	github.com/u2takey/ffmpeg-go v0.5.0

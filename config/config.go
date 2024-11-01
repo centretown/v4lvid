@@ -15,15 +15,17 @@ type Action struct {
 
 type Config struct {
 	Output  string
-	Cameras []*camera.VideoConfig
 	HttpUrl string
-	Actions []*Action
 	WsUrl   string
+	Cameras []*camera.VideoConfig
+	Actions []*Action
 	Drivers map[string][]*camera.ControlKey
 }
 
 var DefaultConfig = Config{
-	Output: "/mnt/molly/output/",
+	Output:  "/mnt/molly/output/",
+	HttpUrl: "192.168.10.7:9000",
+	WsUrl:   "192.168.10.7:9900",
 	Cameras: []*camera.VideoConfig{
 		{
 			CameraType: camera.V4L_CAMERA,
@@ -42,7 +44,6 @@ var DefaultConfig = Config{
 			FPS:        2,
 		},
 	},
-	HttpUrl: "192.168.10.7:9000",
 	Actions: []*Action{
 		{Name: "camera", Icon: "settings_video_camera"},
 		{Name: "sun", Icon: "wb_twilight"},
@@ -84,7 +85,6 @@ var DefaultConfig = Config{
 				{Url: "/saturationdown", Icon: "backlight_low", Multiplier: -10},
 			}},
 		}},
-	WsUrl: "192.168.10.7:9900",
 }
 
 func Load(filename string) (cfg *Config, err error) {
