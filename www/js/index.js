@@ -47,40 +47,35 @@ function startTime() {
     setTimeout(startTime, 1000*60);
 }
 
-const chatId = "chat";
-let drag_offsetX = 0;
-let drag_offsetY = 0;
-  
+// const chatId = "chat";
+let drag_data = {};
+let chat_data = {};
+
 function dragstartHandler(ev) {
-    // Add the target element's id to the data transfer object
-    console.log("dragstart", ev.target.id, ev.clientX, ev.clientY,
-        ev.offsetX, ev.offsetY);
-    drag_offsetX = ev.offsetX; 
-    drag_offsetY = ev.offsetY;
-    ev.dataTransfer.setData("text/plain", ev.target.id);
+    drag_data.offsetX = ev.offsetX; 
+    drag_data.offsetY = ev.offsetY;
 }
 
 function dragendHandler(ev) {
-    // Add the target element's id to the data transfer object
-    console.log("dragend", ev.target.id, ev.clientX, ev.clientY,
-        ev.offsetX, ev.offsetY);
-    const element = document.getElementById(chatId);
-    console.log("current-left and top", element.style.left, element.style.top)
-    console.log("current-right and bottom", element.style.right, element.style.bottom)
-    element.style.left = (ev.clientX-drag_offsetX)+'px';
-    element.style.top = (ev.clientY-drag_offsetY)+'px';
+    const target = document.getElementById(ev.target.id);
+    chat_data.X = ev.clientX - drag_data.offsetX;
+    chat_data.Y = ev.clientY - drag_data.offsetY;
+    target.style.left = chat_data.X +'px';
+    target.style.top = chat_data.Y +'px';
+    setdraggable(ev.target.id, false);
 }
 
-function dropHandler(ev) {
-    // Add the target element's id to the data transfer object
-    console.log("drop", ev.clientX, ev.clientY,
-        ev.offsetX, ev.offsetY);
+function addDragHandlers(id) {
+    const target = document.getElementById(id);
+    target.addEventListener("dragstart", dragstartHandler);
+    target.addEventListener("dragend", dragendHandler);
+}
+
+function setdraggable(id, dragabble) {
+    document.getElementById(id).setAttribute('draggable', dragabble);
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-    // Get the element by id
-    const element = document.getElementById(chatId);
-    // Add the ondragstart event listener
-    element.addEventListener("dragstart", dragstartHandler);
-    element.addEventListener("dragend", dragendHandler);
+    addDragHandlers("chat");
+    addDragHandlers("slot-left");
 });

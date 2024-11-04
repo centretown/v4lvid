@@ -1,6 +1,7 @@
 :root {
   --bgOpaque: rgba(0, 0, 0, .6);
   --bgTransparent: rgba(0, 0, 0, 0.15);
+  --bgH3: rgba(0, 127, 255, 0.15);
   --fgBright: rgba(0, 255, 255, 1);
   --fgDim: rgba(128, 255, 0, 0.5);
   --fgOut: rgba(128, 255, 0, 1);
@@ -43,6 +44,7 @@ body {
   font-family: sans-serif;
   background-color: black;
 }
+
 .hide {
   display: none;
 }
@@ -57,6 +59,7 @@ h3 {
   font-size: 1.25rem;
   margin-top: .25rem;
   margin-bottom: .25rem;
+  background-color: var(--bgH3);
 }
 
 .source {
@@ -98,8 +101,9 @@ h3 {
 }
 
 .slot-left {
-  margin-top: .3rem;
-  margin-left: 3.5rem;
+  position: fixed;
+  top: 5rem;
+  left: 1rem;
   width: 23rem;
   overflow: wrap;
 }

@@ -1,17 +1,24 @@
 package ha
 
-import "strings"
+import (
+	"strings"
+	"v4lvid/config"
+)
 
 type Weather struct {
 	Entity[WeatherAttributes]
+	Action *config.Action
 }
 
-func (data *HomeData) Forecast() *Weather {
-	wthr := &Weather{}
+func (data *HomeData) NewWeather(action *config.Action) *Weather {
+	wthr := &Weather{
+		Action: action,
+	}
 	entity, ok := data.Entities["weather.forecast_home"]
 	if ok {
 		wthr.Copy(entity)
 	}
+	wthr.Action.Icon = wthr.Icon()
 	return wthr
 }
 

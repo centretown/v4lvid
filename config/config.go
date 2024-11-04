@@ -9,23 +9,30 @@ import (
 )
 
 type Action struct {
-	Name string
-	Icon string
+	Name  string
+	Title string
+	Icon  string
 }
 
 type Config struct {
 	Output  string
 	HttpUrl string
-	WsUrl   string
 	Cameras []*camera.VideoConfig
 	Actions []*Action
 	Drivers map[string][]*camera.ControlKey
 }
 
+func (cfg *Config) NewActionMap() (m map[string]*Action) {
+	m = make(map[string]*Action)
+	for _, action := range cfg.Actions {
+		m[action.Name] = action
+	}
+	return
+}
+
 var DefaultConfig = Config{
 	Output:  "/mnt/molly/output/",
 	HttpUrl: "192.168.10.7:9000",
-	WsUrl:   "192.168.10.7:9900",
 	Cameras: []*camera.VideoConfig{
 		{
 			CameraType: camera.V4L_CAMERA,
@@ -45,11 +52,11 @@ var DefaultConfig = Config{
 		},
 	},
 	Actions: []*Action{
-		{Name: "camera", Icon: "settings_video_camera"},
-		{Name: "sun", Icon: "wb_twilight"},
-		{Name: "weather", Icon: "routine"},
-		{Name: "wifi", Icon: "network_wifi"},
-		{Name: "lights", Icon: "backlight_high"},
+		{Name: "camera", Title: "Camera Settings", Icon: "settings_video_camera"},
+		{Name: "sun", Title: "Next Sun", Icon: "wb_twilight"},
+		{Name: "weather", Title: "Forecast Home", Icon: "routine"},
+		{Name: "wifi", Title: "WIFI Signals", Icon: "network_wifi"},
+		{Name: "lights", Title: "LED Lights", Icon: "backlight_high"},
 	},
 
 	Drivers: map[string][]*camera.ControlKey{

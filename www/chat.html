@@ -1,6 +1,7 @@
 {{ define "layout.chat" }}
-<div id="chat" class="content chat hide" draggable="true">
- 	<h3 hx-on:click="setdraggable">
+<div id="chat" class="content chat hide" draggable="false">
+ 	<h3 hx-on:mousedown="setdraggable('chat',true)"
+        hx-on:mouseup="setdraggable('chat',false)">
         <span id="ws-status" class="symbols">question_mark</span>
         <span id="ws-status-text">Chat</span>
     </h3> 
@@ -17,7 +18,7 @@
         <form>
             <div class="label">Alias:</div>
             <input class="text-input" type="text" name="name"
-                placeholder="Who are you?">
+                placeholder="Who?">
             <div class="label">Post:</div>
             <textarea class="text-input" 
                 name="message" rows="3" cols="30"

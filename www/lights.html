@@ -1,11 +1,12 @@
 {{ define "layout.lights" }}
 <div class="content">
-    <h3>
+    {{template "layout.content.head" .Action }}
+    {{/* <h3>
         <span class="symbols">backlight_high</span> 
         <span>LED Lights</span>
-    </h3> 
+    </h3>  */}}
     {{$on:="on"}}
-    {{range .}}
+    {{range .Lights}}
         <div class="header">
             <span class="symbols-small">backlight_high</span>
             <span>{{.Attributes.Name}}</span>

@@ -1,7 +1,6 @@
 {
   "Output": "/mnt/molly/output/",
   "HttpUrl": "192.168.10.7:9000",
-  "WsUrl": "192.168.10.7:9900",
   "Cameras": [
     {
       "CameraType": 0,
@@ -23,22 +22,27 @@
   "Actions": [
     {
       "Name": "camera",
+      "Title": "Camera Settings",
       "Icon": "settings_video_camera"
     },
     {
       "Name": "sun",
+      "Title": "Next Sun",
       "Icon": "wb_twilight"
     },
     {
       "Name": "weather",
+      "Title": "Forecast Home",
       "Icon": "routine"
     },
     {
       "Name": "wifi",
+      "Title": "WIFI Signals",
       "Icon": "network_wifi"
     },
     {
       "Name": "lights",
+      "Title": "LED Lights",
       "Icon": "backlight_high"
     }
   ],

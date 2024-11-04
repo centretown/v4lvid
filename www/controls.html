@@ -1,11 +1,7 @@
 
 {{ define "layout.controls" }}
-    <div class="content">
-        <h3>
-            <span class="symbols">settings_video_camera</span>
-            <span class="title">Camera Settings</span>
-        </h3> 
-
+<div class="content">
+    {{template "layout.content.head" .Action }}
     {{range .WebcamHandlers}}
         {{range .Controls}}
         <button class="action" 
@@ -15,12 +11,8 @@
         </button>
         {{ end }}
     {{ end }}
-
-    </div>
-
-    
-    <div id="response-div"></div>
-
+</div>
+<div id="response-div"></div>
 {{ end }}
 
 {{ define "layout.response" }}

@@ -21,6 +21,7 @@ type RunData struct {
 	WebcamUrl string
 	cfg       *config.Config
 	Actions   []*config.Action
+	ActionMap map[string]*config.Action
 	// WebcamServers  []*camera.Server
 	WebcamHandlers []*WebcamHandler
 	Recorder       *RecordingHandler
@@ -35,6 +36,7 @@ func Run(cfg *config.Config) (data *RunData) {
 	data = &RunData{
 		WebcamUrl: "http://192.168.10.7:9000/0/",
 		Actions:   cfg.Actions,
+		ActionMap: cfg.NewActionMap(),
 		Recorder: &RecordingHandler{
 			Server: webcamServers[0],
 			Url:    "/record",
@@ -197,11 +199,19 @@ func handleHomeData(data *RunData) {
 	handleLightProperties(data)
 }
 
+type CameraData struct {
+	Action         *config.Action
+	WebcamHandlers []*WebcamHandler
+}
+
 func handleCameras(data *RunData) {
 	data.mux.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
-			err := data.template.Lookup("layout.controls").Execute(w, data)
+			err := data.template.Lookup("layout.controls").Execute(w,
+				&CameraData{
+					Action:         data.ActionMap["camera"],
+					WebcamHandlers: data.WebcamHandlers})
 			if err != nil {
 				log.Fatal("/camera", err)
 			}
@@ -211,8 +221,8 @@ func handleCameras(data *RunData) {
 func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		sensors := data.home.SunTimes()
-		err := data.template.Lookup("layout.sun").Execute(w, sensors)
+		sun := data.home.NewSun(data.ActionMap["sun"])
+		err := data.template.Lookup("layout.sun").Execute(w, sun)
 		if err != nil {
 			log.Fatal("/sun", err)
 		}
@@ -222,7 +232,7 @@ func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
 func handleWeather(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		forecast := data.home.Forecast()
+		forecast := data.home.NewWeather(data.ActionMap["weather"])
 		err := data.template.Lookup("layout.weather").Execute(w, forecast)
 		if err != nil {
 			log.Fatal("/weather", err)
@@ -233,7 +243,7 @@ func handleWeather(data *RunData) func(http.ResponseWriter, *http.Request) {
 func handleWifi(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		sensors := data.home.WifiSensors()
+		sensors := data.home.WifiSensors(data.ActionMap["wifi"])
 		err := data.template.Lookup("layout.wifi").Execute(w, sensors)
 		if err != nil {
 			log.Fatal("/wifi", err)
@@ -243,7 +253,7 @@ func handleWifi(data *RunData) func(http.ResponseWriter, *http.Request) {
 func handleLights(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		lights := data.home.LedLights()
+		lights := data.home.NewLedLights(data.ActionMap["lights"])
 		err := data.template.Lookup("layout.lights").Execute(w, lights)
 		if err != nil {
 			log.Fatal("/lights", err)

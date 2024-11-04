@@ -1,6 +1,9 @@
 package ha
 
-import "fmt"
+import (
+	"fmt"
+	"v4lvid/config"
+)
 
 type LightAttributes struct {
 	Name       string    `json:"friendly_name" yaml:"friendly_name"`
@@ -27,9 +30,14 @@ func (led *Light) HexColor() string {
 	return "#3f3f3f"
 }
 
-func (data *HomeData) LedLights() (lights []*Light) {
+type LedLight struct {
+	Action *config.Action
+	Lights []*Light
+}
+
+func (data *HomeData) NewLedLights(action *config.Action) (ledLight *LedLight) {
 	ids := ListEntitiesLike("light.led", data.EntityKeys)
-	lights = make([]*Light, 0, len(ids))
+	lights := make([]*Light, 0, len(ids))
 	for _, id := range ids {
 		light := &Light{}
 		e, ok := data.Entities[id]
@@ -38,5 +46,6 @@ func (data *HomeData) LedLights() (lights []*Light) {
 		}
 		lights = append(lights, light)
 	}
+	ledLight = &LedLight{Action: action, Lights: lights}
 	return
 }

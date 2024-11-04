@@ -27,6 +27,8 @@
     <span hx-ext="ws" ws-connect="/events">
         {{ template "layout.actions" . }}
         {{ template "layout.chat" .Sock }}
+        <div id="slot-left" class="slot-left" draggable="false"></div>
+        <div id="slot-right" class="slot-right"></div>
     </span>
     <script src="/static/js/wsstatus.js" defer></script>
 </body>

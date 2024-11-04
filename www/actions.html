@@ -12,7 +12,6 @@
                     <span class="symbols">{{.Icon}}</span>
                 </button>
             {{ end }}
-            <div id="slot-left" class="slot-left"></div>
         </span>
     </div>
     <div class="actions-right">
@@ -30,16 +29,24 @@
                 hx-put="{{.Recorder.Url}}" hx-swap=none>
                 <span class="symbols">{{.Recorder.Icon}}</span>
             </button>
-            <div id="slot-right" class="slot-right"></div>
         </span>
     </div>
 {{ end }}
 
+{{ define "layout.content.head" }}
+	<h3 hx-on:mousedown="setdraggable('slot-left',true)"
+        hx-on:mouseup="setdraggable('slot-left',false)">
+        <span class="symbols">{{.Icon}}</span>
+        <span>{{.Title}}</span>
+    </h3> 
+ 
+{{ end }}
+
 {{ define "layout.sun" }}
     <div class="content">
-        <h3><span class="symbols">wb_twilight</span> <span class="title">Next Sun</span></h3> 
+        {{template "layout.content.head" .Action }}
         <ol>
-        {{range .}}
+        {{range .Sensors}}
             <li>{{.ShortName}} {{.FormatTime}}</li>
         {{end}}
         </ol>
@@ -48,9 +55,9 @@
 
 {{ define "layout.wifi" }}
     <div class="content">
-    <h3><span class="symbols">network_wifi</span> WIFI Signals</h3> 
+        {{template "layout.content.head" .Action }}
         <div class="grid-container">
-        {{range .}}
+        {{range .Sensors}}
         <div>
             <div><span class="symbols-small">{{.SignalIcon}}</span> {{.Attributes.Name}}</div> 
             <div class="form-label">{{.State}} {{.Attributes.Units}}</div>
@@ -63,7 +70,7 @@
 
 {{ define "layout.weather" }}
     <div class="content">
-        <h3><span class="symbols">{{.Icon}}</span> {{.Attributes.Name}} {{.State}}</h3> 
+        {{template "layout.content.head" .Action }}
         {{range .Properties}}
         <div class="form-label">
             <span class="symbols-small">{{.Icon}}</span>

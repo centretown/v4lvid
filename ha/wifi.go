@@ -3,15 +3,21 @@ package ha
 import (
 	"fmt"
 	"log"
+	"v4lvid/config"
 )
 
-type Wifi struct {
+type WifiSensors struct {
 	Entity[SensorAttributes]
 }
 
-func (wifi *Wifi) SignalIcon() string {
+type Wifi struct {
+	Action  *config.Action
+	Sensors []*WifiSensors
+}
+
+func (ws *WifiSensors) SignalIcon() string {
 	signal := -100
-	count, _ := fmt.Sscan(wifi.State, &signal)
+	count, _ := fmt.Sscan(ws.State, &signal)
 	if count == 0 {
 		return "signal_wifi_bad"
 	}
@@ -30,22 +36,24 @@ func (wifi *Wifi) SignalIcon() string {
 	return "network_wifi"
 }
 
-func (data *HomeData) WifiSensors() (wifis []*Wifi) {
+func (data *HomeData) WifiSensors(action *config.Action) (wifi *Wifi) {
 	ids := ListEntitiesLike("wifi", data.EntityKeys)
-	wifis = make([]*Wifi, 0, len(ids))
+
+	sensors := make([]*WifiSensors, 0, len(ids))
 	for _, id := range ids {
-		wifi := &Wifi{}
+		sensor := &WifiSensors{}
 		e, ok := data.Entities[id]
 		if ok {
-			wifi.Copy(e)
+			sensor.Copy(e)
 		}
-		wifis = append(wifis, wifi)
+		sensors = append(sensors, sensor)
 	}
+	wifi = &Wifi{Action: action, Sensors: sensors}
 	return
 }
 
-func (data *HomeData) WifiSensor(entityID string) (wifi *Wifi) {
-	wifi = &Wifi{}
+func (data *HomeData) WifiSensor(entityID string) (wifi *WifiSensors) {
+	wifi = &WifiSensors{}
 	e, ok := data.Entities[entityID]
 	if !ok {
 		log.Println(entityID, "not found")
