@@ -18,17 +18,17 @@ document.body.addEventListener('htmx:wsOpen', function(evt) {
     console.log('connected');
     socket = evt.detail.socketWrapper;
     elt = evt.detail.elt;
-
-    wsstat.innerText = 'Connected';
+    wsstat.innerText = 'chat';
     wsstat.setAttribute('ws-status', 'connected');
 });
 document.body.addEventListener('htmx:wsError', function(evt) {
     console.log('error');
-    wsstat.innerText = 'Error';
+    wsstat.innerText = 'chat_error';
     wsstat.setAttribute('ws-status', 'error');
 });
 document.body.addEventListener('htmx:wsClose', function(evt) {
     console.log('disconnected');
-    wsstat.innerText = 'Disconnected';
+    wsstat.innerText = 'chat_error';
     wsstat.setAttribute('ws-status', 'disconnected');
 });
+

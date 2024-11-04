@@ -77,8 +77,9 @@ func (h *Hub) Run() {
 
 		case <-h.updateList:
 			h.mutex.Lock()
+			b := []byte("<div id=\"users\" class=\"users\">" + h.GetClientList() + "</div>")
 			for client := range h.clients {
-				client.send <- []byte("<div id=\"users\">" + h.GetClientList() + "</div>")
+				client.send <- b
 			}
 			h.mutex.Unlock()
 		}
@@ -87,14 +88,12 @@ func (h *Hub) Run() {
 
 func (h *Hub) GetClientList() string {
 	var buf bytes.Buffer
-	buf.WriteString("<ul>")
 	for client := range h.clients {
 		if !client.active {
-			buf.WriteString("<li><em>" + client.name + "</em></li>")
+			buf.WriteString("<div  class=\"user-inactive\">" + client.name + "</i></div>")
 		} else {
-			buf.WriteString("<li>" + client.name + "</li>")
+			buf.WriteString("<div class=\"user-active\">" + client.name + "</b></div>")
 		}
 	}
-	buf.WriteString("</ul>")
 	return buf.String()
 }

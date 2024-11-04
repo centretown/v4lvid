@@ -2,18 +2,18 @@ package sockserve
 
 import (
 	"bytes"
+	"encoding/json"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
+	"os"
 	"sync"
+	"time"
 )
-
-const maxMessages = 10
 
 type SockServer struct {
 	messageChan   chan string
-	PastMessages  []string
+	Messages      []*Message
 	mutex         sync.Mutex
 	hub           *Hub
 	statusLayout  *template.Template
@@ -23,7 +23,7 @@ type SockServer struct {
 func NewSockServer(t *template.Template) *SockServer {
 	s := &SockServer{
 		messageChan:   make(chan string),
-		PastMessages:  []string{},
+		Messages:      make([]*Message, 0),
 		hub:           NewHub(),
 		statusLayout:  t.Lookup("layout.wsstatus"),
 		messageLayout: t.Lookup("layout.wsmessage"),
@@ -35,24 +35,75 @@ func (s *SockServer) Run() {
 	go s.hub.Run()
 }
 
-func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
-	b, err := io.ReadAll(r.Body)
+func (s *SockServer) PastMessages() (past []*Message) {
+	max := len(s.Messages)
+	past = make([]*Message, max)
+	for i := range max {
+		past[max-i-1] = s.Messages[i]
+	}
+	return
+}
+
+const messageFile = "messages.json"
+
+func (s *SockServer) LoadMessages() (err error) {
+	var buf []byte
+	buf, err = os.ReadFile(messageFile)
 	if err != nil {
-		log.Printf("Failed to read body: %v", err)
+		log.Println("LoadMessages:ReadFile", err)
 		return
 	}
 
-	log.Printf("Received webhook: %s", string(b))
+	err = json.Unmarshal(buf, &s.Messages)
+	if err != nil {
+		log.Println("LoadMessages:Unmarshal", err)
+		return
+	}
+	return
+}
 
-	var buf bytes.Buffer
-	err = s.messageLayout.Execute(
-		&buf,
-		struct {
-			Raw string
-		}{
-			Raw: string(b),
-		},
+func (s *SockServer) SaveMessages() (err error) {
+	var buf []byte
+	buf, err = json.MarshalIndent(s.Messages, "", "  ")
+	if err != nil {
+		log.Println("SaveMessages:MarshalIndent", err)
+		return
+	}
+	err = os.WriteFile(messageFile, buf, os.ModePerm)
+	if err != nil {
+		log.Println("SaveMessages:WriteFile", err)
+		return
+	}
+	return
+}
+
+func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Failed to parse body: %v", err)
+		return
+	}
+
+	name := "unknown"
+	names, ok := r.PostForm["name"]
+	if ok && len(names) > 0 {
+		name = names[0]
+	}
+
+	message := "empty"
+	messages, ok := r.PostForm["message"]
+	if ok && len(messages) > 0 {
+		message = messages[0]
+	}
+
+	log.Printf("Received webhook: %s %s", name, message)
+
+	var (
+		buf bytes.Buffer
+		msg = &Message{Name: name, Message: message, Stamp: time.Now()}
 	)
+
+	err = s.messageLayout.Execute(&buf, msg)
 	if err != nil {
 		log.Printf("Failed to execute template: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -60,21 +111,20 @@ func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// wrap the message in a div so we can use htmx to add it to the page
-	s.hub.Broadcast <- []byte("<ul hx-swap-oob=\"afterbegin:#messages\"><li class=\"message\">" + buf.String() + "</li></ul>")
+	s.hub.Broadcast <- []byte("<div hx-swap-oob=\"afterbegin:#messages\">" + buf.String() + "</div>")
 
 	s.mutex.Lock()
-	s.PastMessages = append(s.PastMessages, buf.String())
-	if len(s.PastMessages) > maxMessages {
-		s.PastMessages = s.PastMessages[1:]
+	s.Messages = append(s.Messages, msg)
+	if len(s.Messages) > maxMessages {
+		s.Messages = s.Messages[1:]
 	}
-	log.Printf("Now have %d past messages", len(s.PastMessages))
+	log.Printf("Now have %d past messages", len(s.Messages))
 	s.mutex.Unlock()
 
 	w.WriteHeader(http.StatusOK)
 }
 
 func (s *SockServer) Events(w http.ResponseWriter, r *http.Request) {
-	log.Println("EVENTS")
 	client, err := NewClient(s.hub, w, r)
 	if err != nil {
 		log.Printf("Failed to create WebSocket client: %v", err)
@@ -87,17 +137,18 @@ func (s *SockServer) Events(w http.ResponseWriter, r *http.Request) {
 	go client.ReadPump()
 }
 
-func (s *SockServer) Status(w http.ResponseWriter, r *http.Request) {
-	s.statusLayout.Execute(
-		w,
-		struct {
-			WebsocketHost string
-			ClientList    string
-			PastMessages  []string
-		}{
-			ClientList:    s.hub.GetClientList(),
-			WebsocketHost: "ws://" + r.Host + "/events",
-			PastMessages:  s.PastMessages,
-		},
-	)
-}
+// func (s *SockServer) Status(w http.ResponseWriter, r *http.Request) {
+// 	log.Println("STATUS")
+// 	s.statusLayout.Execute(
+// 		w,
+// 		struct {
+// 			WebsocketHost string
+// 			ClientList    string
+// 			PastMessages  []string
+// 		}{
+// 			ClientList:    s.hub.GetClientList(),
+// 			WebsocketHost: "ws://" + r.Host + "/events",
+// 			PastMessages:  s.PastMessages,
+// 		},
+// 	)
+// }

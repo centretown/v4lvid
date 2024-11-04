@@ -17,7 +17,7 @@ import (
 	"v4lvid/sockserve"
 )
 
-type ServerData struct {
+type RunData struct {
 	WebcamUrl string
 	cfg       *config.Config
 	Actions   []*config.Action
@@ -30,9 +30,9 @@ type ServerData struct {
 	Sock           *sockserve.SockServer
 }
 
-func Serve(cfg *config.Config) (data *ServerData) {
+func Run(cfg *config.Config) (data *RunData) {
 	webcamServers := cfg.NewCameraServers()
-	data = &ServerData{
+	data = &RunData{
 		WebcamUrl: "http://192.168.10.7:9000/0/",
 		Actions:   cfg.Actions,
 		Recorder: &RecordingHandler{
@@ -60,11 +60,12 @@ func Serve(cfg *config.Config) (data *ServerData) {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
 	data.Sock = sockserve.NewSockServer(data.template)
+	data.Sock.LoadMessages()
 	data.Sock.Run()
 
 	data.mux.HandleFunc("/events", data.Sock.Events)
 	data.mux.HandleFunc("/webhook", data.Sock.Webhook)
-	data.mux.HandleFunc("/wsstatus", data.Sock.Status)
+	// data.mux.HandleFunc("/wsstatus", data.Sock.Status)
 
 	serveCameras(data, cfg, webcamServers)
 	handleCameras(data)
@@ -88,6 +89,8 @@ func Serve(cfg *config.Config) (data *ServerData) {
 		log.Printf("terminating: %v", sig)
 	}
 
+	data.Sock.SaveMessages()
+
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Second)
 	defer cancel()
@@ -97,7 +100,7 @@ func Serve(cfg *config.Config) (data *ServerData) {
 	return
 }
 
-func handleFiles(data *ServerData) {
+func handleFiles(data *RunData) {
 	data.mux.Handle(data.Recorder.Url, data.Recorder)
 
 	fs := http.FileServer(http.Dir("www/"))
@@ -129,7 +132,7 @@ func handleFiles(data *ServerData) {
 
 }
 
-func serveCameras(data *ServerData, cfg *config.Config, camServers []*camera.Server) {
+func serveCameras(data *RunData, cfg *config.Config, camServers []*camera.Server) {
 	data.WebcamHandlers = CreateNexigoHandlers(cfg, data.template)
 
 	for i, camServer := range camServers {
@@ -151,7 +154,7 @@ func serveCameras(data *ServerData, cfg *config.Config, camServers []*camera.Ser
 	}
 }
 
-func serveHomeData(data *ServerData) (err error) {
+func serveHomeData(data *RunData) (err error) {
 	home := data.home
 	var ok bool
 	ok, err = home.Authorize()
@@ -185,7 +188,7 @@ func serveHomeData(data *ServerData) (err error) {
 	return
 }
 
-func handleHomeData(data *ServerData) {
+func handleHomeData(data *RunData) {
 	mux := data.mux
 	mux.HandleFunc("/sun", handleSun(data))
 	mux.HandleFunc("/weather", handleWeather(data))
@@ -194,7 +197,7 @@ func handleHomeData(data *ServerData) {
 	handleLightProperties(data)
 }
 
-func handleCameras(data *ServerData) {
+func handleCameras(data *RunData) {
 	data.mux.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
@@ -205,7 +208,7 @@ func handleCameras(data *ServerData) {
 		})
 }
 
-func handleSun(data *ServerData) func(http.ResponseWriter, *http.Request) {
+func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		sensors := data.home.SunTimes()
@@ -216,7 +219,7 @@ func handleSun(data *ServerData) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func handleWeather(data *ServerData) func(http.ResponseWriter, *http.Request) {
+func handleWeather(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		forecast := data.home.Forecast()
@@ -227,7 +230,7 @@ func handleWeather(data *ServerData) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func handleWifi(data *ServerData) func(http.ResponseWriter, *http.Request) {
+func handleWifi(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		sensors := data.home.WifiSensors()
@@ -237,7 +240,7 @@ func handleWifi(data *ServerData) func(http.ResponseWriter, *http.Request) {
 		}
 	}
 }
-func handleLights(data *ServerData) func(http.ResponseWriter, *http.Request) {
+func handleLights(data *RunData) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		lights := data.home.LedLights()
@@ -248,7 +251,7 @@ func handleLights(data *ServerData) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func handleLightProperties(data *ServerData) {
+func handleLightProperties(data *RunData) {
 	home := data.home
 	readBody := func(r *http.Request) (id string, key string, val string) {
 		buf, err := io.ReadAll(r.Body)

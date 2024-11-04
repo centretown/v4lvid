@@ -1,7 +1,6 @@
 package sockserve
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -53,7 +52,7 @@ func NewClient(hub *Hub, w http.ResponseWriter, r *http.Request) (*Client, error
 		return nil, err
 	}
 
-	name := fmt.Sprintf("Name%d", nameCount)
+	name := r.RemoteAddr
 	nameCount++
 	return &Client{
 		hub:    hub,

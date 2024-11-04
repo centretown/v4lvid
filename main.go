@@ -29,5 +29,5 @@ func main() {
 		log.Println("video.VideoBase", camera.VideoBase)
 	}
 
-	web.Serve(cfg)
+	web.Run(cfg)
 }

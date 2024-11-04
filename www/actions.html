@@ -74,31 +74,3 @@
     </div>
 {{ end }}
 
-{{ define "layout.wsstatus" }}
-<div id="chat" class="content status hide">
- 	<h3>
-        <span class="symbols">router</span> 
-        <span id="ws-status">Status</span>
-    </h3> 
-    
-    <div id="users"></div>
-	<ul id="messages">
-		{{ range .PastMessages }}
-		<li>{{ . }}</li>
-		{{ end }}
-	</ul><br>
-    <div>
-        New Message:
-        <form>
-            <input type="text" name="name">
-            <input type="text" name="message">
-            <button hx-post="/webhook" hx-swap="none" hx>Send</button>
-        </form>
-    </div>
-</div>
-{{end}}
-
-
-{{ define "layout.wsmessage" }}
-    {{ .Raw }}
-{{end}}

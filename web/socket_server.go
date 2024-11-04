@@ -21,7 +21,7 @@ type SocketServer struct {
 	mux    *http.ServeMux
 }
 
-func NewSocketServer(data *ServerData, cfg *config.Config) *SocketServer {
+func NewSocketServer(data *RunData, cfg *config.Config) *SocketServer {
 	wss := &SocketServer{
 		url: cfg.WsUrl,
 		mux: &http.ServeMux{},
@@ -39,7 +39,7 @@ func NewSocketServer(data *ServerData, cfg *config.Config) *SocketServer {
 	return wss
 }
 
-func handleEcho(data *ServerData, echoServer *EchoServer) func(http.ResponseWriter, *http.Request) {
+func handleEcho(data *RunData, echoServer *EchoServer) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		err := data.template.Lookup("layout.echo").Execute(w, data)

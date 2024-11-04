@@ -1,0 +1,44 @@
+{{ define "layout.chat" }}
+<div id="chat" class="content chat hide" draggable="true">
+ 	<h3 hx-on:click="setdraggable">
+        <span id="ws-status" class="symbols">question_mark</span>
+        <span id="ws-status-text">Chat</span>
+    </h3> 
+    <div>
+        <div class="label">Messages: </div>
+        <div id="messages">
+            {{ range .PastMessages }}
+                {{ template "layout.wsmessage" . }}
+            {{ end }}
+        </div>
+	</div>
+
+    <div>
+        <form>
+            <div class="label">Alias:</div>
+            <input class="text-input" type="text" name="name"
+                placeholder="Who are you?">
+            <div class="label">Post:</div>
+            <textarea class="text-input" 
+                name="message" rows="3" cols="30"
+                placeholder="What's on your mind?"></textarea>
+            <button class="action" hx-post="/webhook" hx-swap="none" hx>
+                <span class="symbols">send</span>
+            </button>
+        </form>
+    </div>
+    <div class="hide">
+        <div>Users: </div>
+        <div id="users" class="users"></div>
+	</div>
+</div>
+{{end}}
+
+
+{{ define "layout.wsmessage" }}
+    <div class="name-item">{{.Name}}
+    </div>
+    <div class="message-item">{{.Message}}
+        <span class="timestamp">({{.StampShort}})</span>
+    </div>
+{{end}}

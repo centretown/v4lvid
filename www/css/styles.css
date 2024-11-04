@@ -4,6 +4,7 @@
   --fgBright: rgba(0, 255, 255, 1);
   --fgDim: rgba(128, 255, 0, 0.5);
   --fgOut: rgba(128, 255, 0, 1);
+  --fgIn: rgba(255, 255, 255, 1);
 }
 
 /* fallback */
@@ -40,6 +41,7 @@
 
 body {
   font-family: sans-serif;
+  background-color: black;
 }
 .hide {
   display: none;
@@ -102,13 +104,74 @@ h3 {
   overflow: wrap;
 }
 
-.slot-right {
+.chat {
+  position: fixed;
+  top: 5rem;
+  right: 1rem;
+  width: 18rem;
+  overflow: wrap;
 }
 
-.status {
+.label {
+  margin-top: .5rem;
+  font-size: .9rem;
+}
+
+.text-input {
+  font-size: .75rem;
+  border-radius: .35rem;
+  background-color: rgba(255,255,0,.1);
+  color: rgba(255,255,0,1);
+  width: 100%;
+}
+
+#messages {
+  overflow-y: auto;
+  overflow-x: wrap;
+  height: 8rem;
+}
+
+.users, .message {
+  margin-left: .25rem;
+  /*display: grid;
+  grid-template-columns: auto auto auto auto;*/
+  font-size: .75rem;
+}
+
+.message-item {
+  margin-left: 1rem;
+  margin-bottom: .25rem;
+  color: yellow;
+  font-size: .75rem;
+}
+
+.timestamp {
+  color: grey;
+}
+
+.clock {
   position: fixed;
-  top: 6rem;
-  right: 1rem;
+  bottom: 1rem;
+  color: rgba(127,168,158,.5);
+  text-align: center;
+  width: 100%;
+  font-size: 3rem;
+}
+
+.name-item {
+  margin-left: .5rem;
+  margin-top: .25rem;
+  font-size: .75rem;
+}
+
+.user-active {
+  font-weight: bold;
+  font-style: normal;
+}
+
+.user-inactive {
+  font-weight: lighter;
+  font-style: italic;
 }
 
 .content {
@@ -197,3 +260,4 @@ h3 {
     font-size: 6rem;
     color: var(--fgBright);
 }
+
