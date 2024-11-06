@@ -3,7 +3,7 @@
   --bgTransparent: rgba(0, 0, 0, 0.15);
   --bgH3: rgba(0, 127, 255, 0.15);
   --fgBright: rgba(0, 255, 255, 1);
-  --fgDim: rgba(127,168, 158, .8);
+  --fgDim: rgba(72, 168, 158, .8);
   --fgOut: rgba(128, 255, 0, 1);
   --fgIn: rgba(255, 255, 255, 1);
   --fgClock: rgba(127,168,158,.5);
@@ -242,7 +242,7 @@ h3 {
 .form-label {
   font-size: .85rem;
   margin-left: 1.5rem;
-  line-height: 1.75;
+  line-height: 1.9;
 }
 
 .form-option {

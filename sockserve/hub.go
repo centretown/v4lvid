@@ -10,7 +10,7 @@ import (
 // clients.
 type Hub struct {
 	// Inbound messages from the clients.
-	Broadcast chan []byte
+	broadcast chan []byte
 
 	// Register requests from the clients.
 	Register chan *Client
@@ -31,12 +31,16 @@ type Hub struct {
 // NewHub creates new Hub
 func NewHub() *Hub {
 	return &Hub{
-		Broadcast:  make(chan []byte),
+		broadcast:  make(chan []byte),
 		Register:   make(chan *Client),
 		Unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
 		updateList: make(chan struct{}),
 	}
+}
+
+func (h *Hub) Broadcast(message string) {
+	h.broadcast <- []byte(message)
 }
 
 // Run handles communication operations with Hub
@@ -68,7 +72,7 @@ func (h *Hub) Run() {
 			}()
 			h.mutex.Unlock()
 
-		case message := <-h.Broadcast:
+		case message := <-h.broadcast:
 			h.mutex.Lock()
 			for client := range h.clients {
 				client.send <- message

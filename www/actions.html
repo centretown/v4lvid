@@ -77,17 +77,23 @@
 </div>
 {{ end }}
 
+{{ define "weather" }}
+<span>
+    {{range .Properties}}
+    <div class="form-label">
+        <span class="symbols-small">{{.Icon}}</span>
+        <span>{{.Label}} {{.Value}} {{.Units}}</span>
+    </div>
+    {{end}}
+    <div class="note">{{.Attributes.Attribution}} Last Update: <span>{{.FormatTime}}</span></div>
+</span>
+{{ end }}
+
 {{ define "layout.weather" }}
 <div id="slot-{{.Action.Name}}" class="slot" draggable="false">
     {{template "layout.content.head" .Action }}
-    <div class="content">
-        {{range .Properties}}
-        <div class="form-label">
-            <span class="symbols-small">{{.Icon}}</span>
-            <span>{{.Label}} {{.Value}} {{.Units}}</span>
-        </div>
-        {{end}}
-        <div class="note">{{.Attributes.Attribution}} Last Update: <span>{{.FormatTime}}</span></div>
+    <div id="weather" class="content">
+        {{template "weather" . }}
     </div>
 </div>
 {{ end }}

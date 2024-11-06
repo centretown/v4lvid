@@ -2,16 +2,20 @@ package ha
 
 import "encoding/json"
 
+type Consumer interface {
+	Copy(src *Entity[json.RawMessage])
+}
+
 type Subscription struct {
 	consumer Consumer
-	run      func(consumer Consumer)
+	Run      func(consumer Consumer)
 	Enabled  bool
 }
 
 func NewSubcription(consumer Consumer, run func(Consumer)) *Subscription {
 	sub := &Subscription{
 		consumer: consumer,
-		run:      run,
+		Run:      run,
 		Enabled:  true,
 	}
 	return sub
@@ -19,5 +23,5 @@ func NewSubcription(consumer Consumer, run func(Consumer)) *Subscription {
 
 func (sub *Subscription) Consume(newState *Entity[json.RawMessage]) {
 	sub.consumer.Copy(newState)
-	sub.run(sub.consumer)
+	sub.Run(sub.consumer)
 }

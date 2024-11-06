@@ -78,6 +78,19 @@ func Run(cfg *config.Config) (data *RunData) {
 	handleHomeData(data)
 	handleFiles(data)
 
+	sub := ha.NewSubcription(&ha.Weather{}, func(c ha.Consumer) {
+		w, ok := c.(*ha.Weather)
+		if ok {
+			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+			text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+			message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
+			data.Sock.Broadcast(message)
+		}
+	})
+
+	data.home.Subscribe("weather.forecast_home", sub)
+	sub.Consume(data.home.Entities["weather.forecast_home"])
+
 	httpErr := make(chan error, 1)
 	go func() {
 		httpErr <- httpServer.ListenAndServe()

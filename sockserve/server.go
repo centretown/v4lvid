@@ -83,13 +83,15 @@ const (
 )
 
 func (s *SockServer) StreamOn() {
-	s.hub.Broadcast <- []byte(messageOn)
-	// w.WriteHeader(http.StatusOK)
+	s.Broadcast(messageOn)
 }
 
 func (s *SockServer) StreamOff() {
-	s.hub.Broadcast <- []byte(messageOff)
-	// w.WriteHeader(http.StatusOK)
+	s.Broadcast(messageOff)
+}
+
+func (s *SockServer) Broadcast(message string) {
+	s.hub.Broadcast(message)
 }
 
 func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +128,7 @@ func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// wrap the message in a div so we can use htmx to add it to the page
-	s.hub.Broadcast <- []byte("<div hx-swap-oob=\"afterbegin:#messages\">" + buf.String() + "</div>")
+	s.hub.broadcast <- []byte("<div hx-swap-oob=\"afterbegin:#messages\">" + buf.String() + "</div>")
 
 	s.mutex.Lock()
 	s.Messages = append(s.Messages, msg)

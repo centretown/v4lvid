@@ -17,10 +17,6 @@ type Entity[T any] struct {
 
 type EntityMap map[string]*Entity[json.RawMessage]
 
-type Consumer interface {
-	Copy(src *Entity[json.RawMessage])
-}
-
 type NumberAttributes struct {
 	Min   float64 `json:"min" yaml:"min"`
 	Max   float64 `json:"max" yaml:"max"`
