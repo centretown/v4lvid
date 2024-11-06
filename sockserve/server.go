@@ -77,6 +77,21 @@ func (s *SockServer) SaveMessages() (err error) {
 	return
 }
 
+const (
+	messageOff = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`
+	messageOn  = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols streaming">radio_button_checked</span>`
+)
+
+func (s *SockServer) StreamOn() {
+	s.hub.Broadcast <- []byte(messageOn)
+	// w.WriteHeader(http.StatusOK)
+}
+
+func (s *SockServer) StreamOff() {
+	s.hub.Broadcast <- []byte(messageOff)
+	// w.WriteHeader(http.StatusOK)
+}
+
 func (s *SockServer) Webhook(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {

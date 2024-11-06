@@ -15,7 +15,7 @@ func TestServer(t *testing.T) {
 		FPS:    30,
 	}
 
-	server := NewVideoServer(webcam, config)
+	server := NewVideoServer(webcam, config, nil)
 
 	err := webcam.Open(config)
 	if err != nil {

@@ -6,7 +6,9 @@
         <span id="leftmenu" class="hide">
             {{range .Actions}}  
                 <div id="{{.Name}}" class="hide"
-                    hx-get="/{{.Name}}" hx-swap="innerHTML" hx-target="#slot-left">
+                    hx-get="/{{.Name}}" hx-swap="beforeend" 
+                    hx-target="#slots" 
+                    hx-on::afterSwap="addDragHandlers('slot-{{.Name}}')">
                 </div>
                 <button class="action" hx-on:click="doAction('{{.Name}}')">
                     <span class="symbols">{{.Icon}}</span>
@@ -26,36 +28,42 @@
             </button>
 
             <button class="action" 
-                hx-put="{{.Recorder.Url}}" hx-swap=none>
-                <span class="symbols">{{.Recorder.Icon}}</span>
+                hx-put="{{.Streamer.Url}}" hx-swap=none>
+                <span id="streamer" 
+                class="symbols{{if .Streamer.IsRecording}} streaming{{end}}"
+                    >radio_button_checked</span>
             </button>
         </span>
     </div>
 {{ end }}
 
 {{ define "layout.content.head" }}
-	<h3 hx-on:mousedown="setdraggable('slot-left',true)"
-        hx-on:mouseup="setdraggable('slot-left',false)">
+	<h3 hx-on:mousedown="setdraggable('slot-{{.Name}}',true)"
+        hx-on:mouseup="setdraggable('slot-{{.Name}}',false)">
         <span class="symbols">{{.Icon}}</span>
         <span>{{.Title}}</span>
+        <button class="symbols-small close-slot"
+            hx-on:click="doAction('{{.Name}}')">close</button>
     </h3> 
- 
 {{ end }}
 
 {{ define "layout.sun" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
     <div class="content">
-        {{template "layout.content.head" .Action }}
         <ol>
         {{range .Sensors}}
             <li>{{.ShortName}} {{.FormatTime}}</li>
         {{end}}
         </ol>
     </div>
+</div>
 {{ end }}
 
 {{ define "layout.wifi" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
     <div class="content">
-        {{template "layout.content.head" .Action }}
         <div class="grid-container">
         {{range .Sensors}}
         <div>
@@ -66,11 +74,13 @@
         {{end}}
         </div>
     </div>
+</div>
 {{ end }}
 
 {{ define "layout.weather" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
     <div class="content">
-        {{template "layout.content.head" .Action }}
         {{range .Properties}}
         <div class="form-label">
             <span class="symbols-small">{{.Icon}}</span>
@@ -79,5 +89,6 @@
         {{end}}
         <div class="note">{{.Attributes.Attribution}} Last Update: <span>{{.FormatTime}}</span></div>
     </div>
+</div>
 {{ end }}
 

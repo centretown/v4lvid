@@ -135,7 +135,7 @@ func Save(cfg *Config, filename string) (err error) {
 	return
 }
 
-func (cfg *Config) NewCameraServers() (cameraServers []*camera.Server) {
+func (cfg *Config) NewCameraServers(indicator camera.StreamIndicator) (cameraServers []*camera.Server) {
 	cameraServers = make([]*camera.Server, 0)
 	var (
 		err    error
@@ -156,7 +156,7 @@ func (cfg *Config) NewCameraServers() (cameraServers []*camera.Server) {
 			continue
 		}
 		cameraServers = append(cameraServers,
-			camera.NewVideoServer(source, vcfg))
+			camera.NewVideoServer(source, vcfg, indicator))
 	}
 	return
 }

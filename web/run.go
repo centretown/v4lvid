@@ -24,7 +24,7 @@ type RunData struct {
 	ActionMap map[string]*config.Action
 	// WebcamServers  []*camera.Server
 	WebcamHandlers []*WebcamHandler
-	Recorder       *RecordingHandler
+	Streamer       *Streamer
 	mux            *http.ServeMux
 	template       *template.Template
 	home           *ha.HomeData
@@ -32,19 +32,13 @@ type RunData struct {
 }
 
 func Run(cfg *config.Config) (data *RunData) {
-	webcamServers := cfg.NewCameraServers()
 	data = &RunData{
 		WebcamUrl: "http://192.168.10.7:9000/0/",
 		Actions:   cfg.Actions,
 		ActionMap: cfg.NewActionMap(),
-		Recorder: &RecordingHandler{
-			Server: webcamServers[0],
-			Url:    "/record",
-			Icon:   "radio_button_checked",
-		},
-		mux:  &http.ServeMux{},
-		home: ha.NewHomeData(),
-		cfg:  cfg,
+		mux:       &http.ServeMux{},
+		home:      ha.NewHomeData(),
+		cfg:       cfg,
 	}
 	var (
 		err        error
@@ -61,9 +55,18 @@ func Run(cfg *config.Config) (data *RunData) {
 	if err != nil {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
+
 	data.Sock = sockserve.NewSockServer(data.template)
 	data.Sock.LoadMessages()
 	data.Sock.Run()
+
+	webcamServers := cfg.NewCameraServers(data.Sock)
+	data.Streamer = &Streamer{
+		Server: webcamServers[0],
+		Url:    "/record",
+		Icon:   "radio_button_checked",
+		Sock:   data.Sock,
+	}
 
 	data.mux.HandleFunc("/events", data.Sock.Events)
 	data.mux.HandleFunc("/webhook", data.Sock.Webhook)
@@ -103,7 +106,7 @@ func Run(cfg *config.Config) (data *RunData) {
 }
 
 func handleFiles(data *RunData) {
-	data.mux.Handle(data.Recorder.Url, data.Recorder)
+	data.mux.Handle(data.Streamer.Url, data.Streamer)
 
 	fs := http.FileServer(http.Dir("www/"))
 	data.mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {

@@ -3,9 +3,10 @@
   --bgTransparent: rgba(0, 0, 0, 0.15);
   --bgH3: rgba(0, 127, 255, 0.15);
   --fgBright: rgba(0, 255, 255, 1);
-  --fgDim: rgba(128, 255, 0, 0.5);
+  --fgDim: rgba(127,168, 158, .8);
   --fgOut: rgba(128, 255, 0, 1);
   --fgIn: rgba(255, 255, 255, 1);
+  --fgClock: rgba(127,168,158,.5);
 }
 
 /* fallback */
@@ -35,9 +36,14 @@
 .symbols  {
   font-size: 2.25rem;
 }
+
 .symbols-small  {
   margin-right: .5rem;
   font-size: 1rem;
+}
+
+.streaming {
+  color: red;
 }
 
 body {
@@ -55,11 +61,40 @@ li {
 }
 
 h3 {
+  margin: 0rem;
   font-weight: bold;
   font-size: 1.25rem;
-  margin-top: .25rem;
-  margin-bottom: .25rem;
+  padding: .25rem;
   background-color: var(--bgH3);
+  color: var(--fgBright);
+  border-radius: 1rem 1rem 0rem 0rem;
+}
+
+.slot, .chat {
+  position: fixed;
+  top: 5rem;
+  color: var(--fgBright);
+  background-color: var(--bgOpaque);
+  border-radius: 1rem;
+  animation-name: fade-in-slow;
+  animation-timing-function: ease-out;
+  animation-duration: 1000ms;
+  animation-fill-mode: forwards;
+  overflow: wrap;
+}
+
+.slot {
+  left: 1rem;
+  width: 23rem;
+}
+
+.chat {
+  right: 1rem;
+  width: 18rem;
+}
+
+.content {
+  padding: 1rem;
 }
 
 .source {
@@ -100,21 +135,14 @@ h3 {
   color: var(--fgBright);
 }
 
-.slot-left {
-  position: fixed;
-  top: 5rem;
-  left: 1rem;
-  width: 23rem;
-  overflow: wrap;
+.close-slot {
+  position: absolute;
+  right: 0rem;
+  background-color: var(--bgH3);
+  color: var(--fgBright);
+  border-radius: .35rem;
 }
 
-.chat {
-  position: fixed;
-  top: 5rem;
-  right: 1rem;
-  width: 18rem;
-  overflow: wrap;
-}
 
 .label {
   margin-top: .5rem;
@@ -156,10 +184,14 @@ h3 {
 .clock {
   position: fixed;
   bottom: 1rem;
-  color: rgba(127,168,158,.5);
+  color: var(--fgDim);
   text-align: center;
   width: 100%;
   font-size: 3rem;
+}
+
+.clock:hover {
+  color: var(--fgBright);
 }
 
 .name-item {
@@ -178,19 +210,6 @@ h3 {
   font-style: italic;
 }
 
-.content {
-  padding-top: .1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 1rem;
-  background-color: var(--bgOpaque);
-  color: var(--fgBright);
-  animation-name: fade-in-slow;
-  animation-timing-function: ease-out;
-  animation-duration: 1000ms;
-  animation-fill-mode: forwards;
-  border-radius: 1rem;
-}
 
 .grid-container {
   display: grid;

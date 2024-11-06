@@ -1,22 +1,22 @@
 
 {{ define "layout.controls" }}
-<div class="content">
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
     {{template "layout.content.head" .Action }}
-    {{range .WebcamHandlers}}
-        {{range .Controls}}
-        <button class="action" 
-            hx-get="{{.Url}}" hx-swap="outerHTML" 
-            hx-target="#response-div">
-            <span class="symbols">{{.Icon}}</span> 
-        </button>
+    <div class="content">
+        {{range .WebcamHandlers}}
+            {{range .Controls}}
+            <button class="action" 
+                hx-get="{{.Url}}" hx-swap="outerHTML" 
+                hx-target="#response-div">
+                <span class="symbols">{{.Icon}}</span> 
+            </button>
+            {{ end }}
         {{ end }}
-    {{ end }}
+    </div>
+    <div id="response-div"></div>
 </div>
-<div id="response-div"></div>
 {{ end }}
 
 {{ define "layout.response" }}
-
 <div id="response-div" class="fade-it">{{.}}</div>
-
 {{ end }}
