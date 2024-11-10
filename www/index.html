@@ -22,11 +22,11 @@
     </div>
     <span id="events" hx-ext="ws" ws-connect="/events">
         {{ template "layout.actions" . }}
-        {{ template "layout.chat" .Sock }}
-        <span id="slots"></span>
+        {{ template "layout.chat" .Socket }}
+        <span id="slots" class="slots"></span>
         <span class="clock">
+            <span id="clock-temp">{{.Temperature}}  {{.TemperatureUnit}}</span>
             <span id="clock"></span>
-            <span id="clock-temp"></span>
         </span>
     </span>
     <script src="/static/js/wsstatus.js" defer></script>

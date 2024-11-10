@@ -1,52 +1,52 @@
 [
   {
-    "Name": "",
-    "Message": "Quack! Quack! Qua",
-    "Stamp": "2024-11-03T20:38:36.796215617-05:00"
-  },
-  {
-    "Name": "Fred Basset",
-    "Message": "Woof",
-    "Stamp": "2024-11-03T20:41:52.835892258-05:00"
-  },
-  {
-    "Name": "Fred Basset",
-    "Message": "Woof",
-    "Stamp": "2024-11-03T20:41:55.246042105-05:00"
-  },
-  {
-    "Name": "Fred Basset",
-    "Message": "Woof",
-    "Stamp": "2024-11-03T20:41:59.491410216-05:00"
+    "Name": "Admin",
+    "Message": "Not much",
+    "Stamp": "2024-11-07T14:37:03.458984951-05:00"
   },
   {
     "Name": "Admin",
-    "Message": "Quack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! (17:28:24)",
-    "Stamp": "2024-11-03T21:05:12.06095096-05:00"
-  },
-  {
-    "Name": "Moron McFukHed",
-    "Message": "Admin\nQuack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! Quack! (17:28:24) (21:05:12)",
-    "Stamp": "2024-11-03T22:06:21.958569256-05:00"
-  },
-  {
-    "Name": "Fred Basset",
-    "Message": "Woof",
-    "Stamp": "2024-11-04T07:54:18.933239677-05:00"
+    "Message": "",
+    "Stamp": "2024-11-07T14:37:37.708815876-05:00"
   },
   {
     "Name": "Admin",
-    "Message": "ast Update: Monday at 08:58:36",
-    "Stamp": "2024-11-04T10:53:25.824817356-05:00"
+    "Message": "What's New",
+    "Stamp": "2024-11-07T14:39:39.356066632-05:00"
   },
   {
-    "Name": "Fred Basset",
-    "Message": "Woof woof woof",
-    "Stamp": "2024-11-05T08:27:40.724301414-05:00"
+    "Name": "Admin",
+    "Message": "What's New",
+    "Stamp": "2024-11-07T14:46:58.022033688-05:00"
   },
   {
-    "Name": "Fred Basset",
-    "Message": "hi",
-    "Stamp": "2024-11-06T08:03:36.494752681-05:00"
+    "Name": "Admin",
+    "Message": "What's Not New",
+    "Stamp": "2024-11-07T14:47:14.111360663-05:00"
+  },
+  {
+    "Name": "Dave M",
+    "Message": "What's Not New",
+    "Stamp": "2024-11-07T14:47:26.727719727-05:00"
+  },
+  {
+    "Name": "Daffy Duck",
+    "Message": "Quack n Pack",
+    "Stamp": "2024-11-07T14:51:43.476693564-05:00"
+  },
+  {
+    "Name": "Daffy Duck",
+    "Message": "What's New Balou",
+    "Stamp": "2024-11-07T14:52:32.865409113-05:00"
+  },
+  {
+    "Name": "Admin",
+    "Message": "Hey What's up",
+    "Stamp": "2024-11-07T15:51:10.071918271-05:00"
+  },
+  {
+    "Name": "Admin",
+    "Message": "What's on your mind?",
+    "Stamp": "2024-11-08T08:53:44.988008712-05:00"
   }
 ]

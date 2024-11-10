@@ -17,7 +17,7 @@
   src: url(symbols.woff2) format('woff2');
 }
 
-.material-symbols-outlined, .symbols, .symbols-small {
+.material-symbols-outlined, .symbols, .symbols-small, .symbols-form {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
@@ -40,6 +40,11 @@
 .symbols-small  {
   margin-right: .5rem;
   font-size: 1rem;
+}
+
+.symbols-form  {
+  font-size: 1.5rem;
+  width: 3rem;
 }
 
 .streaming {
@@ -70,6 +75,7 @@ h3 {
   border-radius: 1rem 1rem 0rem 0rem;
 }
 
+
 .slot, .chat {
   position: fixed;
   top: 5rem;
@@ -90,7 +96,7 @@ h3 {
 
 .chat {
   right: 1rem;
-  width: 18rem;
+  width: 15rem;
 }
 
 .content {
@@ -137,7 +143,8 @@ h3 {
 
 .close-slot {
   position: absolute;
-  right: 0rem;
+  top: .5rem;
+  right: .5rem;
   background-color: var(--bgH3);
   color: var(--fgBright);
   border-radius: .35rem;
@@ -145,28 +152,28 @@ h3 {
 
 
 .label {
-  margin-top: .5rem;
-  font-size: .9rem;
+  margin-top: .6rem;
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .text-input {
-  font-size: .75rem;
   border-radius: .35rem;
   background-color: rgba(255,255,0,.1);
   color: rgba(255,255,0,1);
   width: 100%;
 }
 
-#messages {
+.messages {
   overflow-y: auto;
   overflow-x: wrap;
-  height: 8rem;
+  scrollbar-color: var(--fgDim) var(--bgOpaque);
+  scrollbar-width: thin;
+  height: 10rem;
 }
 
 .users, .message {
   margin-left: .25rem;
-  /*display: grid;
-  grid-template-columns: auto auto auto auto;*/
   font-size: .75rem;
 }
 
@@ -187,7 +194,7 @@ h3 {
   color: var(--fgDim);
   text-align: center;
   width: 100%;
-  font-size: 3rem;
+  font-size: 2.5rem;
 }
 
 .clock:hover {
@@ -234,7 +241,7 @@ h3 {
 .form-input {
   font-size: .85rem;
   position: absolute;
-  left: 55%;
+  left: 40%;
   background-color: var(--bgTransparent);
   color: var(--fgOut);
 }

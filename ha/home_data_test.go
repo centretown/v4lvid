@@ -5,7 +5,10 @@ import (
 )
 
 func TestAppData(t *testing.T) {
-	data := NewHomeData()
+	data, err := NewHomeData()
+	if err != nil {
+		t.Fatal(err)
+	}
 	testAuthorize(t, data)
 	testBuildEntities(t, data)
 	testPrefixWifi(t, data)

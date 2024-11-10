@@ -26,6 +26,16 @@
       "Icon": "settings_video_camera"
     },
     {
+      "Name": "camera_add",
+      "Title": "Add Camera",
+      "Icon": "linked_camera"
+    },
+    {
+      "Name": "camera_list",
+      "Title": "List Cameras",
+      "Icon": "view_list"
+    },
+    {
       "Name": "weather",
       "Title": "Forecast Home",
       "Icon": "routine"

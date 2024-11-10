@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"v4lvid/camera"
-	"v4lvid/sockserve"
+	"v4lvid/socket"
 )
 
 var _ http.Handler = (*Streamer)(nil)
@@ -13,7 +13,7 @@ type Streamer struct {
 	Server *camera.Server
 	Url    string
 	Icon   string
-	Sock   *sockserve.SockServer
+	Sock   *socket.Server
 }
 
 func (strm *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {

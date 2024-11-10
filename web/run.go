@@ -9,36 +9,41 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"time"
 	"v4lvid/camera"
 	"v4lvid/config"
 	"v4lvid/ha"
-	"v4lvid/sockserve"
+	"v4lvid/socket"
 )
 
 type RunData struct {
 	WebcamUrl string
-	cfg       *config.Config
+	Config    *config.Config
 	Actions   []*config.Action
 	ActionMap map[string]*config.Action
 	// WebcamServers  []*camera.Server
-	WebcamHandlers []*WebcamHandler
-	Streamer       *Streamer
-	mux            *http.ServeMux
-	template       *template.Template
-	home           *ha.HomeData
-	Sock           *sockserve.SockServer
+	WebcamHandlers  []*WebcamHandler
+	CameraMap       map[string]*camera.VideoConfig
+	Streamer        *Streamer
+	Temperature     float64
+	TemperatureUnit string
+	mux             *http.ServeMux
+	template        *template.Template
+	home            *ha.HomeData
+	HomeActive      bool
+	Socket          *socket.Server
 }
 
 func Run(cfg *config.Config) (data *RunData) {
 	data = &RunData{
 		WebcamUrl: "http://192.168.10.7:9000/0/",
+		Config:    cfg,
 		Actions:   cfg.Actions,
 		ActionMap: cfg.NewActionMap(),
+		CameraMap: cfg.NewCameraMap(),
 		mux:       &http.ServeMux{},
-		home:      ha.NewHomeData(),
-		cfg:       cfg,
 	}
 	var (
 		err        error
@@ -56,40 +61,33 @@ func Run(cfg *config.Config) (data *RunData) {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
 
-	data.Sock = sockserve.NewSockServer(data.template)
-	data.Sock.LoadMessages()
-	data.Sock.Run()
+	data.WebcamHandlers = CreateNexigoHandlers(cfg, data.template)
 
-	webcamServers := cfg.NewCameraServers(data.Sock)
+	data.Socket = socket.NewServer(data.template)
+	data.Socket.LoadMessages()
+	data.Socket.Run()
+
+	webcamServers := cfg.NewCameraServers(data.Socket)
 	data.Streamer = &Streamer{
 		Server: webcamServers[0],
 		Url:    "/record",
 		Icon:   "radio_button_checked",
-		Sock:   data.Sock,
+		Sock:   data.Socket,
 	}
 
-	data.mux.HandleFunc("/events", data.Sock.Events)
-	data.mux.HandleFunc("/webhook", data.Sock.Webhook)
-	// data.mux.HandleFunc("/wsstatus", data.Sock.Status)
+	data.mux.HandleFunc("/events", data.Socket.Events)
+	data.mux.HandleFunc("/webhook", data.Socket.Webhook)
 
-	serveCameras(data, cfg, webcamServers)
+	serveCameras(data, webcamServers)
 	handleCameras(data)
-	serveHomeData(data)
-	handleHomeData(data)
+	data.home, err = ha.NewHomeData()
+	if err == nil {
+		serveHomeData(data)
+		handleHomeData(data)
+		data.HomeActive = true
+	}
+
 	handleFiles(data)
-
-	sub := ha.NewSubcription(&ha.Weather{}, func(c ha.Consumer) {
-		w, ok := c.(*ha.Weather)
-		if ok {
-			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
-			text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
-			message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
-			data.Sock.Broadcast(message)
-		}
-	})
-
-	data.home.Subscribe("weather.forecast_home", sub)
-	sub.Consume(data.home.Entities["weather.forecast_home"])
 
 	httpErr := make(chan error, 1)
 	go func() {
@@ -107,7 +105,7 @@ func Run(cfg *config.Config) (data *RunData) {
 		log.Printf("terminating: %v", sig)
 	}
 
-	data.Sock.SaveMessages()
+	data.Socket.SaveMessages()
 
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Second)
@@ -133,7 +131,7 @@ func handleFiles(data *RunData) {
 	})
 
 	data.mux.HandleFunc("/filesave", func(w http.ResponseWriter, r *http.Request) {
-		err := config.Save(data.cfg, "config.json")
+		err := config.Save(data.Config, "config.json")
 		if err != nil {
 			log.Println("filesave", err)
 			return
@@ -150,8 +148,7 @@ func handleFiles(data *RunData) {
 
 }
 
-func serveCameras(data *RunData, cfg *config.Config, camServers []*camera.Server) {
-	data.WebcamHandlers = CreateNexigoHandlers(cfg, data.template)
+func serveCameras(data *RunData, camServers []*camera.Server) {
 
 	for i, camServer := range camServers {
 		path := fmt.Sprintf("/%d/", i)
@@ -220,6 +217,10 @@ type CameraData struct {
 	WebcamHandlers []*WebcamHandler
 }
 
+type AddCamera struct {
+	Action *config.Action
+}
+
 func handleCameras(data *RunData) {
 	data.mux.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
@@ -232,6 +233,21 @@ func handleCameras(data *RunData) {
 				log.Fatal("/camera", err)
 			}
 		})
+	data.mux.HandleFunc("/camera_add",
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("Cache-Control", "no-cache")
+			err := data.template.Lookup("layout.camera.add").Execute(w,
+				&AddCamera{
+					Action: data.ActionMap["camera_add"],
+				})
+
+			if err != nil {
+				log.Fatal("/camera_add", err)
+			}
+		})
+	data.mux.HandleFunc("/camera_post", addCameraHandler(data))
+	data.mux.HandleFunc("/camera_list", listCameraHandler(data))
+
 }
 
 func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
@@ -245,7 +261,76 @@ func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+type CameraListData struct {
+	Action  *config.Action
+	Cameras []*camera.VideoConfig
+}
+
+func listCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		camData := &CameraListData{
+			Action:  data.ActionMap["camera_list"],
+			Cameras: data.Config.Cameras,
+		}
+		err := data.template.Lookup("layout.camera.list").Execute(w, camData)
+		if err != nil {
+			log.Fatal("/camera_list", err)
+		}
+	}
+}
+
+func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("camera_post")
+		// w.Header().Add("Cache-Control", "no-cache")
+		err := r.ParseForm()
+		if err != nil {
+			log.Println("/camera_add", err)
+		}
+		for k, v := range r.Form {
+			log.Println(k, v)
+		}
+		path := fmt.Sprintf("%s.%s:%s",
+			r.FormValue("camera_net"),
+			r.FormValue("camera_suffix"),
+			r.FormValue("camera_port"))
+
+		cam, ok := data.CameraMap[path]
+		if ok {
+			log.Println("Camera Found", cam.Path)
+		} else {
+			width, _ := strconv.Atoi(r.FormValue("camera_width"))
+			height, _ := strconv.Atoi(r.FormValue("camera_height"))
+			fps, _ := strconv.Atoi(r.FormValue("camera_fps"))
+			vc := &camera.VideoConfig{
+				Path:       path,
+				CameraType: camera.IP_CAMERA,
+				Codec:      r.FormValue("camera_codec"),
+				Width:      width,
+				Height:     height,
+				FPS:        uint32(fps),
+			}
+			data.CameraMap[path] = vc
+			data.Config.AddCamera(vc)
+			log.Println("Camera Added", vc)
+		}
+	}
+}
+
 func handleWeather(data *RunData) func(http.ResponseWriter, *http.Request) {
+	sub := ha.NewSubcription(&ha.Weather{}, func(c ha.Consumer) {
+		w, ok := c.(*ha.Weather)
+		if ok {
+			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+			data.Temperature = w.Attributes.Temperature
+			data.TemperatureUnit = w.Attributes.TemperatureUnit
+			text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+			message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
+			data.Socket.Broadcast(message)
+		}
+	})
+	data.home.Subscribe("weather.forecast_home", sub)
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		forecast := data.home.NewWeather(data.ActionMap["weather"])

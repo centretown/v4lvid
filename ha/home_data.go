@@ -31,7 +31,7 @@ type HomeData struct {
 	sock          *sockclient.SockClient
 }
 
-func NewHomeData() *HomeData {
+func NewHomeData() (*HomeData, error) {
 	var data = &HomeData{
 		Entities:      make(map[string]*Entity[json.RawMessage]),
 		stop:          make(chan int),
@@ -43,7 +43,7 @@ func NewHomeData() *HomeData {
 	if err != nil {
 		log.Println("NewHomeData", err)
 	}
-	return data
+	return data, err
 }
 
 func (data *HomeData) Subscribe(entityID string, subscription *Subscription) {

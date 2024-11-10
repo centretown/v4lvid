@@ -10,13 +10,13 @@ import (
 )
 
 func main() {
+	flag.Parse()
 	// cfg := &config.DefaultConfig
 	cfg, err := config.Load("config.json")
 	if err != nil {
 		log.Fatal("config.Load", err)
 	}
 	base := flag.String("output", cfg.Output, "Output folder")
-	flag.Parse()
 
 	if len(*base) > 0 {
 		var err error

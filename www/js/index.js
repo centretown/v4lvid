@@ -50,6 +50,7 @@ let chat_data = {};
 let slots = new Map();
 
 function dragstartHandler(ev) {
+    ev.dataTransfer.effectAllowed = "move";
     drag_data.offsetX = ev.offsetX;
     drag_data.offsetY = ev.offsetY;
 }
@@ -68,19 +69,41 @@ function dragendHandler(ev) {
 
 function addDragHandlers(id) {
     const target = document.getElementById(id);
-    console.log("addDragHandlers", id, target);
-    target.addEventListener("dragstart", dragstartHandler);
-    target.addEventListener("dragend", dragendHandler);
+    if (target !== undefined) {
+        console.log("addDragHandlers", id, target);
+        target.addEventListener("dragstart", dragstartHandler);
+        target.addEventListener("dragend", dragendHandler);
+    }
 }
 
 function removeDragHandlers(id) {
     const target = document.getElementById(id);
-    target.removeEventListener("dragstart", dragstartHandler);
-    target.removeEventListener("dragend", dragendHandler);
+    if (target !== undefined) {
+        target.removeEventListener("dragstart", dragstartHandler);
+        target.removeEventListener("dragend", dragendHandler);
+    }
 }
 
 function setdraggable(id, dragabble) {
-    document.getElementById(id).setAttribute('draggable', dragabble);
+    const target = document.getElementById(id);
+    if (target !== undefined) {
+        document.getElementById(id).setAttribute('draggable', dragabble);
+    }
+}
+
+function postName() {
+    const target = document.getElementById("postname");
+    if (target !== undefined) {
+        document.getElementById(id).setAttribute('draggable', dragabble);
+        return target.value;
+    }
+}
+
+function clearMessage(id) {
+    const target = document.getElementById(id);
+    if (target !== undefined) {
+        target.value = "";
+    }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -99,23 +122,24 @@ window.addEventListener('htmx:load', function (evt) {
         target.style.top = data.Y + 'px';
     }
     addDragHandlers(id);
+    target.getc
+
 })
 
 window.addEventListener("gamepadconnected", (e) => {
     console.log(
-      "Gamepad connected at index %d: %s. %d buttons, %d axes.",
-      e.gamepad.index,
-      e.gamepad.id,
-      e.gamepad.buttons.length,
-      e.gamepad.axes.length,
+        "Gamepad connected at index %d: %s. %d buttons, %d axes.",
+        e.gamepad.index,
+        e.gamepad.id,
+        e.gamepad.buttons.length,
+        e.gamepad.axes.length,
     );
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {
     console.log(
-      "Gamepad disconnected from index %d: %s",
-      e.gamepad.index,
-      e.gamepad.id,
+        "Gamepad disconnected from index %d: %s",
+        e.gamepad.index,
+        e.gamepad.id,
     );
 });
-  

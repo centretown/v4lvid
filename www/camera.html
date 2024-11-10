@@ -1,0 +1,64 @@
+{{ define "layout.camera.add" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
+    <div class="content">
+    <form id="camera_add_form" hx-post="/camera_post" hx-swap="none">
+        <div class="form-label">
+            <label for="camera_net">Ip Network</label>
+            <input type="url" id="camera_net" class="form-input" name="camera_net"
+                value="http://192.168.10" readonly>
+        </div>
+        <div class="form-label">
+            <label for="camera_suffix">Ip Suffix</label>
+            <input type="number" id="camera_suffix" class="form-input"
+                name="camera_suffix" required min="2" max="254">
+        </div>
+        <div class="form-label">
+            <label for="camera_port">Port</label>
+            <input type="number" id="camera_port" class="form-input" name="camera_port"
+                value="8080" required min="80">
+        </div>
+        <div class="form-label">
+            <label for="camera_codec">Format</label>
+            <select id="camera_codec" class="form-input" name="camera_codec" value="MJPG">
+                <option class="form-option" value="MJPG">MJPG</select>
+            </select>
+        </div>
+        <div class="form-label">
+            <label for="camera_width">Width</label>
+            <input type="number" id="camera_width" class="form-input" name="camera_width"
+                value="1920" required>
+        </div>
+        <div class="form-label">
+            <label for="camera_height">Height</label>
+            <input type="number" id="camera_height" class="form-input" name="camera_height"
+                value="1080" required>
+        </div>
+        <div class="form-label">
+            <label  for="camera_fps">Frames/Sec</label>
+            <input type="number" id="camera_fps" class="form-input" name="camera_fps" 
+                value="30" required min="1" max="60">
+        </div>
+        <button type="submit" class="action">
+            <span class="symbols-form">send</span>
+        </button>
+    </form>
+    </div>
+ </div>
+{{ end }}
+
+{{ define "layout.camera.list" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
+    <div class="content">
+    {{range $cam := .Cameras}}
+        <div class="form-label">
+            <span class="symbols-small">link
+                {{/* {{if eq $cam.IsOpened true}}link{{else}}link_off{{end}} */}}
+            </span>
+            <span>{{$cam.Path}}</span>
+        </div>
+    {{end}}
+    </div>
+ </div>
+{{ end }}

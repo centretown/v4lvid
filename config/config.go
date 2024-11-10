@@ -9,17 +9,20 @@ import (
 )
 
 type Action struct {
-	Name  string
-	Title string
-	Icon  string
+	Name     string
+	Title    string
+	Icon     string
+	HomeData bool
 }
 
 type Config struct {
-	Output  string
-	HttpUrl string
-	Cameras []*camera.VideoConfig
-	Actions []*Action
-	Drivers map[string][]*camera.ControlKey
+	Output       string
+	HttpUrl      string
+	Cameras      []*camera.VideoConfig
+	Actions      []*Action
+	ActionsHome  []*Action
+	ActionsRight []*Action
+	Drivers      map[string][]*camera.ControlKey
 }
 
 func (cfg *Config) NewActionMap() (m map[string]*Action) {
@@ -53,10 +56,18 @@ var DefaultConfig = Config{
 	},
 	Actions: []*Action{
 		{Name: "camera", Title: "Camera Settings", Icon: "settings_video_camera"},
-		{Name: "sun", Title: "Next Sun", Icon: "wb_twilight"},
-		{Name: "weather", Title: "Forecast Home", Icon: "routine"},
-		{Name: "wifi", Title: "WIFI Signals", Icon: "network_wifi"},
-		{Name: "lights", Title: "LED Lights", Icon: "backlight_high"},
+		{Name: "cameraadd", Title: "Add Camera", Icon: "linked_camera"},
+		{Name: "camera_list", Title: "List Cameras", Icon: "view_list"},
+		{Name: "sun", Title: "Next Sun", Icon: "wb_twilight", HomeData: true},
+		{Name: "weather", Title: "Forecast Home", Icon: "routine", HomeData: true},
+		{Name: "wifi", Title: "WIFI Signals", Icon: "network_wifi", HomeData: true},
+		{Name: "lights", Title: "LED Lights", Icon: "backlight_high", HomeData: true},
+	},
+	ActionsHome: []*Action{},
+	ActionsRight: []*Action{
+		{Name: "chat", Title: "Chat", Icon: "chat"},
+		{Name: "resetcontrols", Title: "Reset Camera", Icon: "reset_settings"},
+		{Name: "record", Title: "Record", Icon: "radio_button_checked"},
 	},
 
 	Drivers: map[string][]*camera.ControlKey{
@@ -159,4 +170,16 @@ func (cfg *Config) NewCameraServers(indicator camera.StreamIndicator) (cameraSer
 			camera.NewVideoServer(source, vcfg, indicator))
 	}
 	return
+}
+
+func (cfg *Config) NewCameraMap() map[string]*camera.VideoConfig {
+	cm := make(map[string]*camera.VideoConfig)
+	for _, cam := range cfg.Cameras {
+		cm[cam.Path] = cam
+	}
+	return cm
+}
+
+func (cfg *Config) AddCamera(vc *camera.VideoConfig) {
+	cfg.Cameras = append(cfg.Cameras, vc)
 }
