@@ -48,7 +48,7 @@
             <span class="symbols-form">send</span>
         </button>
     </form>
-    <div id="camera_status"></div>
+    <div id="camera_status" class="status"></div>
 
     </div>
  </div>
@@ -62,19 +62,20 @@
         <div class="form-entry">
             {{if eq $cam.Source.IsOpened true}}
             <span class="symbols-small">link</span>
-            <span>{{$cam.Config.Path}}</span>
+            <span>{{$cam.Config.Path}}</span><br>
+            <span>connected as: {{$cam.Url}}</span>
             {{else}}
             <span class="symbols-small">link_off</span>
             <span>{{$cam.Config.Path}}</span>
             <button class="action" hx-post="/camera_connect"
                 hx-target="#camera_list_status" hx-swap="innerHTML"
-                hx-vals='{"path": "{{$cam.Path}}"}'>
+                hx-vals='{"path": "{{$cam.Config.Path}}"}'>
                 <span class="symbols-form">link</span>
             </button>
             {{end}}
         </div>
     {{end}}
-        <div id="camera_list_status"></div>
+        <div id="camera_list_status" class="status"></div>
     </div>
  </div>
 {{ end }}

@@ -57,13 +57,35 @@ func connectCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Req
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
-			w.Write([]byte(fmt.Sprintf("Camera error parsing form. %v", err)))
+			w.Write([]byte(fmt.Sprintf("Problem parsing form.<br>  %v", err)))
 			return
 		}
 
 		path := r.FormValue("path")
-		w.Write([]byte(fmt.Sprintf("Camera Path: %s", path)))
-		log.Println(path)
+		cam, ok := data.CameraMap[path]
+		if !ok {
+			w.Write([]byte(fmt.Sprintf("Path not found. Add %s to connect.", path)))
+			return
+		}
+
+		if cam.Source.IsOpened() {
+			w.Write([]byte(fmt.Sprintf("%s is already connected as %s",
+				path, cam.Url())))
+			return
+		}
+
+		err = cam.Open()
+		if err != nil {
+			w.Write([]byte(fmt.Sprintf("Problem connecting to %s.<br>  %v",
+				path, err)))
+			return
+		}
+
+		go cam.Serve()
+
+		// serveCamera(data, cam)
+		w.Write([]byte(fmt.Sprintf("Connected to path %s as %s", path, cam.Url())))
+		log.Println(path, cam.Url())
 	}
 }
 
@@ -101,7 +123,7 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 			w.Write([]byte(fmt.Sprintf("Camera already on file. %s", path)))
 			err = ws.Open()
 			if err != nil {
-				w.Write([]byte(fmt.Sprintf("Camera error parsing form. %v", err)))
+				w.Write([]byte(fmt.Sprintf("Camera error connecting. %v", err)))
 				return
 			}
 
@@ -123,7 +145,8 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 		}
 
 		id := data.Config.AddCamera(vc)
-		ws, err = NewCameraServer(id, vc, data.WebSocket)
+		ws, err = newCameraServer(id, vc, data.WebSocket)
+		// add even if error
 		data.CameraMap[path] = ws
 		data.WebcamServers = append(data.WebcamServers, ws)
 		if err != nil {
@@ -133,13 +156,13 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 		}
 
 		serveCamera(data, ws)
-		w.Write([]byte(fmt.Sprintf("Connected to %s as %s", path, ws.Path())))
+		w.Write([]byte(fmt.Sprintf("Connected to %s as %s", path, ws.Url())))
 	}
 }
 
 func serveCamera(data *RunData, camServer *camera.Server) {
-	log.Println("serveCamera", camServer.Path())
-	data.mux.Handle(camServer.Path(), camServer.Stream())
+	log.Println("serveCamera", camServer.Url())
+	data.mux.Handle(camServer.Url(), camServer.Stream())
 	source := camServer.Source
 	webcam, isWebcam := source.(*camera.Webcam)
 	if isWebcam {
@@ -151,7 +174,7 @@ func serveCamera(data *RunData, camServer *camera.Server) {
 	}
 
 	go camServer.Serve()
-	log.Printf("Serving %s\n", camServer.Path())
+	log.Printf("Serving %s\n", camServer.Url())
 }
 
 func serveCameras(data *RunData) {
@@ -160,7 +183,7 @@ func serveCameras(data *RunData) {
 	}
 }
 
-func NewCameraServer(id int, vcfg *camera.VideoConfig,
+func newCameraServer(id int, vcfg *camera.VideoConfig,
 	indicator camera.StreamIndicator) (cameraServer *camera.Server, err error) {
 
 	var source camera.VideoSource
@@ -177,7 +200,7 @@ func NewCameraServer(id int, vcfg *camera.VideoConfig,
 	return
 }
 
-func NewCameraServers(cfg *config.Config, indicator camera.StreamIndicator) (cameraServers []*camera.Server) {
+func newCameraServers(cfg *config.Config, indicator camera.StreamIndicator) (cameraServers []*camera.Server) {
 	cameraServers = make([]*camera.Server, 0, len(cfg.Cameras))
 	var (
 		cameraServer *camera.Server
@@ -185,7 +208,7 @@ func NewCameraServers(cfg *config.Config, indicator camera.StreamIndicator) (cam
 	)
 
 	for id, vcfg := range cfg.Cameras {
-		cameraServer, err = NewCameraServer(id, vcfg, indicator)
+		cameraServer, err = newCameraServer(id, vcfg, indicator)
 		if err != nil {
 			log.Println(err)
 		}

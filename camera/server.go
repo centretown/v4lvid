@@ -93,7 +93,7 @@ func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator S
 	return cam
 }
 
-func (vs *Server) Path() string {
+func (vs *Server) Url() string {
 	return fmt.Sprintf("/video%d", vs.Id)
 }
 

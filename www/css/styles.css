@@ -7,6 +7,7 @@
   --fgOut: rgba(128, 255, 0, 1);
   --fgIn: rgba(255, 255, 255, 1);
   --fgClock: rgba(127,168,158,.5);
+  --fgStatus: rgba(255,255, 0, .9);
 }
 
 /* fallback */
@@ -177,10 +178,10 @@ h3 {
   font-size: .75rem;
 }
 
-.message-item {
+.message-item, .status {
   margin-left: 1rem;
   margin-bottom: .25rem;
-  color: yellow;
+  color: var(--fgStatus);
   font-size: .75rem;
 }
 

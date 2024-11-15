@@ -67,7 +67,7 @@ func Run(cfg *config.Config) (data *RunData) {
 	data.WebSocket.LoadMessages()
 	data.WebSocket.Run()
 
-	data.WebcamServers = NewCameraServers(cfg, data.WebSocket)
+	data.WebcamServers = newCameraServers(cfg, data.WebSocket)
 	for _, cam := range data.WebcamServers {
 		data.CameraMap[cam.Config.Path] = cam
 	}
