@@ -78,16 +78,16 @@ func (s *Server) SaveMessages() (err error) {
 }
 
 const (
-	messageOff = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`
-	messageOn  = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols streaming">radio_button_checked</span>`
+	streamOff = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`
+	streamOn  = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols streaming">radio_button_checked</span>`
 )
 
 func (s *Server) StreamOn() {
-	s.Broadcast(messageOn)
+	s.Broadcast(streamOn)
 }
 
 func (s *Server) StreamOff() {
-	s.Broadcast(messageOff)
+	s.Broadcast(streamOff)
 }
 
 func (s *Server) Broadcast(message string) {

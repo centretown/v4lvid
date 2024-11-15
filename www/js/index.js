@@ -70,7 +70,6 @@ function dragendHandler(ev) {
 function addDragHandlers(id) {
     const target = document.getElementById(id);
     if (target !== undefined) {
-        console.log("addDragHandlers", id, target);
         target.addEventListener("dragstart", dragstartHandler);
         target.addEventListener("dragend", dragendHandler);
     }

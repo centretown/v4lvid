@@ -1,6 +1,7 @@
 package camera
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -46,6 +47,7 @@ type StreamIndicator interface {
 type Server struct {
 	Source    VideoSource
 	Config    *VideoConfig
+	Id        int
 	indicator StreamIndicator
 
 	quit chan int
@@ -73,11 +75,12 @@ type Server struct {
 	captureSource chan []byte
 }
 
-func NewVideoServer(source VideoSource, config *VideoConfig, indicator StreamIndicator) *Server {
+func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator StreamIndicator) *Server {
 
 	cam := &Server{
 		Source:        source,
 		Config:        config,
+		Id:            id,
 		indicator:     indicator,
 		quit:          make(chan int),
 		cmd:           make(chan ServerCmd),
@@ -88,6 +91,10 @@ func NewVideoServer(source VideoSource, config *VideoConfig, indicator StreamInd
 	}
 
 	return cam
+}
+
+func (vs *Server) Path() string {
+	return fmt.Sprintf("/video%d", vs.Id)
 }
 
 func (vs *Server) AddFilter(filter Hook) {
@@ -251,6 +258,7 @@ func (vs *Server) Serve() {
 			if err != nil {
 				log.Println("Unable to open",
 					vs.Source.Path(), "The camera is unavailable.")
+				vs.Source.Close()
 				return
 			}
 			continue

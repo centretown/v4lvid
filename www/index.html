@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Dave's Window</title>
+    <title>Window</title>
 
     <meta name="author" content="Centretown">
     <meta name="description" content="Dave's Window">
@@ -22,7 +22,7 @@
     </div>
     <span id="events" hx-ext="ws" ws-connect="/events">
         {{ template "layout.actions" . }}
-        {{ template "layout.chat" .Socket }}
+        {{ template "layout.chat" .WebSocket }}
         <span id="slots" class="slots"></span>
         <span class="clock">
             <span id="clock-temp">{{.Temperature}}  {{.TemperatureUnit}}</span>

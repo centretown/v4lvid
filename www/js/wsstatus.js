@@ -6,6 +6,7 @@ let wsmenu = document.getElementById('ws-status-menu');
 // htmx:wsError
 
 let socket;
+let elt;
 
 document.addEventListener("visibilitychange", function(evt) {
     console.log('visibilitychange', document.visibilityState);
@@ -17,6 +18,7 @@ document.addEventListener("visibilitychange", function(evt) {
 document.body.addEventListener('htmx:wsOpen', function(evt) {
     console.log('connected');
     socket = evt.detail.socketWrapper;
+    elt = evt.detail.elt;
     wsstat.innerText = 'chat';
     wsmenu.innerText = 'chat';
 });

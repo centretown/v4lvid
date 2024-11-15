@@ -3,6 +3,7 @@ module v4lvid
 go 1.23.0
 
 require (
+	github.com/google/flatbuffers v24.3.25+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/korandiz/v4l v1.1.0

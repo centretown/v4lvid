@@ -71,7 +71,7 @@
         {{range .Sensors}}
         <div>
             <div><span class="symbols-small">{{.SignalIcon}}</span> {{.Attributes.Name}}</div> 
-            <div class="form-label">{{.State}} {{.Attributes.Units}}</div>
+            <div class="form-entry">{{.State}} {{.Attributes.Units}}</div>
             <div class="note">Last Update: <span>{{.FormatTime}}</span></div>
         </div>
         {{end}}
@@ -85,7 +85,7 @@
     {{template "layout.content.head" .Action }}
     <div id="weather" class="content">
         {{range .Properties}}
-        <div class="form-label">
+        <div class="form-entry">
             <span class="symbols-small">{{.Icon}}</span>
             <span>{{.Label}} {{.Value}} {{.Units}}</span>
         </div>

@@ -13,7 +13,7 @@ type Streamer struct {
 	Server *camera.Server
 	Url    string
 	Icon   string
-	Sock   *socket.Server
+	Socket *socket.Server
 }
 
 func (strm *Streamer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
