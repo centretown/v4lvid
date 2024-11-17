@@ -50,21 +50,65 @@ func handleCameras(data *RunData) {
 	data.mux.HandleFunc("/camera_post", addCameraHandler(data))
 	data.mux.HandleFunc("/camera_list", listCameraHandler(data))
 	data.mux.HandleFunc("/camera_connect", connectCameraHandler(data))
+	data.mux.HandleFunc("/camera_background", setCameraBackground(data))
 
+}
+
+func parseCameraPath(r *http.Request, data *RunData) (cam *camera.Server, path string, err error) {
+	err = r.ParseForm()
+	if err != nil {
+		err = fmt.Errorf("parse form: %v", err)
+		return
+	}
+
+	path = r.FormValue("path")
+	cam, ok := data.CameraMap[path]
+	if !ok {
+		err = fmt.Errorf("path not found: %s", path)
+		return
+	}
+	return
+}
+
+func wrapStatus(id, msg string) []byte {
+	return []byte(fmt.Sprintf(`<div id="%s" class="status">%s</div>`, id, msg))
+}
+
+func setCameraBackground(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const statusID = "camera_list_status"
+		const sourceID = "source"
+		wrapSource := func(id, src string) []byte {
+			return []byte(fmt.Sprintf(`<img id="%s" src="%s">`, id, src))
+		}
+
+		cam, path, err := parseCameraPath(r, data)
+		if err != nil {
+			msg := fmt.Sprintf("Error occured.<br>  %v", err)
+			w.Write(wrapStatus(statusID, msg))
+			return
+		}
+
+		if !cam.Source.IsOpened() {
+			msg := fmt.Sprintf("%s as %s is not connected", path, cam.Url())
+			w.Write(wrapStatus(statusID, msg))
+			return
+		}
+
+		msg := fmt.Sprintf("%s is connected as %s", path, cam.Url())
+		w.Write(wrapStatus(statusID, msg))
+		w.Write(wrapSource(sourceID, cam.Url()))
+
+		// `<img id="source" src="{{.WebcamUrl}}">`
+
+	}
 }
 
 func connectCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
+		cam, path, err := parseCameraPath(r, data)
 		if err != nil {
-			w.Write([]byte(fmt.Sprintf("Problem parsing form.<br>  %v", err)))
-			return
-		}
-
-		path := r.FormValue("path")
-		cam, ok := data.CameraMap[path]
-		if !ok {
-			w.Write([]byte(fmt.Sprintf("Path not found. Add %s to connect.", path)))
+			w.Write([]byte(fmt.Sprintf("Error occured.<br>  %v", err)))
 			return
 		}
 
@@ -82,10 +126,9 @@ func connectCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Req
 		}
 
 		go cam.Serve()
-
-		// serveCamera(data, cam)
-		w.Write([]byte(fmt.Sprintf("Connected to path %s as %s", path, cam.Url())))
-		log.Println(path, cam.Url())
+		msg := fmt.Sprintf("Connected to path %s as %s", path, cam.Url())
+		w.Write([]byte(msg))
+		log.Println(msg)
 	}
 }
 

@@ -83,10 +83,11 @@ function removeDragHandlers(id) {
     }
 }
 
-function setdraggable(id, dragabble) {
+function setdraggable(id, draggable) {
     const target = document.getElementById(id);
     if (target !== undefined) {
-        document.getElementById(id).setAttribute('draggable', dragabble);
+        document.getElementById(id).setAttribute('draggable', draggable);
+        target.style.cursor = (draggable) ? 'move' : 'auto';
     }
 }
 

@@ -60,14 +60,20 @@
     <div class="content">
     {{range $cam := .Cameras}}
         <div class="form-entry">
+            <span class="symbols-small">videocam</span>
             {{if eq $cam.Source.IsOpened true}}
-            <span class="symbols-small">link</span>
-            <span>{{$cam.Config.Path}}</span><br>
-            <span>connected as: {{$cam.Url}}</span>
+            <span>{{$cam.Url}} <span class="symbols-small">link</span>{{$cam.Config.Path}}</span>
+            <div class="image"><img src="{{$cam.Url}}"></div>
+            <button class="action" hx-post="/camera_background"
+                hx-target="#camera_list_status" hx-swap="outerHTML"
+                hx-select="#camera_list_status"
+                hx-select-oob="#source"
+                hx-vals='{"path": "{{$cam.Config.Path}}"}'>
+                <span class="symbols-form">background_replace</span>
+            </button>
             {{else}}
-            <span class="symbols-small">link_off</span>
-            <span>{{$cam.Config.Path}}</span>
-            <button class="action" hx-post="/camera_connect"
+            <span>{{$cam.Url}}<span class="symbols-small">link_off</span>{{$cam.Config.Path}}</span>
+            <button class="action" hx-get="/camera_connect"
                 hx-target="#camera_list_status" hx-swap="innerHTML"
                 hx-vals='{"path": "{{$cam.Config.Path}}"}'>
                 <span class="symbols-form">link</span>
@@ -76,6 +82,7 @@
         </div>
     {{end}}
         <div id="camera_list_status" class="status"></div>
+        <div id="camera_test_status" class="status"></div>
     </div>
  </div>
 {{ end }}

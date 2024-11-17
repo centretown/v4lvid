@@ -8,6 +8,8 @@
   --fgIn: rgba(255, 255, 255, 1);
   --fgClock: rgba(127,168,158,.5);
   --fgStatus: rgba(255,255, 0, .9);
+  --slotWidth: 23rem;
+  --slotImageWidth: 18rem;
 }
 
 /* fallback */
@@ -81,18 +83,24 @@ h3 {
   position: fixed;
   top: 5rem;
   color: var(--fgBright);
-  background-color: var(--bgOpaque);
+  /*background-color: var(--bgOpaque);*/
+  background-color: rgba(0,0,0,1);
+
   border-radius: 1rem;
   animation-name: fade-in-slow;
   animation-timing-function: ease-out;
   animation-duration: 1000ms;
   animation-fill-mode: forwards;
-  overflow: wrap;
+  overflow-x: wrap;
+  overflow-y: auto;
+  scrollbar-color: var(--fgDim) var(--bgOpaque);
+  scrollbar-width: thin;
+  max-height: 86%;
 }
 
 .slot {
   left: 1rem;
-  width: 23rem;
+  width: var(--slotWidth);
 }
 
 .chat {
@@ -107,8 +115,19 @@ h3 {
 .source {
   position: absolute; 
   top: 0px;
-  left:0px;
-  width:100%;
+  left: 0px;
+  width: 100%;
+}
+
+.image {
+  background-color: rgba(0,0,0,1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image > img {
+  width: var(--slotImageWidth);
 }
 
 .source > img {

@@ -40,10 +40,11 @@ func (ipc *Ipcam) IsOpened() bool {
 }
 
 func (ipc *Ipcam) Open(config *VideoConfig) (err error) {
-	ipc.decoder, err = mjpeg.NewDecoderFromURL(ipc.path)
 	ipc.config = config
+	ipc.decoder, err = mjpeg.NewDecoderFromURL(ipc.path)
 	if err != nil {
 		log.Println("NewDecoderFromURL", err)
+		ipc.isOpened = false
 	} else {
 		ipc.isOpened = true
 	}

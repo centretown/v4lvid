@@ -22,18 +22,18 @@
   "Actions": [
     {
       "Name": "camera",
-      "Title": "Camera Settings",
-      "Icon": "settings_video_camera"
+      "Title": "Camera Controls",
+      "Icon": "control_camera"
     },
     {
       "Name": "camera_add",
       "Title": "Add Camera",
-      "Icon": "linked_camera"
+      "Icon": "video_call"
     },
     {
       "Name": "camera_list",
-      "Title": "List Cameras",
-      "Icon": "view_list"
+      "Title": "Cameras",
+      "Icon": "videocam"
     },
     {
       "Name": "weather",

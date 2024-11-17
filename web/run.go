@@ -38,7 +38,8 @@ type RunData struct {
 
 func Run(cfg *config.Config) (data *RunData) {
 	data = &RunData{
-		WebcamUrl: "http://192.168.10.7:9000/video0",
+		WebcamUrl: "/video0",
+		// WebcamUrl: "http://192.168.10.7:9000/video0",
 		Config:    cfg,
 		Actions:   cfg.Actions,
 		ActionMap: cfg.NewActionMap(),

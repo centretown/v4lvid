@@ -8,8 +8,6 @@ const (
 	CAMERATYPE_COUNT
 )
 
-//http://192.168.10.177:8080/browserfs.html
-
 var cameraType = []string{
 	"V4L_CAMERA",
 	"IP_CAMERA",
@@ -30,16 +28,4 @@ type VideoConfig struct {
 	Width      int
 	Height     int
 	FPS        uint32
-}
-
-type VideoSource interface {
-	Path() string
-	Open(*VideoConfig) error
-	IsOpened() bool
-	Close()
-	Read() ([]byte, error)
-}
-
-func (cfg *VideoConfig) Open() {
-
 }
