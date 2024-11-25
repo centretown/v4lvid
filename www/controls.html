@@ -6,8 +6,9 @@
         {{range .WebcamHandlers}}
             {{range .Controls}}
             <button class="action" 
-                hx-get="{{.Url}}" hx-swap="outerHTML" 
-                hx-target="#response-div">
+                hx-put="{{.Url}}" hx-swap="outerHTML" 
+                hx-target="#response-div"
+                hx-vals='js:{source: currentSource()}'>
                 <span class="symbols">{{.Icon}}</span> 
             </button>
             {{ end }}

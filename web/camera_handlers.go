@@ -50,7 +50,7 @@ func handleCameras(data *RunData) {
 	data.mux.HandleFunc("/camera_post", addCameraHandler(data))
 	data.mux.HandleFunc("/camera_list", listCameraHandler(data))
 	data.mux.HandleFunc("/camera_connect", connectCameraHandler(data))
-	data.mux.HandleFunc("/camera_background", setCameraBackground(data))
+	data.mux.HandleFunc("/camera_primary", setPrimaryCamera(data))
 
 }
 
@@ -74,7 +74,7 @@ func wrapStatus(id, msg string) []byte {
 	return []byte(fmt.Sprintf(`<div id="%s" class="status">%s</div>`, id, msg))
 }
 
-func setCameraBackground(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+func setPrimaryCamera(data *RunData) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const statusID = "camera_list_status"
 		const sourceID = "source"
@@ -180,7 +180,7 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 		fps, _ := strconv.Atoi(r.FormValue("camera_fps"))
 		vc := &camera.VideoConfig{
 			Path:       path,
-			CameraType: camera.IP_CAMERA,
+			CameraType: camera.REMOTE_CAMERA,
 			Codec:      r.FormValue("camera_codec"),
 			Width:      width,
 			Height:     height,
@@ -231,9 +231,9 @@ func newCameraServer(id int, vcfg *camera.VideoConfig,
 
 	var source camera.VideoSource
 	switch vcfg.CameraType {
-	case camera.V4L_CAMERA:
+	case camera.LOCAL_CAMERA:
 		source = camera.NewWebcam(vcfg.Path)
-	case camera.IP_CAMERA:
+	case camera.REMOTE_CAMERA:
 		source = camera.NewIpcam(vcfg.Path)
 	default:
 		return

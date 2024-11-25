@@ -64,7 +64,7 @@
             {{if eq $cam.Source.IsOpened true}}
             <span>{{$cam.Url}} <span class="symbols-small">link</span>{{$cam.Config.Path}}</span>
             <div class="image"><img src="{{$cam.Url}}"></div>
-            <button class="action" hx-post="/camera_background"
+            <button class="action" hx-post="/camera_primary"
                 hx-target="#camera_list_status" hx-swap="outerHTML"
                 hx-select="#camera_list_status"
                 hx-select-oob="#source"

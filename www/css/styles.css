@@ -91,11 +91,11 @@ h3 {
   animation-timing-function: ease-out;
   animation-duration: 1000ms;
   animation-fill-mode: forwards;
+  max-height: 80%;
   overflow-x: wrap;
   overflow-y: auto;
   scrollbar-color: var(--fgDim) var(--bgOpaque);
   scrollbar-width: thin;
-  max-height: 86%;
 }
 
 .slot {

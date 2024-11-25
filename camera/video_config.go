@@ -3,8 +3,8 @@ package camera
 type CameraType int
 
 const (
-	V4L_CAMERA CameraType = iota
-	IP_CAMERA
+	LOCAL_CAMERA CameraType = iota
+	REMOTE_CAMERA
 	CAMERATYPE_COUNT
 )
 
@@ -24,6 +24,7 @@ func (ct CameraType) String() string {
 type VideoConfig struct {
 	CameraType CameraType
 	Path       string
+	Driver     string
 	Codec      string
 	Width      int
 	Height     int

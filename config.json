@@ -12,6 +12,14 @@
     },
     {
       "CameraType": 1,
+      "Path": "http://192.168.10.213:8080/video0",
+      "Codec": "MJPG",
+      "Width": 1920,
+      "Height": 1080,
+      "FPS": 30
+    },
+    {
+      "CameraType": 1,
       "Path": "http://192.168.10.30:8080",
       "Codec": "MJPG",
       "Width": 1024,
@@ -57,6 +65,10 @@
     }
   ],
   "Drivers": {
+    "ipwebcam":[
+    {
+    }
+  ],
     "uvcvideo": [
       {
         "Key": "Zoom, Absolute",

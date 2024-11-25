@@ -18,11 +18,10 @@ import (
 )
 
 type RunData struct {
-	WebcamUrl string
-	Config    *config.Config
-	Actions   []*config.Action
-	ActionMap map[string]*config.Action
-	// WebcamServers  []*camera.Server
+	WebcamUrl       string
+	Config          *config.Config
+	Actions         []*config.Action
+	ActionMap       map[string]*config.Action
 	WebcamHandlers  []*WebcamHandler
 	WebcamServers   []*camera.Server
 	CameraMap       map[string]*camera.Server

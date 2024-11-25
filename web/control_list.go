@@ -7,12 +7,13 @@ import (
 )
 
 type ControlList struct {
-	webcam   *camera.Webcam
+	webcam camera.VideoSource
+	// webcam   *camera.Webcam
 	Id       int
 	Handlers []*WebcamHandler
 }
 
-func NewControlList(mux *http.ServeMux, webcam *camera.Webcam, id int, handlers []*WebcamHandler) *ControlList {
+func NewControlList(mux *http.ServeMux, webcam camera.VideoSource, id int, handlers []*WebcamHandler) *ControlList {
 	ctll := &ControlList{
 		webcam:   webcam,
 		Id:       id,
@@ -29,9 +30,13 @@ func (ctll *ControlList) AddHandler(mux *http.ServeMux, ctlh *WebcamHandler) {
 	if ctlh == nil {
 		log.Fatalln("AddControl control is nil")
 	}
+
 	ctlh.webcam = ctll.webcam
-	ctlh.Info, err = ctlh.webcam.GetControlInfo(ctlh.Key)
-	ctlh.Value = ctlh.webcam.GetControlValue(ctlh.Key)
+	webcam, ok := ctlh.webcam.(*camera.Webcam)
+	if ok {
+		ctlh.Info, err = webcam.GetControlInfo(ctlh.Key)
+		ctlh.Value = webcam.GetControlValue(ctlh.Key)
+	}
 
 	ctll.Handlers = append(ctll.Handlers, ctlh)
 	if err != nil {
@@ -45,9 +50,14 @@ func (ctll *ControlList) AddHandler(mux *http.ServeMux, ctlh *WebcamHandler) {
 }
 
 func (ctlh *ControlList) ResetControls() {
-	for _, ctl := range ctlh.Handlers {
-		ctl.webcam.SetValue(ctl.Key, ctl.Info.Default)
-		log.Println("ResetControls", ctl.Key, ctl.Info.Default)
-		ctl.Value = ctl.Info.Default
+	webcam, ok := ctlh.webcam.(*camera.Webcam)
+	if ok {
+		for _, ctl := range ctlh.Handlers {
+			webcam.SetValue(ctl.Key, ctl.Info.Default)
+			log.Println("ResetControls", ctl.Key, ctl.Info.Default)
+			ctl.Value = ctl.Info.Default
+		}
+	} else {
+		//TODO
 	}
 }

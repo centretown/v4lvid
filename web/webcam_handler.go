@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 	"v4lvid/camera"
 
 	"github.com/korandiz/v4l"
@@ -12,7 +13,7 @@ import (
 var _ http.Handler = (*WebcamHandler)(nil)
 
 type WebcamHandler struct {
-	webcam *camera.Webcam
+	webcam camera.VideoSource
 	Key    string
 
 	Info       v4l.ControlInfo
@@ -42,21 +43,42 @@ func NewWebcamHandler(key string, ctls []*camera.Control, tmpl *template.Templat
 }
 
 func (handler *WebcamHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var (
+		err    error
+		source string
+	)
+	err = r.ParseForm()
+	if err != nil {
+		log.Println("src: ", err)
+		return
+	}
 
+	source = r.FormValue("source")
+	last := strings.LastIndex(source, "/")
+	if last >= 0 {
+		source = source[last+1:]
+	}
+
+	log.Println("src:", source)
 	control, ok := handler.controlMap[r.RequestURI]
 	if !ok {
 		log.Println("RequestURI not found", handler.Key, r.RequestURI)
 		return
 	}
 
-	log.Println("Handle", handler.Key, r.RequestURI)
-	newValue := handler.Value + handler.Info.Step*control.Multiplier
-	if newValue >= handler.Info.Min && newValue <= handler.Info.Max {
-		handler.Value = newValue
-		handler.webcam.SetValue(handler.Key, newValue)
-	}
-	err := handler.tmpl.ExecuteTemplate(w, "layout.response", handler.Value)
-	if err != nil {
-		log.Println("ControlHandler", err)
+	webcam, ok := handler.webcam.(*camera.Webcam)
+	if ok {
+		log.Println("Handle", handler.Key, r.RequestURI)
+		newValue := handler.Value + handler.Info.Step*control.Multiplier
+		if newValue >= handler.Info.Min && newValue <= handler.Info.Max {
+			handler.Value = newValue
+			webcam.SetValue(handler.Key, newValue)
+		}
+		err = handler.tmpl.ExecuteTemplate(w, "layout.response", handler.Value)
+		if err != nil {
+			log.Println("ControlHandler", err)
+		}
+	} else {
+		//TODO
 	}
 }

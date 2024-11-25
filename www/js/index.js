@@ -106,6 +106,15 @@ function clearMessage(id) {
     }
 }
 
+function currentSource() {
+    const target = document.getElementById("source");
+    if (target !== undefined) {
+        console.log(target.src);
+        return target.src;
+    }
+    return "target not found";
+}
+
 window.addEventListener("DOMContentLoaded", () => {
     addDragHandlers("chat");
 });

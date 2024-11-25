@@ -7,7 +7,7 @@ var DefaultConfig = Config{
 	HttpUrl: "192.168.10.7:9000",
 	Cameras: []*camera.VideoConfig{
 		{
-			CameraType: camera.V4L_CAMERA,
+			CameraType: camera.LOCAL_CAMERA,
 			Path:       "/dev/video0",
 			Codec:      "MJPG",
 			Width:      1920,
@@ -15,7 +15,7 @@ var DefaultConfig = Config{
 			FPS:        30,
 		},
 		{
-			CameraType: camera.IP_CAMERA,
+			CameraType: camera.REMOTE_CAMERA,
 			Path:       "http://192.168.10.30:8080",
 			Codec:      "MJPG",
 			Width:      1024,
