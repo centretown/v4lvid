@@ -3,21 +3,24 @@ package web
 import (
 	"html/template"
 	"log"
+	"v4lvid/camera"
 	"v4lvid/config"
 )
 
-func CreateNexigoHandlers(cfg *config.Config, tmpl *template.Template) (handlers []*WebcamHandler) {
+func CreateNexigoHandlers(cfg *config.Config, cameras []*camera.Server,
+	tmpl *template.Template) (handlers []*WebcamHandler) {
+
+	const driverKey = "uvcvideo"
 	handlers = make([]*WebcamHandler, 0)
-	const key = "uvcvideo"
-	driver, ok := cfg.Drivers[key]
+	driver, ok := cfg.Drivers[driverKey]
 	if !ok {
-		log.Println("Driver not found", key)
+		log.Println("Driver not found", driverKey)
 		return
 	}
 
 	for _, d := range driver {
 		handlers = append(handlers,
-			NewWebcamHandler(d.Key, d.Controls, tmpl))
+			NewWebcamHandler(d.Key, d.Controls, cameras, tmpl))
 	}
 	return
 }

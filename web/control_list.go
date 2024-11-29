@@ -31,12 +31,12 @@ func (ctll *ControlList) AddHandler(mux *http.ServeMux, ctlh *WebcamHandler) {
 		log.Fatalln("AddControl control is nil")
 	}
 
-	ctlh.webcam = ctll.webcam
-	webcam, ok := ctlh.webcam.(*camera.Webcam)
-	if ok {
-		ctlh.Info, err = webcam.GetControlInfo(ctlh.Key)
-		ctlh.Value = webcam.GetControlValue(ctlh.Key)
-	}
+	// ctlh.webcam = ctll.webcam
+	// webcam, ok := ctlh.webcam.(*camera.Webcam)
+	// if ok {
+	// 	ctlh.Info, err = webcam.GetControlInfo(ctlh.Key)
+	// 	ctlh.Value = webcam.GetControlValue(ctlh.Key)
+	// }
 
 	ctll.Handlers = append(ctll.Handlers, ctlh)
 	if err != nil {
@@ -53,9 +53,13 @@ func (ctlh *ControlList) ResetControls() {
 	webcam, ok := ctlh.webcam.(*camera.Webcam)
 	if ok {
 		for _, ctl := range ctlh.Handlers {
-			webcam.SetValue(ctl.Key, ctl.Info.Default)
-			log.Println("ResetControls", ctl.Key, ctl.Info.Default)
-			ctl.Value = ctl.Info.Default
+			info, err := webcam.GetControlInfo(ctl.Key)
+			if err != nil {
+				log.Println("ResetControls", ctl.Key, err)
+				continue
+			}
+			webcam.SetValue(ctl.Key, info.Default)
+			log.Println("ResetControls", ctl.Key, info.Default)
 		}
 	} else {
 		//TODO

@@ -24,6 +24,7 @@ func (ct CameraType) String() string {
 type VideoConfig struct {
 	CameraType CameraType
 	Path       string
+	Base       string
 	Driver     string
 	Codec      string
 	Width      int

@@ -225,37 +225,3 @@ func serveCameras(data *RunData) {
 		serveCamera(data, camServer)
 	}
 }
-
-func newCameraServer(id int, vcfg *camera.VideoConfig,
-	indicator camera.StreamIndicator) (cameraServer *camera.Server, err error) {
-
-	var source camera.VideoSource
-	switch vcfg.CameraType {
-	case camera.LOCAL_CAMERA:
-		source = camera.NewWebcam(vcfg.Path)
-	case camera.REMOTE_CAMERA:
-		source = camera.NewIpcam(vcfg.Path)
-	default:
-		return
-	}
-	cameraServer = camera.NewVideoServer(id, source, vcfg, indicator)
-	err = cameraServer.Open()
-	return
-}
-
-func newCameraServers(cfg *config.Config, indicator camera.StreamIndicator) (cameraServers []*camera.Server) {
-	cameraServers = make([]*camera.Server, 0, len(cfg.Cameras))
-	var (
-		cameraServer *camera.Server
-		err          error
-	)
-
-	for id, vcfg := range cfg.Cameras {
-		cameraServer, err = newCameraServer(id, vcfg, indicator)
-		if err != nil {
-			log.Println(err)
-		}
-		cameraServers = append(cameraServers, cameraServer)
-	}
-	return
-}
