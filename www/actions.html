@@ -23,7 +23,8 @@
             </button>
 
             <button class="action" 
-                hx-put="/resetcontrols" hx-swap=none>
+                hx-put="/resetcontrols" hx-swap=none
+                hx-vals='js:{source: currentSource()}'>
                 <span class="symbols">reset_settings</span>
             </button>
 

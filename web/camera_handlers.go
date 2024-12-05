@@ -16,45 +16,45 @@ type CameraListData struct {
 
 type CameraData struct {
 	Action         *config.Action
-	WebcamHandlers []*WebcamHandler
+	WebcamHandlers []*ControlHandler
 }
 
 type AddCamera struct {
 	Action *config.Action
 }
 
-func handleCameras(data *RunData) {
-	data.mux.HandleFunc("/camera",
+func (rt *RunTime) handleCameras() {
+	rt.mux.HandleFunc("/camera",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
-			err := data.template.Lookup("layout.controls").Execute(w,
+			err := rt.template.Lookup("layout.controls").Execute(w,
 				&CameraData{
-					Action:         data.ActionMap["camera"],
-					WebcamHandlers: data.WebcamHandlers})
+					Action:         rt.ActionMap["camera"],
+					WebcamHandlers: rt.ControlHandlers})
 			if err != nil {
 				log.Fatal("/camera", err)
 			}
 		})
-	data.mux.HandleFunc("/camera_add",
+	rt.mux.HandleFunc("/camera_add",
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add("Cache-Control", "no-cache")
-			err := data.template.Lookup("layout.camera.add").Execute(w,
+			err := rt.template.Lookup("layout.camera.add").Execute(w,
 				&AddCamera{
-					Action: data.ActionMap["camera_add"],
+					Action: rt.ActionMap["camera_add"],
 				})
 
 			if err != nil {
 				log.Fatal("/camera_add", err)
 			}
 		})
-	data.mux.HandleFunc("/camera_post", addCameraHandler(data))
-	data.mux.HandleFunc("/camera_list", listCameraHandler(data))
-	data.mux.HandleFunc("/camera_connect", connectCameraHandler(data))
-	data.mux.HandleFunc("/camera_primary", setPrimaryCamera(data))
+	rt.mux.HandleFunc("/camera_post", rt.addCameraHandler())
+	rt.mux.HandleFunc("/camera_list", rt.listCameraHandler())
+	rt.mux.HandleFunc("/camera_connect", rt.connectCameraHandler())
+	rt.mux.HandleFunc("/camera_primary", rt.setPrimaryCamera())
 
 }
 
-func parseCameraPath(r *http.Request, data *RunData) (cam *camera.Server, path string, err error) {
+func (rt *RunTime) parseCameraPath(r *http.Request) (cam *camera.Server, path string, err error) {
 	err = r.ParseForm()
 	if err != nil {
 		err = fmt.Errorf("parse form: %v", err)
@@ -62,7 +62,7 @@ func parseCameraPath(r *http.Request, data *RunData) (cam *camera.Server, path s
 	}
 
 	path = r.FormValue("path")
-	cam, ok := data.CameraMap[path]
+	cam, ok := rt.CameraMap[path]
 	if !ok {
 		err = fmt.Errorf("path not found: %s", path)
 		return
@@ -74,7 +74,7 @@ func wrapStatus(id, msg string) []byte {
 	return []byte(fmt.Sprintf(`<div id="%s" class="status">%s</div>`, id, msg))
 }
 
-func setPrimaryCamera(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+func (rt *RunTime) setPrimaryCamera() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const statusID = "camera_list_status"
 		const sourceID = "source"
@@ -82,7 +82,7 @@ func setPrimaryCamera(data *RunData) func(w http.ResponseWriter, r *http.Request
 			return []byte(fmt.Sprintf(`<img id="%s" src="%s">`, id, src))
 		}
 
-		cam, path, err := parseCameraPath(r, data)
+		cam, path, err := rt.parseCameraPath(r)
 		if err != nil {
 			msg := fmt.Sprintf("Error occured.<br>  %v", err)
 			w.Write(wrapStatus(statusID, msg))
@@ -95,6 +95,7 @@ func setPrimaryCamera(data *RunData) func(w http.ResponseWriter, r *http.Request
 			return
 		}
 
+		rt.Streamer.Server = cam
 		msg := fmt.Sprintf("%s is connected as %s", path, cam.Url())
 		w.Write(wrapStatus(statusID, msg))
 		w.Write(wrapSource(sourceID, cam.Url()))
@@ -104,9 +105,9 @@ func setPrimaryCamera(data *RunData) func(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func connectCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+func (rt *RunTime) connectCameraHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cam, path, err := parseCameraPath(r, data)
+		cam, path, err := rt.parseCameraPath(r)
 		if err != nil {
 			w.Write([]byte(fmt.Sprintf("Error occured.<br>  %v", err)))
 			return
@@ -132,20 +133,20 @@ func connectCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Req
 	}
 }
 
-func listCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+func (rt *RunTime) listCameraHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		camData := &CameraListData{
-			Action:  data.ActionMap["camera_list"],
-			Cameras: data.WebcamServers,
+			Action:  rt.ActionMap["camera_list"],
+			Cameras: rt.CameraServers,
 		}
-		err := data.template.Lookup("layout.camera.list").Execute(w, camData)
+		err := rt.template.Lookup("layout.camera.list").Execute(w, camData)
 		if err != nil {
 			log.Fatal("/camera_list", err)
 		}
 	}
 }
 
-func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request) {
+func (rt *RunTime) addCameraHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("camera_post")
 		w.Header().Add("Cache-Control", "no-cache")
@@ -161,7 +162,7 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 			r.FormValue("camera_port"),
 			r.FormValue("camera_url"))
 
-		ws, ok := data.CameraMap[path]
+		ws, ok := rt.CameraMap[path]
 		if ok {
 			w.Write([]byte(fmt.Sprintf("Camera already on file. %s", path)))
 			err = ws.Open()
@@ -187,41 +188,69 @@ func addCameraHandler(data *RunData) func(w http.ResponseWriter, r *http.Request
 			FPS:        uint32(fps),
 		}
 
-		id := data.Config.AddCamera(vc)
-		ws, err = newCameraServer(id, vc, data.WebSocket)
+		id := rt.Config.AddCamera(vc)
+		ws, err = newCameraServer(id, vc, rt.WebSocket)
 		// add even if error
-		data.CameraMap[path] = ws
-		data.WebcamServers = append(data.WebcamServers, ws)
+		rt.CameraMap[path] = ws
+		rt.CameraServers = append(rt.CameraServers, ws)
 		if err != nil {
 			msg := fmt.Sprintf("Camera Added %s.<br>The following error was reported:<br>%v", path, err)
 			w.Write([]byte(msg))
 			return
 		}
 
-		serveCamera(data, ws)
+		rt.serveCamera(ws)
 		w.Write([]byte(fmt.Sprintf("Connected to %s as %s", path, ws.Url())))
 	}
 }
 
-func serveCamera(data *RunData, camServer *camera.Server) {
-	log.Println("serveCamera", camServer.Url())
-	data.mux.Handle(camServer.Url(), camServer.Stream())
-	source := camServer.Source
-	webcam, isWebcam := source.(*camera.Webcam)
-	if isWebcam {
-		ctll := NewControlList(data.mux, webcam, 0, data.WebcamHandlers)
-		data.mux.HandleFunc("/resetcontrols",
-			func(w http.ResponseWriter, r *http.Request) {
-				ctll.ResetControls()
-			})
-	}
-
+func (rt *RunTime) serveCamera(camServer *camera.Server) {
+	rt.mux.Handle(camServer.Url(), camServer.Stream())
 	go camServer.Serve()
-	log.Printf("Serving %s\n", camServer.Url())
 }
 
-func serveCameras(data *RunData) {
-	for _, camServer := range data.WebcamServers {
-		serveCamera(data, camServer)
+func (rt *RunTime) serveCameras() {
+	for _, camServer := range rt.CameraServers {
+		rt.serveCamera(camServer)
+	}
+
+	for _, handler := range rt.ControlHandlers {
+		for _, ctl := range handler.Controls {
+			rt.mux.Handle(ctl.Url, handler)
+		}
+	}
+
+	rt.mux.HandleFunc("/resetcontrols",
+		func(w http.ResponseWriter, r *http.Request) {
+			camsrv, err := rt.parseSourceId(r)
+			if err != nil {
+				return
+			}
+			if camsrv.Config.Driver != UVCVideo {
+				log.Printf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
+				return
+			}
+			_, ok := camsrv.Source.(*camera.Ipcam)
+			if ok {
+				handleRemote(camsrv, w, r, rt.template)
+				return
+			}
+			webcam, ok := camsrv.Source.(*camera.Webcam)
+			if ok {
+				rt.ResetControls(webcam)
+			}
+		})
+}
+
+func (rt *RunTime) ResetControls(webcam *camera.Webcam) {
+	for _, ctlh := range rt.ControlHandlers {
+		info, err := webcam.GetControlInfo(ctlh.Key)
+		if err != nil {
+			log.Println("ResetControls", ctlh.Key, err)
+			continue
+		}
+		ctlh.Value = info.Default
+		webcam.SetControlValue(ctlh.Key, ctlh.Value)
+		log.Println("ResetControls", ctlh.Key, ctlh.Value)
 	}
 }

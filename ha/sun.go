@@ -33,12 +33,12 @@ type Sun struct {
 	Sensors []*TimeStampSensor
 }
 
-func (data *HomeData) NewSun(action *config.Action) (sun *Sun) {
-	sunlist := ListEntitiesLike("sensor.sun_next", data.EntityKeys)
+func (home *HomeRuntime) NewSun(action *config.Action) (sun *Sun) {
+	sunlist := ListEntitiesLike("sensor.sun_next", home.EntityKeys)
 	sensors := make([]*TimeStampSensor, 0, len(sunlist))
 	for _, s := range sunlist {
 		sensor := &TimeStampSensor{}
-		sensor.Sun.Copy(data.Entities[s])
+		sensor.Sun.Copy(home.Entities[s])
 		sensor.TimeStamp, _ = time.Parse(time.RFC3339, sensor.Sun.State)
 		sensors = append(sensors, sensor)
 	}

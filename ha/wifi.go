@@ -36,13 +36,13 @@ func (ws *WifiSensors) SignalIcon() string {
 	return "network_wifi"
 }
 
-func (data *HomeData) WifiSensors(action *config.Action) (wifi *Wifi) {
-	ids := ListEntitiesLike("wifi", data.EntityKeys)
+func (home *HomeRuntime) WifiSensors(action *config.Action) (wifi *Wifi) {
+	ids := ListEntitiesLike("wifi", home.EntityKeys)
 
 	sensors := make([]*WifiSensors, 0, len(ids))
 	for _, id := range ids {
 		sensor := &WifiSensors{}
-		e, ok := data.Entities[id]
+		e, ok := home.Entities[id]
 		if ok {
 			sensor.Copy(e)
 		}
@@ -52,9 +52,9 @@ func (data *HomeData) WifiSensors(action *config.Action) (wifi *Wifi) {
 	return
 }
 
-func (data *HomeData) WifiSensor(entityID string) (wifi *WifiSensors) {
+func (home *HomeRuntime) WifiSensor(entityID string) (wifi *WifiSensors) {
 	wifi = &WifiSensors{}
-	e, ok := data.Entities[entityID]
+	e, ok := home.Entities[entityID]
 	if !ok {
 		log.Println(entityID, "not found")
 		return

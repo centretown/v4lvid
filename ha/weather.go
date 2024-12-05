@@ -10,11 +10,11 @@ type Weather struct {
 	Action *config.Action
 }
 
-func (data *HomeData) NewWeather(action *config.Action) *Weather {
+func (home *HomeRuntime) NewWeather(action *config.Action) *Weather {
 	wthr := &Weather{
 		Action: action,
 	}
-	entity, ok := data.Entities["weather.forecast_home"]
+	entity, ok := home.Entities["weather.forecast_home"]
 	if ok {
 		wthr.Copy(entity)
 	}

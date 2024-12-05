@@ -10,14 +10,13 @@ import (
 var _ VideoSource = (*Webcam)(nil)
 
 type Webcam struct {
-	path     string
-	config   *VideoConfig
-	Device   *v4l.Device
-	Info     v4l.DeviceInfo
-	Buffer   []byte
-	Controls map[string]v4l.ControlInfo
-	Configs  []v4l.DeviceConfig
-	isOpened bool
+	path       string
+	Device     *v4l.Device
+	DeviceInfo v4l.DeviceInfo
+	Buffer     []byte
+	Controls   map[string]v4l.ControlInfo
+	Configs    []v4l.DeviceConfig
+	isOpened   bool
 }
 
 func NewWebcam(path string) *Webcam {
@@ -34,10 +33,6 @@ func (cam *Webcam) Path() string {
 	return cam.path
 }
 
-func (cam *Webcam) Config() *VideoConfig {
-	return cam.config
-}
-
 func (cam *Webcam) Open(config *VideoConfig) error {
 
 	cam.isOpened = false
@@ -46,17 +41,16 @@ func (cam *Webcam) Open(config *VideoConfig) error {
 		log.Println("Open", cam.path, err)
 		return err
 	}
-	cam.config = config
 	cam.isOpened = true
 	cam.Device = device
-	cam.Info, err = device.DeviceInfo()
+	cam.DeviceInfo, err = device.DeviceInfo()
 	if err != nil {
 		log.Println("DeviceInfo", cam.path, err)
 		return err
 	}
 
 	log.Printf("DeviceName:'%s' DriverName: '%s'\n",
-		cam.Info.DeviceName, cam.Info.DriverName)
+		cam.DeviceInfo.DeviceName, cam.DeviceInfo.DriverName)
 
 	err = cam.LoadConfigs()
 	if err != nil {
@@ -171,7 +165,7 @@ func (cam *Webcam) GetControlValue(key string) (value int32) {
 	return
 }
 
-func (cam *Webcam) SetValue(key string, value int32) {
+func (cam *Webcam) SetControlValue(key string, value int32) {
 	control, ok := cam.Controls[strings.ToLower(key)]
 	if !ok {
 		log.Println("unknown control", key, value)

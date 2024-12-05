@@ -5,7 +5,7 @@ import (
 )
 
 func TestAppData(t *testing.T) {
-	data, err := NewHomeData()
+	data, err := NewHomeRuntime()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -15,7 +15,7 @@ func TestAppData(t *testing.T) {
 	testSunTimes(t, data)
 }
 
-func testAuthorize(t *testing.T, data *HomeData) {
+func testAuthorize(t *testing.T, data *HomeRuntime) {
 	ok, err := data.Authorize()
 	if err != nil {
 		t.Fatal("authorize", err)
@@ -27,7 +27,7 @@ func testAuthorize(t *testing.T, data *HomeData) {
 	t.Log("authorized")
 }
 
-func testSunTimes(t *testing.T, data *HomeData) {
+func testSunTimes(t *testing.T, data *HomeRuntime) {
 	// sensors := data.SunTimes(nil)
 	// tmpl, err := template.ParseGlob("../www/*.html")
 	// if err != nil {
@@ -39,7 +39,7 @@ func testSunTimes(t *testing.T, data *HomeData) {
 	// }
 }
 
-func testPrefixWifi(t *testing.T, data *HomeData) {
+func testPrefixWifi(t *testing.T, data *HomeRuntime) {
 	show := func(list []string) {
 		for i := range list {
 			t.Log(list[i])
@@ -49,7 +49,7 @@ func testPrefixWifi(t *testing.T, data *HomeData) {
 	show(ListEntitiesLike("sensor.sun_next", data.EntityKeys))
 }
 
-func testBuildEntities(t *testing.T, data *HomeData) {
+func testBuildEntities(t *testing.T, data *HomeRuntime) {
 	var err error = data.BuildEntities()
 	if err != nil {
 		t.Fatal("BuildEntities", err)

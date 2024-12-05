@@ -18,12 +18,14 @@ const (
 	SubscribeCommand = `{ "type":"subscribe_events", "event_type":"state_changed", "id":%d }`
 )
 
-type HomeData struct {
+type HomeRuntime struct {
 	Entities   EntityMap
 	EntityKeys []string
 
-	Err           error
-	Monitoring    bool
+	Monitoring      bool
+	Temperature     float64
+	TemperatureUnit string
+
 	stop          chan int
 	loadStatesID  int
 	subscriptions map[string][]*Subscription
@@ -31,34 +33,34 @@ type HomeData struct {
 	sock          *sockclient.SockClient
 }
 
-func NewHomeData() (*HomeData, error) {
-	var data = &HomeData{
+func NewHomeRuntime() (*HomeRuntime, error) {
+	var home = &HomeRuntime{
 		Entities:      make(map[string]*Entity[json.RawMessage]),
 		stop:          make(chan int),
 		subscriptions: make(map[string][]*Subscription),
 	}
 
 	var err error
-	data.sock, err = sockclient.NewSockClient()
+	home.sock, err = sockclient.NewSockClient()
 	if err != nil {
 		log.Println("NewHomeData", err)
 	}
-	return data, err
+	return home, err
 }
 
-func (data *HomeData) Subscribe(entityID string, subscription *Subscription) {
-	list, ok := data.subscriptions[entityID]
+func (home *HomeRuntime) Subscribe(entityID string, subscription *Subscription) {
+	list, ok := home.subscriptions[entityID]
 	if !ok {
 		list = make([]*Subscription, 1)
 		list[0] = subscription
 	} else {
 		list = append(list, subscription)
 	}
-	data.subscriptions[entityID] = list
+	home.subscriptions[entityID] = list
 }
 
-func (data *HomeData) Consume(entityID string, newState *Entity[json.RawMessage]) {
-	subs, ok := data.subscriptions[entityID]
+func (home *HomeRuntime) Consume(entityID string, newState *Entity[json.RawMessage]) {
+	subs, ok := home.subscriptions[entityID]
 	if ok {
 		for _, sub := range subs {
 			if sub.Enabled {
@@ -68,18 +70,17 @@ func (data *HomeData) Consume(entityID string, newState *Entity[json.RawMessage]
 	}
 }
 
-func (data *HomeData) EntityList(filters ...string) (list []string) {
+func (home *HomeRuntime) EntityList(filters ...string) (list []string) {
 	list = make([]string, 0)
 	all := len(filters) == 0
-	// list = make([]string, 0, len(data.Entities))
-	for k := range data.Entities {
+	for keys := range home.Entities {
 		if all {
-			list = append(list, k)
+			list = append(list, keys)
 			continue
 		}
-		for _, s := range filters {
-			if strings.HasPrefix(k, s) {
-				list = append(list, k)
+		for _, filter := range filters {
+			if strings.HasPrefix(keys, filter) {
+				list = append(list, keys)
 				break
 			}
 		}
@@ -88,18 +89,18 @@ func (data *HomeData) EntityList(filters ...string) (list []string) {
 	return
 }
 
-func (data *HomeData) CallService(cmd string) {
-	data.sock.WriteCommandID(cmd)
+func (home *HomeRuntime) CallService(cmd string) {
+	home.sock.WriteCommandID(cmd)
 }
 
-func (data *HomeData) StopMonitor() {
-	if data.Monitoring {
+func (home *HomeRuntime) StopMonitor() {
+	if home.Monitoring {
 		log.Println("StopMonitor")
-		data.stop <- 1
+		home.stop <- 1
 	}
 }
 
-func (data *HomeData) Authorize() (ok bool, err error) {
+func (home *HomeRuntime) Authorize() (ok bool, err error) {
 	var (
 		result AuthResult
 		buf    []byte
@@ -109,11 +110,11 @@ func (data *HomeData) Authorize() (ok bool, err error) {
 	cmd := fmt.Sprintf(AuthCommand, sockclient.Token)
 
 	for i := 0; i < max && !ok; i += 1 {
-		err = data.sock.WriteCommand(cmd)
+		err = home.sock.WriteCommand(cmd)
 		if err != nil {
 			return
 		}
-		buf, err = data.sock.Read()
+		buf, err = home.sock.Read()
 		if err != nil {
 			return
 		}
@@ -129,8 +130,8 @@ func (data *HomeData) Authorize() (ok bool, err error) {
 	return
 }
 
-func (data *HomeData) BuildEntities() (err error) {
-	data.loadStatesID, err = data.sock.WriteCommandID(StatesCommand)
+func (home *HomeRuntime) BuildEntities() (err error) {
+	home.loadStatesID, err = home.sock.WriteCommandID(StatesCommand)
 	if err != nil {
 		log.Println("BuildEntities", err)
 		return
@@ -141,16 +142,16 @@ func (data *HomeData) BuildEntities() (err error) {
 
 	log.Println("BuildEntities Loop")
 	for {
-		buf, err = data.sock.Read()
+		buf, err = home.sock.Read()
 		if err != nil && err != io.EOF {
 			log.Println("ReadEntities", err)
 			return
 		}
 
 		if len(buf) > 0 {
-			data.ParseResponse(buf)
-			if len(data.Entities) > 0 {
-				log.Println("COUNT", len(buf), len(data.Entities))
+			home.ParseResponse(buf)
+			if len(home.Entities) > 0 {
+				log.Println("COUNT", len(buf), len(home.Entities))
 				break
 			}
 			log.Println(len(buf), string(buf))
@@ -158,11 +159,11 @@ func (data *HomeData) BuildEntities() (err error) {
 		time.Sleep(time.Millisecond)
 	}
 
-	data.EntityKeys = BuildEntityKeys(data.Entities)
+	home.EntityKeys = BuildEntityKeys(home.Entities)
 	return
 }
 
-func (data *HomeData) Monitor() {
+func (home *HomeRuntime) Monitor() {
 	log.Println("monitor")
 	var (
 		errCount int
@@ -170,16 +171,16 @@ func (data *HomeData) Monitor() {
 		err      error
 	)
 
-	data.Monitoring = false
-	data.loadStatesID, err = data.sock.WriteCommandID(StatesCommand)
+	home.Monitoring = false
+	home.loadStatesID, err = home.sock.WriteCommandID(StatesCommand)
 	if err != nil {
 		log.Println("StatesCommand", err)
 		return
 	}
 	log.Println("StatesCommand")
-	data.Monitoring = true
+	home.Monitoring = true
 
-	data.eventsID, err = data.sock.WriteCommandID(SubscribeCommand)
+	home.eventsID, err = home.sock.WriteCommandID(SubscribeCommand)
 	if err != nil {
 		log.Println("SubscribeCommand", err)
 		return
@@ -190,13 +191,13 @@ func (data *HomeData) Monitor() {
 		time.Sleep(delay)
 
 		select {
-		case <-data.stop:
+		case <-home.stop:
 			log.Println("STOP RECEIVED")
-			data.Monitoring = false
+			home.Monitoring = false
 			return
 
 		default:
-			buf, err := data.sock.Read()
+			buf, err := home.sock.Read()
 			if err != nil {
 				errCount++
 				if errCount > 10 {
@@ -207,7 +208,7 @@ func (data *HomeData) Monitor() {
 			}
 			errCount = 0
 			if len(buf) > 0 {
-				go data.ParseResponse(buf)
+				go home.ParseResponse(buf)
 			}
 		}
 	}

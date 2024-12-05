@@ -15,39 +15,36 @@ import (
 	"v4lvid/socket"
 )
 
-type RunData struct {
+type RunTime struct {
 	WebcamUrl       string
 	Config          *config.Config
 	Actions         []*config.Action
 	ActionMap       map[string]*config.Action
-	WebcamHandlers  []*WebcamHandler
-	WebcamServers   []*camera.Server
+	ControlHandlers []*ControlHandler
+	CameraServers   []*camera.Server
 	CameraMap       map[string]*camera.Server
 	Streamer        *Streamer
-	Temperature     float64
-	TemperatureUnit string
 	mux             *http.ServeMux
 	template        *template.Template
-	home            *ha.HomeData
-	HomeActive      bool
+	Home            *ha.HomeRuntime
 	WebSocket       *socket.Server
 }
 
-func Run(cfg *config.Config) (data *RunData) {
-	data = &RunData{
+func Run(cfg *config.Config) (rt *RunTime) {
+	rt = &RunTime{
 		WebcamUrl: "/video0",
 		// WebcamUrl: "http://192.168.10.7:9000/video0",
 		Config:        cfg,
 		Actions:       cfg.Actions,
 		ActionMap:     cfg.NewActionMap(),
 		CameraMap:     make(map[string]*camera.Server),
-		WebcamServers: make([]*camera.Server, 0, len(cfg.Cameras)),
+		CameraServers: make([]*camera.Server, 0, len(cfg.Cameras)),
 		mux:           &http.ServeMux{},
 	}
 	var (
 		err        error
 		httpServer = &http.Server{
-			Handler:      data.mux,
+			Handler:      rt.mux,
 			Addr:         cfg.HttpUrl,
 			ReadTimeout:  0,
 			WriteTimeout: 0,
@@ -55,34 +52,30 @@ func Run(cfg *config.Config) (data *RunData) {
 	)
 
 	const pattern = "www/*.html"
-	data.template, err = template.ParseGlob(pattern)
+	rt.template, err = template.ParseGlob(pattern)
 	if err != nil {
 		log.Fatalln("ParseGlob", pattern, err)
 	}
 
-	data.WebSocket = socket.NewServer(data.template)
-	data.WebSocket.LoadMessages()
-	data.WebSocket.Run()
+	rt.WebSocket = socket.NewServer(rt.template)
+	rt.WebSocket.LoadMessages()
+	rt.WebSocket.Run()
 
-	data.buildCameraServers()
+	rt.mux.HandleFunc("/events", rt.WebSocket.Events)
+	rt.mux.HandleFunc("/webhook", rt.WebSocket.Webhook)
 
-	data.mux.HandleFunc("/events", data.WebSocket.Events)
-	data.mux.HandleFunc("/webhook", data.WebSocket.Webhook)
+	rt.buildCameraServers()
+	rt.ControlHandlers = CreateNexigoHandlers(rt)
 
-	data.WebcamHandlers = CreateNexigoHandlers(cfg, data.WebcamServers,
-		data.template)
-
-	serveCameras(data)
-	handleCameras(data)
-
-	data.home, err = ha.NewHomeData()
+	rt.serveCameras()
+	rt.handleCameras()
+	rt.Home, err = ha.NewHomeRuntime()
 	if err == nil {
-		serveHomeData(data)
-		handleHomeData(data)
-		data.HomeActive = true
+		rt.serveHomeData()
+		rt.handleHomeData()
 	}
 
-	handleFiles(data)
+	rt.handleFiles()
 
 	httpErr := make(chan error, 1)
 	go func() {
@@ -100,7 +93,7 @@ func Run(cfg *config.Config) (data *RunData) {
 		log.Printf("terminating: %v", sig)
 	}
 
-	data.WebSocket.SaveMessages()
+	rt.WebSocket.SaveMessages()
 
 	ctx, cancel := context.WithTimeout(context.Background(),
 		time.Second)
@@ -111,22 +104,22 @@ func Run(cfg *config.Config) (data *RunData) {
 	return
 }
 
-func handleFiles(data *RunData) {
-	data.mux.Handle(data.Streamer.Url, data.Streamer)
+func (rt *RunTime) handleFiles() {
+	rt.mux.Handle(rt.Streamer.Url, rt.Streamer)
 
 	fs := http.FileServer(http.Dir("www/"))
-	data.mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+	rt.mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
 		http.StripPrefix("/static/", fs).ServeHTTP(w, r)
 	})
 
-	data.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	rt.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		data.template.ExecuteTemplate(w, "index.html", data)
+		rt.template.ExecuteTemplate(w, "index.html", rt)
 	})
 
-	data.mux.HandleFunc("/filesave", func(w http.ResponseWriter, r *http.Request) {
-		err := config.Save(data.Config, "config.json")
+	rt.mux.HandleFunc("/filesave", func(w http.ResponseWriter, r *http.Request) {
+		err := config.Save(rt.Config, "config.json")
 		if err != nil {
 			log.Println("filesave", err)
 			return
@@ -135,8 +128,8 @@ func handleFiles(data *RunData) {
 
 }
 
-func serveHomeData(data *RunData) (err error) {
-	home := data.home
+func (rt *RunTime) serveHomeData() (err error) {
+	home := rt.Home
 	var ok bool
 	ok, err = home.Authorize()
 	if err != nil {
@@ -186,22 +179,22 @@ func newCameraServer(id int, vcfg *camera.VideoConfig,
 	return
 }
 
-func (data *RunData) buildCameraServers() {
+func (rt *RunTime) buildCameraServers() {
 
-	for id, vcfg := range data.Config.Cameras {
-		cameraServer, err := newCameraServer(id, vcfg, data.WebSocket)
+	for id, vcfg := range rt.Config.Cameras {
+		cameraServer, err := newCameraServer(id, vcfg, rt.WebSocket)
 		if err != nil {
 			log.Println(err)
 		}
-		data.WebcamServers = append(data.WebcamServers, cameraServer)
-		data.CameraMap[cameraServer.Config.Path] = cameraServer
+		rt.CameraServers = append(rt.CameraServers, cameraServer)
+		rt.CameraMap[cameraServer.Config.Path] = cameraServer
 	}
 
-	data.Streamer = &Streamer{
-		Server: data.WebcamServers[0],
+	rt.Streamer = &Streamer{
+		Server: rt.CameraServers[0],
 		Url:    "/record",
 		Icon:   "radio_button_checked",
-		Socket: data.WebSocket,
+		Socket: rt.WebSocket,
 	}
 
 }

@@ -1,30 +1,5 @@
 [
   {
-    "Name": "Admin",
-    "Message": "Not much",
-    "Stamp": "2024-11-07T14:37:03.458984951-05:00"
-  },
-  {
-    "Name": "Admin",
-    "Message": "",
-    "Stamp": "2024-11-07T14:37:37.708815876-05:00"
-  },
-  {
-    "Name": "Admin",
-    "Message": "What's New",
-    "Stamp": "2024-11-07T14:39:39.356066632-05:00"
-  },
-  {
-    "Name": "Admin",
-    "Message": "What's New",
-    "Stamp": "2024-11-07T14:46:58.022033688-05:00"
-  },
-  {
-    "Name": "Admin",
-    "Message": "What's Not New",
-    "Stamp": "2024-11-07T14:47:14.111360663-05:00"
-  },
-  {
     "Name": "Dave M",
     "Message": "What's Not New",
     "Stamp": "2024-11-07T14:47:26.727719727-05:00"
@@ -48,5 +23,30 @@
     "Name": "Admin",
     "Message": "What's on your mind?",
     "Stamp": "2024-11-08T08:53:44.988008712-05:00"
+  },
+  {
+    "Name": "Fred Basset",
+    "Message": "Where's the beef?",
+    "Stamp": "2024-12-02T09:47:17.528899361-05:00"
+  },
+  {
+    "Name": "Daffy Duck",
+    "Message": "Fred's a quack.",
+    "Stamp": "2024-12-02T09:49:20.392412445-05:00"
+  },
+  {
+    "Name": "Fred Basset",
+    "Message": "Duck Soup.",
+    "Stamp": "2024-12-02T09:49:57.708931143-05:00"
+  },
+  {
+    "Name": "Daffy Puck",
+    "Message": "Facebook sucks!",
+    "Stamp": "2024-12-03T08:22:49.61114803-05:00"
+  },
+  {
+    "Name": "Fred Basset",
+    "Message": "Woof No",
+    "Stamp": "2024-12-03T08:23:36.183502757-05:00"
   }
 ]

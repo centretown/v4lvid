@@ -9,73 +9,73 @@ import (
 	"v4lvid/ha"
 )
 
-func handleHomeData(data *RunData) {
-	mux := data.mux
-	mux.HandleFunc("/sun", handleSun(data))
-	mux.HandleFunc("/weather", handleWeather(data))
-	mux.HandleFunc("/wifi", handleWifi(data))
-	mux.HandleFunc("/lights", handleLights(data))
-	handleLightProperties(data)
+func (rt *RunTime) handleHomeData() {
+	mux := rt.mux
+	mux.HandleFunc("/sun", rt.handleSun())
+	mux.HandleFunc("/weather", rt.handleWeather())
+	mux.HandleFunc("/wifi", rt.handleWifi())
+	mux.HandleFunc("/lights", rt.handleLights())
+	rt.handleLightProperties()
 }
 
-func handleSun(data *RunData) func(http.ResponseWriter, *http.Request) {
+func (rt *RunTime) handleSun() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		sun := data.home.NewSun(data.ActionMap["sun"])
-		err := data.template.Lookup("layout.sun").Execute(w, sun)
+		sun := rt.Home.NewSun(rt.ActionMap["sun"])
+		err := rt.template.Lookup("layout.sun").Execute(w, sun)
 		if err != nil {
 			log.Fatal("/sun", err)
 		}
 	}
 }
 
-func handleWeather(data *RunData) func(http.ResponseWriter, *http.Request) {
+func (rt *RunTime) handleWeather() func(http.ResponseWriter, *http.Request) {
 	sub := ha.NewSubcription(&ha.Weather{}, func(c ha.Consumer) {
 		w, ok := c.(*ha.Weather)
 		if ok {
 			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
-			data.Temperature = w.Attributes.Temperature
-			data.TemperatureUnit = w.Attributes.TemperatureUnit
+			rt.Home.Temperature = w.Attributes.Temperature
+			rt.Home.TemperatureUnit = w.Attributes.TemperatureUnit
 			text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
 			message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
-			data.WebSocket.Broadcast(message)
+			rt.WebSocket.Broadcast(message)
 		}
 	})
-	data.home.Subscribe("weather.forecast_home", sub)
+	rt.Home.Subscribe("weather.forecast_home", sub)
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		forecast := data.home.NewWeather(data.ActionMap["weather"])
-		err := data.template.Lookup("layout.weather").Execute(w, forecast)
+		forecast := rt.Home.NewWeather(rt.ActionMap["weather"])
+		err := rt.template.Lookup("layout.weather").Execute(w, forecast)
 		if err != nil {
 			log.Fatal("/weather", err)
 		}
 	}
 }
 
-func handleWifi(data *RunData) func(http.ResponseWriter, *http.Request) {
+func (rt *RunTime) handleWifi() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		sensors := data.home.WifiSensors(data.ActionMap["wifi"])
-		err := data.template.Lookup("layout.wifi").Execute(w, sensors)
+		sensors := rt.Home.WifiSensors(rt.ActionMap["wifi"])
+		err := rt.template.Lookup("layout.wifi").Execute(w, sensors)
 		if err != nil {
 			log.Fatal("/wifi", err)
 		}
 	}
 }
-func handleLights(data *RunData) func(http.ResponseWriter, *http.Request) {
+func (rt *RunTime) handleLights() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")
-		lights := data.home.NewLedLights(data.ActionMap["lights"])
-		err := data.template.Lookup("layout.lights").Execute(w, lights)
+		lights := rt.Home.NewLedLights(rt.ActionMap["lights"])
+		err := rt.template.Lookup("layout.lights").Execute(w, lights)
 		if err != nil {
 			log.Fatal("/lights", err)
 		}
 	}
 }
 
-func handleLightProperties(data *RunData) {
-	home := data.home
+func (rt *RunTime) handleLightProperties() {
+	home := rt.Home
 	readBody := func(r *http.Request) (id string, key string, val string) {
 		buf, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -97,7 +97,7 @@ func handleLightProperties(data *RunData) {
 		return
 	}
 
-	data.mux.HandleFunc("/light/state",
+	rt.mux.HandleFunc("/light/state",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/state")
 			id, key, _ := readBody(r)
@@ -108,14 +108,14 @@ func handleLightProperties(data *RunData) {
 			}
 		})
 
-	data.mux.HandleFunc("/light/brightness",
+	rt.mux.HandleFunc("/light/brightness",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/brightness")
 			id, key, val := readBody(r)
 			home.CallService(LightCmd(id, ServiceData{Key: key, Value: val}))
 		})
 
-	data.mux.HandleFunc("/light/color",
+	rt.mux.HandleFunc("/light/color",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/color")
 			id, key, val := readBody(r)
@@ -130,7 +130,7 @@ func handleLightProperties(data *RunData) {
 			}
 		})
 
-	data.mux.HandleFunc("/light/effect",
+	rt.mux.HandleFunc("/light/effect",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/effect")
 			id, key, val := readBody(r)

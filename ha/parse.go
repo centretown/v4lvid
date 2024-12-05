@@ -8,33 +8,31 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func (data *HomeData) ParseResponse(buf []byte) (err error) {
+func (home *HomeRuntime) ParseResponse(buf []byte) (err error) {
 	resp := &Response{}
 	err = decode(buf, resp)
 	if err != nil {
-		data.Err = err
 		return
 	}
 
 	switch resp.Type {
 	case "event":
-		data.parseEvent(buf)
+		err = home.parseEvent(buf)
 	case "result":
-		data.parseResult(buf)
+		err = home.parseResult(buf)
 	}
 
 	return
 }
 
-func (data *HomeData) parseResult(buf []byte) {
+func (home *HomeRuntime) parseResult(buf []byte) (err error) {
 	result := &PartialResult{}
-	err := decode(buf, result)
+	err = decode(buf, result)
 	if err != nil {
-		data.Err = err
 		return
 	}
 
-	if result.ID == data.loadStatesID {
+	if result.ID == home.loadStatesID {
 		result := &StateResult{}
 		err = decode(buf, result)
 		if err != nil {
@@ -43,34 +41,36 @@ func (data *HomeData) parseResult(buf []byte) {
 		}
 
 		for _, entity := range result.Entities {
-			data.Entities[entity.EntityID] = entity
-			data.Consume(entity.EntityID, entity)
+			home.Entities[entity.EntityID] = entity
+			home.Consume(entity.EntityID, entity)
 		}
 		// data.loaded.Set(true)
 	} else if !result.Success {
 		showYaml(result)
 	}
+	return
 }
 
-func (data *HomeData) parseEvent(buf []byte) {
+func (home *HomeRuntime) parseEvent(buf []byte) (err error) {
 	idResult := &EventResult[DataState]{}
-	data.Err = decode(buf, idResult)
-	if data.Err != nil {
+	err = decode(buf, idResult)
+	if err != nil {
 		return
 	}
 
 	if idResult.Event.EventType == "state_changed" {
 		entityID := idResult.Event.Data.EntityID
 		result := &EventResult[DataStateChange[json.RawMessage]]{}
-		data.Err = decode(buf, result)
-		if data.Err != nil {
+		err = decode(buf, result)
+		if err != nil {
 			return
 		}
 
 		newState := result.Event.Data.NewState
-		data.Entities[entityID] = newState
-		data.Consume(entityID, newState)
+		home.Entities[entityID] = newState
+		home.Consume(entityID, newState)
 	}
+	return
 }
 
 func decode(buf []byte, lresult any) (err error) {

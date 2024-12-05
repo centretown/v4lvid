@@ -35,12 +35,12 @@ type LedLight struct {
 	Lights []*Light
 }
 
-func (data *HomeData) NewLedLights(action *config.Action) (ledLight *LedLight) {
-	ids := ListEntitiesLike("light.led", data.EntityKeys)
+func (home *HomeRuntime) NewLedLights(action *config.Action) (ledLight *LedLight) {
+	ids := ListEntitiesLike("light.led", home.EntityKeys)
 	lights := make([]*Light, 0, len(ids))
 	for _, id := range ids {
 		light := &Light{}
-		e, ok := data.Entities[id]
+		e, ok := home.Entities[id]
 		if ok {
 			light.Copy(e)
 		}

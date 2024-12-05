@@ -25,7 +25,7 @@
         {{ template "layout.chat" .WebSocket }}
         <span id="slots" class="slots"></span>
         <span class="clock">
-            <span id="clock-temp">{{.Temperature}}  {{.TemperatureUnit}}</span>
+            <span id="clock-temp">{{.Home.Temperature}}  {{.Home.TemperatureUnit}}</span>
             <span id="clock"></span>
         </span>
     </span>

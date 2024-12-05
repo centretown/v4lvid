@@ -91,12 +91,12 @@ function setdraggable(id, draggable) {
     }
 }
 
+const Anonymous = "Anonymous";
 function postName() {
     const target = document.getElementById("postname");
-    if (target !== undefined) {
-        document.getElementById(id).setAttribute('draggable', dragabble);
-        return target.value;
-    }
+    if (target === undefined) return Anonymous;
+    if (target === "") return Anonymous;
+    return target.value;
 }
 
 function clearMessage(id) {
@@ -131,24 +131,5 @@ window.addEventListener('htmx:load', function (evt) {
         target.style.top = data.Y + 'px';
     }
     addDragHandlers(id);
-    target.getc
-
 })
 
-window.addEventListener("gamepadconnected", (e) => {
-    console.log(
-        "Gamepad connected at index %d: %s. %d buttons, %d axes.",
-        e.gamepad.index,
-        e.gamepad.id,
-        e.gamepad.buttons.length,
-        e.gamepad.axes.length,
-    );
-});
-
-window.addEventListener("gamepaddisconnected", (e) => {
-    console.log(
-        "Gamepad disconnected from index %d: %s",
-        e.gamepad.index,
-        e.gamepad.id,
-    );
-});
