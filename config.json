@@ -9,7 +9,7 @@
       "Codec": "MJPG",
       "Width": 1920,
       "Height": 1080,
-      "FPS": 30
+      "FPS": 25
     },
     {
       "CameraType": 1,
@@ -30,7 +30,7 @@
       "FPS": 2
     }
   ],
-  "Actions": [
+  "ActionsCamera": [
     {
       "Name": "camera",
       "Title": "Camera Controls",
@@ -45,7 +45,9 @@
       "Name": "camera_list",
       "Title": "Cameras",
       "Icon": "videocam"
-    },
+    }
+  ],
+  "ActionsHome": [
     {
       "Name": "weather",
       "Title": "Forecast Home",
@@ -66,6 +68,8 @@
       "Title": "LED Lights",
       "Icon": "backlight_high"
     }
+  ],
+  "ActionsChat": [
   ],
   "Drivers": {
     "ipwebcam":[

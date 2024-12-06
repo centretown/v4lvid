@@ -45,9 +45,10 @@ type StreamIndicator interface {
 }
 
 type Server struct {
-	Source    VideoSource
-	Config    *VideoConfig
 	Id        int
+	Config    *VideoConfig
+	Source    VideoSource
+	Busy      bool
 	indicator StreamIndicator
 
 	quit chan int
@@ -57,20 +58,10 @@ type Server struct {
 
 	filters []Hook
 
-	HideMain    bool
-	HideThumb   bool
-	HideAll     bool
-	Busy        bool
-	Unavailable bool
-
 	Recording  bool
 	recordStop time.Time
-	// buffer     []byte
 
-	captureCount int64
-	// captureTotal int64
-	// captureEnd   time.Time
-
+	captureCount  int64
 	captureStop   chan int
 	captureSource chan []byte
 }
@@ -135,10 +126,9 @@ func (vs *Server) Close() {
 }
 
 const (
-	delayNormal    = time.Millisecond
-	delayRetry     = time.Second
-	delayHibernate = time.Second * 30
-	recordLimit    = time.Second * 5
+	DELAY_NORMAL    = time.Millisecond
+	DELAY_RETRY     = time.Second
+	DELAY_HIBERNATE = time.Second * 30
 )
 
 func (vs *Server) startRecording(duration int) {
@@ -183,9 +173,6 @@ func (vs *Server) doCmd(cmd ServerCmd) {
 	// case SET:
 	// 	f, _ := cmd.Value.(float64)
 	// 	cam.video.Set(cmd.Property, float64(f))
-	case HIDEALL:
-		b, _ := cmd.Value.(bool)
-		vs.HideAll = b
 	case RECORD_START:
 		vs.startRecording(cmd.Value.(int))
 	case RECORD_STOP:
@@ -212,16 +199,11 @@ func (vs *Server) Serve() {
 
 	var (
 		cmd   ServerCmd
-		retry int = 0
-	)
-
-	var (
-		delay = delayNormal
+		retry int
+		delay = DELAY_NORMAL
 		buf   []byte
 		err   error
 	)
-
-	// cam.buffer
 
 	for {
 		time.Sleep(delay)
@@ -235,17 +217,13 @@ func (vs *Server) Serve() {
 		default:
 		}
 
-		if vs.HideAll {
-			continue
-		}
-
 		buf, err = vs.Source.Read()
 		if err != nil {
 			log.Println("READ", err)
 			if retry > 10 {
-				delay = delayHibernate
+				delay = DELAY_HIBERNATE
 			} else {
-				delay = delayRetry
+				delay = DELAY_RETRY
 			}
 
 			retry++
@@ -263,22 +241,11 @@ func (vs *Server) Serve() {
 			}
 			continue
 		}
-		delay = delayNormal
+		delay = DELAY_NORMAL
 		retry = 0
 		vs.streamHook.Update(buf)
 
-		// fmt.Println(len(buf), "BYTES READ")
-
-		// if cam.matrix.Empty() {
-		// 	continue
-		// }
-
-		// for _, filter := range vs.Filters {
-		// 	filter.Update(&vs.buffer)
-		// }
-
 		if vs.Recording {
-			// log.Println("recording")
 			vs.captureSource <- buf
 			if vs.recordStop.Before(time.Now()) {
 				vs.stopRecording()

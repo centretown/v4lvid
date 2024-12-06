@@ -1,4 +1,4 @@
-package ha
+package homeasst
 
 // func NewNumberList(entities []string) []*Number {
 // 	nums := make([]*Number, 0, len(entities))

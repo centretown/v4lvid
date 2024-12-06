@@ -25,18 +25,24 @@ type Action struct {
 }
 
 type Config struct {
-	Output       string
-	HttpUrl      string
-	Cameras      []*camera.VideoConfig
-	Actions      []*Action
-	ActionsHome  []*Action
-	ActionsRight []*Action
-	Drivers      map[string][]*camera.ControlKey
+	Output        string
+	HttpUrl       string
+	Cameras       []*camera.VideoConfig
+	ActionsCamera []*Action
+	ActionsHome   []*Action
+	ActionsChat   []*Action
+	Drivers       map[string][]*camera.ControlKey
 }
 
 func (cfg *Config) NewActionMap() (m map[string]*Action) {
 	m = make(map[string]*Action)
-	for _, action := range cfg.Actions {
+	for _, action := range cfg.ActionsCamera {
+		m[action.Name] = action
+	}
+	for _, action := range cfg.ActionsHome {
+		m[action.Name] = action
+	}
+	for _, action := range cfg.ActionsChat {
 		m[action.Name] = action
 	}
 	return

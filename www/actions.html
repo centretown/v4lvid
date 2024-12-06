@@ -4,7 +4,17 @@
             <span class="symbols">menu</span>
         </button>
         <span id="leftmenu" class="hide">
-            {{range .Actions}}
+            {{range .ActionsCamera}}
+                <div id="{{.Name}}" class="hide"
+                    hx-get="/{{.Name}}" hx-swap="beforeend" 
+                    hx-target="#slots" 
+                    hx-on::afterSwap="addDragHandlers('slot-{{.Name}}')">
+                </div>
+                <button class="action" hx-on:click="doAction('{{.Name}}')">
+                    <span class="symbols">{{.Icon}}</span>
+                </button>
+           {{ end }}
+            {{range .ActionsHome}}
                 <div id="{{.Name}}" class="hide"
                     hx-get="/{{.Name}}" hx-swap="beforeend" 
                     hx-target="#slots" 

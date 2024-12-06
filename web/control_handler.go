@@ -61,14 +61,11 @@ func (wbch *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println("Control not found", wbch.Key, r.RequestURI)
 		return
 	}
-	log.Println(r.RequestURI)
 	camsrv, err := rt.parseSourceId(r)
 	if camsrv.Config.Driver != UVCVideo {
 		log.Printf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
 		return
 	}
-
-	// remote?
 	_, ok = camsrv.Source.(*camera.Ipcam)
 	if ok {
 		handleRemote(camsrv, w, r, rt.template)

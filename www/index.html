@@ -17,16 +17,20 @@
 </head>
 
 <body onload="startTime()">
-    <div class="source">
-        <img id="source" src="{{.WebcamUrl}}">
-    </div>
     <span id="events" hx-ext="ws" ws-connect="/events">
-        {{ template "layout.actions" . }}
-        {{ template "layout.chat" .WebSocket }}
-        <span id="slots" class="slots"></span>
-        <span class="clock">
-            <span id="clock-temp">{{.Home.Temperature}}  {{.Home.TemperatureUnit}}</span>
-            <span id="clock"></span>
+        <div class="cameras">
+        </div>
+        <div class="source">
+            <img id="source" src="{{.WebcamUrl}}">
+        </div>
+        <span>
+            {{ template "layout.actions" . }}
+            {{ template "layout.chat" .WebSocket }}
+            <span id="slots" class="slots"></span>
+            <span class="clock">
+                <span id="clock-temp">{{.Home.Temperature}}  {{.Home.TemperatureUnit}}</span>
+                <span id="clock"></span>
+            </span>
         </span>
     </span>
     <script src="/static/js/wsstatus.js" defer></script>

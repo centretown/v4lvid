@@ -1,4 +1,4 @@
-package ha
+package homeasst
 
 import (
 	"encoding/json"

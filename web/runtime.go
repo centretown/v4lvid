@@ -11,14 +11,16 @@ import (
 	"time"
 	"v4lvid/camera"
 	"v4lvid/config"
-	"v4lvid/ha"
+	"v4lvid/homeasst"
 	"v4lvid/socket"
 )
 
 type RunTime struct {
 	WebcamUrl       string
 	Config          *config.Config
-	Actions         []*config.Action
+	ActionsCamera   []*config.Action
+	ActionsHome     []*config.Action
+	ActionsChat     []*config.Action
 	ActionMap       map[string]*config.Action
 	ControlHandlers []*ControlHandler
 	CameraServers   []*camera.Server
@@ -26,7 +28,7 @@ type RunTime struct {
 	Streamer        *Streamer
 	mux             *http.ServeMux
 	template        *template.Template
-	Home            *ha.HomeRuntime
+	Home            *homeasst.HomeRuntime
 	WebSocket       *socket.Server
 }
 
@@ -35,7 +37,9 @@ func Run(cfg *config.Config) (rt *RunTime) {
 		WebcamUrl: "/video0",
 		// WebcamUrl: "http://192.168.10.7:9000/video0",
 		Config:        cfg,
-		Actions:       cfg.Actions,
+		ActionsCamera: cfg.ActionsCamera,
+		ActionsHome:   cfg.ActionsHome,
+		ActionsChat:   cfg.ActionsChat,
 		ActionMap:     cfg.NewActionMap(),
 		CameraMap:     make(map[string]*camera.Server),
 		CameraServers: make([]*camera.Server, 0, len(cfg.Cameras)),
@@ -69,7 +73,7 @@ func Run(cfg *config.Config) (rt *RunTime) {
 
 	rt.serveCameras()
 	rt.handleCameras()
-	rt.Home, err = ha.NewHomeRuntime()
+	rt.Home, err = homeasst.NewHomeRuntime()
 	if err == nil {
 		rt.serveHomeData()
 		rt.handleHomeData()

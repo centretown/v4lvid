@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"v4lvid/ha"
+	"v4lvid/homeasst"
 )
 
 func (rt *RunTime) handleHomeData() {
@@ -30,8 +30,8 @@ func (rt *RunTime) handleSun() func(http.ResponseWriter, *http.Request) {
 }
 
 func (rt *RunTime) handleWeather() func(http.ResponseWriter, *http.Request) {
-	sub := ha.NewSubcription(&ha.Weather{}, func(c ha.Consumer) {
-		w, ok := c.(*ha.Weather)
+	sub := homeasst.NewSubcription(&homeasst.Weather{}, func(c homeasst.Consumer) {
+		w, ok := c.(*homeasst.Weather)
 		if ok {
 			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
 			rt.Home.Temperature = w.Attributes.Temperature

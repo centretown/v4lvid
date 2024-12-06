@@ -23,17 +23,18 @@ var DefaultConfig = Config{
 			FPS:        2,
 		},
 	},
-	Actions: []*Action{
+	ActionsCamera: []*Action{
 		{Name: "camera", Title: "Camera Settings", Icon: "settings_video_camera"},
 		{Name: "cameraadd", Title: "Add Camera", Icon: "linked_camera"},
 		{Name: "camera_list", Title: "List Cameras", Icon: "view_list"},
+	},
+	ActionsHome: []*Action{
 		{Name: "sun", Title: "Next Sun", Icon: "wb_twilight", Group: Home},
 		{Name: "weather", Title: "Forecast Home", Icon: "routine", Group: Home},
 		{Name: "wifi", Title: "WIFI Signals", Icon: "network_wifi", Group: Home},
 		{Name: "lights", Title: "LED Lights", Icon: "backlight_high", Group: Home},
 	},
-	ActionsHome: []*Action{},
-	ActionsRight: []*Action{
+	ActionsChat: []*Action{
 		{Name: "chat", Title: "Chat", Icon: "chat"},
 		{Name: "resetcontrols", Title: "Reset Camera", Icon: "reset_settings"},
 		{Name: "record", Title: "Record", Icon: "radio_button_checked"},
