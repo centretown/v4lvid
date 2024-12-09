@@ -95,7 +95,6 @@ func (rt *RunTime) setPrimaryCamera() func(w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		rt.Streamer.Server = cam
 		msg := fmt.Sprintf("%s is connected as %s", path, cam.Url())
 		w.Write(wrapStatus(statusID, msg))
 		w.Write(wrapSource(sourceID, cam.Url()))
@@ -252,5 +251,22 @@ func (rt *RunTime) ResetControls(webcam *camera.Webcam) {
 		ctlh.Value = info.Default
 		webcam.SetControlValue(ctlh.Key, ctlh.Value)
 		log.Println("ResetControls", ctlh.Key, ctlh.Value)
+	}
+}
+
+func (rt *RunTime) handleStreamer() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		camsrv, err := rt.parseSourceId(r)
+		if err != nil {
+			return
+		}
+
+		if !camsrv.Recording {
+			log.Printf("recording...")
+			camsrv.RecordCmd(300)
+		} else {
+			log.Printf("stop recording...")
+			camsrv.StopRecordCmd()
+		}
 	}
 }

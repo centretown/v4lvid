@@ -25,7 +25,6 @@ type RunTime struct {
 	ControlHandlers []*ControlHandler
 	CameraServers   []*camera.Server
 	CameraMap       map[string]*camera.Server
-	Streamer        *Streamer
 	mux             *http.ServeMux
 	template        *template.Template
 	Home            *homeasst.HomeRuntime
@@ -34,8 +33,7 @@ type RunTime struct {
 
 func Run(cfg *config.Config) (rt *RunTime) {
 	rt = &RunTime{
-		WebcamUrl: "/video0",
-		// WebcamUrl: "http://192.168.10.7:9000/video0",
+		WebcamUrl:     "/video0",
 		Config:        cfg,
 		ActionsCamera: cfg.ActionsCamera,
 		ActionsHome:   cfg.ActionsHome,
@@ -91,8 +89,6 @@ func Run(cfg *config.Config) (rt *RunTime) {
 	select {
 	case err := <-httpErr:
 		log.Printf("failed to serve http: %v", err)
-	// case err := <-wsErr:
-	// 	log.Printf("failed to serve websockets: %v", err)
 	case sig := <-sigs:
 		log.Printf("terminating: %v", sig)
 	}
@@ -104,12 +100,11 @@ func Run(cfg *config.Config) (rt *RunTime) {
 	defer cancel()
 
 	httpServer.Shutdown(ctx)
-	// wsServer.server.Shutdown(ctx)
 	return
 }
 
 func (rt *RunTime) handleFiles() {
-	rt.mux.Handle(rt.Streamer.Url, rt.Streamer)
+	rt.mux.HandleFunc("/record", rt.handleStreamer())
 
 	fs := http.FileServer(http.Dir("www/"))
 	rt.mux.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
@@ -193,12 +188,4 @@ func (rt *RunTime) buildCameraServers() {
 		rt.CameraServers = append(rt.CameraServers, cameraServer)
 		rt.CameraMap[cameraServer.Config.Path] = cameraServer
 	}
-
-	rt.Streamer = &Streamer{
-		Server: rt.CameraServers[0],
-		Url:    "/record",
-		Icon:   "radio_button_checked",
-		Socket: rt.WebSocket,
-	}
-
 }

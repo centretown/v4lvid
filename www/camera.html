@@ -76,9 +76,10 @@
                     hx-vals='{"source": "{{$cam.Url}}"}'>
                     <span class="symbols-form">reset_settings</span>
                 </button>
-                <button class="action" >
-                    {{/* hx-put="{{.Streamer.Url}}" hx-swap=none> */}}
-                    <span 
+                <button class="action" 
+                    hx-put="/record" hx-swap=none
+                    hx-vals='{"source": "{{$cam.Url}}"}'>
+                    <span id="stream_video{{$cam.Id}}"
                         class="symbols-form{{if eq $cam.Recording true}} streaming{{end}}">
                         radio_button_checked
                     </span>

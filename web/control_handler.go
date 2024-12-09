@@ -171,13 +171,9 @@ func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *camera.Server, err er
 		return
 	}
 
-	if err != nil {
-		log.Println("unable to parse request", r.RequestURI, err)
-		return
-	}
-
 	if id >= len(rt.CameraServers) {
-		log.Printf("Camera id = %d in source id out of range limit\n", id)
+		log.Printf("Camera id = %d in source id out of range limit (%d)\n",
+			id, len(rt.CameraServers))
 		return
 	}
 

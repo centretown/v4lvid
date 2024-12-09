@@ -39,9 +39,9 @@
             </button>
 
             <button class="action" 
-                hx-put="{{.Streamer.Url}}" hx-swap=none>
-                <span id="streamer" 
-                    class="symbols{{if .Streamer.IsRecording}} streaming{{end}}">
+                hx-put="/record" hx-swap=none
+                hx-vals='js:{source: currentSource()}'>
+                <span id="streamer" class="symbols">
                     radio_button_checked
                 </span>
             </button>
