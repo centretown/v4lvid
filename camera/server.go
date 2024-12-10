@@ -39,9 +39,9 @@ type ServerCmd struct {
 	Value  any
 }
 
-type StreamIndicator interface {
-	StreamOn()
-	StreamOff()
+type StreamListener interface {
+	StreamOn(id int)
+	StreamOff(id int)
 }
 
 type Server struct {
@@ -49,7 +49,7 @@ type Server struct {
 	Config    *VideoConfig
 	Source    VideoSource
 	Busy      bool
-	indicator StreamIndicator
+	indicator StreamListener
 
 	quit chan int
 	cmd  chan ServerCmd
@@ -66,7 +66,7 @@ type Server struct {
 	captureSource chan []byte
 }
 
-func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator StreamIndicator) *Server {
+func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator StreamListener) *Server {
 
 	cam := &Server{
 		Source:        source,
@@ -140,7 +140,7 @@ func (vs *Server) startRecording(duration int) {
 		return //?
 	}
 
-	vs.indicator.StreamOn()
+	vs.indicator.StreamOn(vs.Id)
 	vs.Recording = true
 	vs.captureCount = 0
 	config := vs.Config
@@ -162,7 +162,7 @@ func (vs *Server) stopRecording() {
 
 	vs.captureStop <- 1
 	vs.Recording = false
-	vs.indicator.StreamOff()
+	vs.indicator.StreamOff(vs.Id)
 	log.Println("recorder closed")
 }
 

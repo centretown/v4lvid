@@ -3,21 +3,24 @@ package socket
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"sync"
 	"time"
+	"v4lvid/camera"
 )
 
 type Server struct {
-	messageChan   chan string
-	Messages      []*Message
-	mutex         sync.Mutex
-	hub           *Hub
-	statusLayout  *template.Template
-	messageLayout *template.Template
+	messageChan     chan string
+	Messages        []*Message
+	mutex           sync.Mutex
+	hub             *Hub
+	statusLayout    *template.Template
+	messageLayout   *template.Template
+	activeRecorders int
 }
 
 func NewServer(t *template.Template) *Server {
@@ -77,17 +80,27 @@ func (s *Server) SaveMessages() (err error) {
 	return
 }
 
+var _ camera.StreamListener = (*Server)(nil)
+
 const (
-	streamOff = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`
-	streamOn  = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols streaming">radio_button_checked</span>`
+	streamOff     = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`
+	streamOn      = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols streaming">radio_button_checked</span>`
+	streamOnList  = `<span id="stream_video%d" hx-swap-oob="outerHTML" class="symbols-form streaming">radio_button_checked</span>`
+	streamOffList = `<span id="stream_video%d" hx-swap-oob="outerHTML" class="symbols-form">radio_button_checked</span>`
 )
 
-func (s *Server) StreamOn() {
+func (s *Server) StreamOn(id int) {
+	s.activeRecorders += 1
 	s.Broadcast(streamOn)
+	s.Broadcast(fmt.Sprintf(streamOnList, id))
 }
 
-func (s *Server) StreamOff() {
-	s.Broadcast(streamOff)
+func (s *Server) StreamOff(id int) {
+	s.activeRecorders -= 1
+	if s.activeRecorders == 0 {
+		s.Broadcast(streamOff)
+	}
+	s.Broadcast(fmt.Sprintf(streamOffList, id))
 }
 
 func (s *Server) Broadcast(message string) {

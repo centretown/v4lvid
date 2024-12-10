@@ -162,7 +162,7 @@ func (rt *RunTime) serveHomeData() (err error) {
 }
 
 func newCameraServer(id int, vcfg *camera.VideoConfig,
-	indicator camera.StreamIndicator) (cameraServer *camera.Server, err error) {
+	indicator camera.StreamListener) (cameraServer *camera.Server, err error) {
 
 	var source camera.VideoSource
 	switch vcfg.CameraType {
