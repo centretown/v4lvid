@@ -23,6 +23,16 @@
     },
     {
       "CameraType": 1,
+      "Driver": "ipwebcam",
+      "Path": "http://192.168.10.92:8080/video",
+      "Base": "http://192.168.10.92:8080",
+      "Codec": "MJPG",
+      "Width": 1920,
+      "Height": 1080,
+      "FPS": 15
+    },
+    {
+      "CameraType": 1,
       "Path": "http://192.168.10.30:8080",
       "Codec": "MJPG",
       "Width": 1024,
@@ -74,7 +84,20 @@
   "Drivers": {
     "ipwebcam":[
     {
-    }
+      "Key": "Zoom, Absolute",
+      "Controls": [
+        {
+          "Url": "/zoomin",
+          "Icon": "zoom_in",
+          "Multiplier": 1
+        },
+        {
+          "Url": "/zoomout",
+          "Icon": "zoom_out",
+          "Multiplier": -1
+        }
+      ]
+  }
   ],
     "uvcvideo": [
       {

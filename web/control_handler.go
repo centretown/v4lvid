@@ -2,7 +2,6 @@ package web
 
 import (
 	"fmt"
-	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -17,6 +16,7 @@ var _ http.Handler = (*ControlHandler)(nil)
 const (
 	Prefix   = "/video"
 	UVCVideo = "uvcvideo"
+	IPWebcam = "ipwebcam"
 )
 
 type ControlHandler struct {
@@ -61,14 +61,23 @@ func (wbch *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		log.Println("Control not found", wbch.Key, r.RequestURI)
 		return
 	}
+
 	camsrv, err := rt.parseSourceId(r)
-	if camsrv.Config.Driver != UVCVideo {
-		log.Printf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
+
+	if camsrv.Config.Driver == IPWebcam {
+		err = wbch.handleIpWebcam(camsrv, w, r)
 		return
 	}
+
+	if camsrv.Config.Driver != UVCVideo {
+		err = fmt.Errorf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
+		log.Println(err)
+		return
+	}
+
 	_, ok = camsrv.Source.(*camera.Ipcam)
 	if ok {
-		handleRemote(camsrv, w, r, rt.template)
+		err = handleRemoteV4L(camsrv, w, r)
 		return
 	}
 
@@ -96,22 +105,53 @@ func (wbch *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	rt.template.ExecuteTemplate(w, "layout.response", wbch.Value)
 }
 
-func handleRemote(camsrv *camera.Server, w http.ResponseWriter, r *http.Request,
-	tmpl *template.Template) {
+func (wbch *ControlHandler) handleIpWebcam(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {
+	log.Println("wbch.Key", wbch.Key, r.URL.RequestURI())
+
+	var (
+		cmd = camsrv.Config.Base
+		val = -1
+	// 	client = &http.Client{}
+	// 	req    *http.Request
+	// 	resp   *http.Response
+	// 	buf    []byte
+	)
+
+	constrain := func(val, min, max int) int {
+		if val < min {
+			return min
+		}
+		if val > max {
+			return max
+		}
+		return val
+	}
+
+	request := r.URL.RequestURI()
+	switch request {
+	case "/zoomin":
+		val = constrain(val+10, 0, 100)
+		cmd += fmt.Sprintf("/ptz?zoom=%d", val)
+	case "/zoomout":
+		val = constrain(val-10, 0, 100)
+		cmd += fmt.Sprintf("/ptz?zoom=%d", val)
+	default:
+		err = fmt.Errorf("'%s' not yet implemented for %s", camsrv.Config.Driver, r.RequestURI)
+		return
+	}
+	log.Println(cmd, val)
+	err = fmt.Errorf("'%s' not yet implemented for %s", camsrv.Config.Driver, r.RequestURI)
+	return
+}
+
+func handleRemoteV4L(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {
 	var (
 		url    = camsrv.Config.Base + r.RequestURI
 		client = &http.Client{}
-		err    error
 		req    *http.Request
 		resp   *http.Response
 		buf    []byte
 	)
-
-	defer func() {
-		if err != nil {
-			tmpl.ExecuteTemplate(w, "layout.response", 0)
-		}
-	}()
 
 	req, err = http.NewRequest(r.Method, url, nil)
 	if err != nil {
@@ -136,6 +176,7 @@ func handleRemote(camsrv *camera.Server, w http.ResponseWriter, r *http.Request,
 		log.Println("Write", err)
 		return
 	}
+	return
 }
 
 func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *camera.Server, err error) {

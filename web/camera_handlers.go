@@ -231,7 +231,7 @@ func (rt *RunTime) serveCameras() {
 			}
 			_, ok := camsrv.Source.(*camera.Ipcam)
 			if ok {
-				handleRemote(camsrv, w, r, rt.template)
+				err = handleRemoteV4L(camsrv, w, r)
 				return
 			}
 			webcam, ok := camsrv.Source.(*camera.Webcam)
