@@ -30,7 +30,7 @@ type ControlHandler struct {
 
 func NewControlHandler(key string, ctls []*camera.Control,
 	rt *RunTime) *ControlHandler {
-	wbch := &ControlHandler{
+	ctlh := &ControlHandler{
 		Key:        key,
 		Controls:   ctls,
 		controlMap: make(map[string]*camera.Control),
@@ -38,36 +38,31 @@ func NewControlHandler(key string, ctls []*camera.Control,
 	}
 
 	for _, ctl := range ctls {
-		wbch.controlMap[ctl.Url] = ctl
+		ctlh.controlMap[ctl.Url] = ctl
 	}
-	return wbch
+	return ctlh
 }
 
-func (wbch *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var (
 		err  error
 		info v4l.ControlInfo
-		rt   = wbch.rt
+		rt   = ctlh.rt
 	)
 
 	defer func() {
 		if err != nil {
-			wbch.rt.template.ExecuteTemplate(w, "layout.response", 0)
+			ctlh.rt.template.ExecuteTemplate(w, "layout.response", 0)
 		}
 	}()
 
-	control, ok := wbch.controlMap[r.RequestURI]
+	control, ok := ctlh.controlMap[r.RequestURI]
 	if !ok {
-		log.Println("Control not found", wbch.Key, r.RequestURI)
+		log.Println("Control not found", ctlh.Key, r.RequestURI)
 		return
 	}
 
 	camsrv, err := rt.parseSourceId(r)
-
-	if camsrv.Config.Driver == IPWebcam {
-		err = wbch.handleIpWebcam(camsrv, w, r)
-		return
-	}
 
 	if camsrv.Config.Driver != UVCVideo {
 		err = fmt.Errorf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
@@ -83,65 +78,24 @@ func (wbch *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	webcam, ok := camsrv.Source.(*camera.Webcam)
 	if ok {
-		if !wbch.validValue {
-			wbch.Value = webcam.GetControlValue(wbch.Key)
-			wbch.validValue = true
+		if !ctlh.validValue {
+			ctlh.Value = webcam.GetControlValue(ctlh.Key)
+			ctlh.validValue = true
 		}
-		info, err = webcam.GetControlInfo(wbch.Key)
+		info, err = webcam.GetControlInfo(ctlh.Key)
 		if err != nil {
 			return
 		}
-		val := wbch.Value + info.Step*control.Multiplier
-
-		// log.Println(cur, wbch.Value, val, info.Min, info.Max)
+		// some steps don't take on the device (tilt) so we assume we have
+		// the correct value even when we don't to skip the "holes"
+		val := ctlh.Value + info.Step*control.Multiplier
 		if val >= info.Min && val <= info.Max {
-			wbch.Value = val
-			webcam.SetControlValue(wbch.Key, val)
+			ctlh.Value = val
+			webcam.SetControlValue(ctlh.Key, val)
 		}
-		// log.Println(control.Multiplier, info.Step)
-		// log.Println(wbch.Value, val, info.Min, info.Max)
 	}
 
-	rt.template.ExecuteTemplate(w, "layout.response", wbch.Value)
-}
-
-func (wbch *ControlHandler) handleIpWebcam(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {
-	log.Println("wbch.Key", wbch.Key, r.URL.RequestURI())
-
-	var (
-		cmd = camsrv.Config.Base
-		val = -1
-	// 	client = &http.Client{}
-	// 	req    *http.Request
-	// 	resp   *http.Response
-	// 	buf    []byte
-	)
-
-	constrain := func(val, min, max int) int {
-		if val < min {
-			return min
-		}
-		if val > max {
-			return max
-		}
-		return val
-	}
-
-	request := r.URL.RequestURI()
-	switch request {
-	case "/zoomin":
-		val = constrain(val+10, 0, 100)
-		cmd += fmt.Sprintf("/ptz?zoom=%d", val)
-	case "/zoomout":
-		val = constrain(val-10, 0, 100)
-		cmd += fmt.Sprintf("/ptz?zoom=%d", val)
-	default:
-		err = fmt.Errorf("'%s' not yet implemented for %s", camsrv.Config.Driver, r.RequestURI)
-		return
-	}
-	log.Println(cmd, val)
-	err = fmt.Errorf("'%s' not yet implemented for %s", camsrv.Config.Driver, r.RequestURI)
-	return
+	rt.template.ExecuteTemplate(w, "layout.response", ctlh.Value)
 }
 
 func handleRemoteV4L(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {

@@ -14,7 +14,7 @@ type Ipcam struct {
 	decoder  *mjpeg.Decoder
 	Buffer   []byte
 	isOpened bool
-	Status   any
+	State    any
 }
 
 func NewIpcam(path string) *Ipcam {
@@ -59,7 +59,4 @@ func (ipc *Ipcam) Read() (buf []byte, err error) {
 	}
 
 	return
-}
-
-func (ipc *Ipcam) SetControl(key string, value int32) {
 }

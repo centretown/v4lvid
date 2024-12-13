@@ -1,0 +1,42 @@
+{{ define "layout.ipwebcam" }}
+<div id="slot-{{.Action.Name}}" class="slot" draggable="false">
+    {{template "layout.content.head" .Action }}
+    <div class="content">
+    {{range .IPWebcam.Properties}}
+        {{template "layout.ipwebcam.option" .}}
+    {{ end }}
+    </div>
+</div>
+{{ end }}
+
+{{ define "layout.ipwebcam.option" }}
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="ipwc_{{.Key}}">{{.Key}}</label>
+        {{if .Options}}
+        <select name="{{.Key}}" id="ipwc_{{.Key}}" class="form-input"
+            hx-put="/ipwc/{{.Key}}" hx-swap=none
+            hx-vals='js:{source: currentSource()}'>
+            {{$cur:=.Value}}
+            {{range .Options}}
+                <option class="form-option" value="{{.}}"
+                    {{if eq $cur .}}selected{{end}}>{{.}}
+                </option>
+            {{end}}
+        </select>
+        {{else}}
+            {{if eq .InputType "number"}}
+            <input type="number" name="{{.Key}}" id="ipwc_{{.Key}}" 
+                class="form-input" value="{{.Value}}"
+                hx-put="/ipwc/{{.Key}}" hx-swap=none
+                hx-vals='js:{source: currentSource()}'>
+            {{else}}
+            <input type="text" name="{{.Key}}" id="ipwc_{{.Key}}" 
+                class="form-input" value="{{.Value}}" 
+                {{if eq .InputType "readonly"}} readonly {{end}}
+                hx-put="/ipwc/{{.Key}}" hx-swap=none
+                hx-vals='js:{source: currentSource()}'>
+            {{end}}
+        {{end}}
+    </div>
+{{ end }}

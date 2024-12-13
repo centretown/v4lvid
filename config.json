@@ -33,6 +33,16 @@
     },
     {
       "CameraType": 1,
+      "Driver": "ipwebcam",
+      "Path": "http://192.168.10.131:8080/video",
+      "Base": "http://192.168.10.131:8080",
+      "Codec": "MJPG",
+      "Width": 1920,
+      "Height": 1080,
+      "FPS": 15
+    },
+    {
+      "CameraType": 1,
       "Path": "http://192.168.10.30:8080",
       "Codec": "MJPG",
       "Width": 1024,
@@ -79,26 +89,8 @@
       "Icon": "backlight_high"
     }
   ],
-  "ActionsChat": [
-  ],
+  "ActionsChat": [],
   "Drivers": {
-    "ipwebcam":[
-    {
-      "Key": "Zoom, Absolute",
-      "Controls": [
-        {
-          "Url": "/zoomin",
-          "Icon": "zoom_in",
-          "Multiplier": 1
-        },
-        {
-          "Url": "/zoomout",
-          "Icon": "zoom_out",
-          "Multiplier": -1
-        }
-      ]
-  }
-  ],
     "uvcvideo": [
       {
         "Key": "Zoom, Absolute",
@@ -191,5 +183,54 @@
         ]
       }
     ]
+  },
+  "IPWCCommands": {
+    "orientation": {"Command": "/settings/orientation?set=%s", "InputType":""},
+    "idle": {"Command":  "", "InputType":""},
+    "audio_only": {"Command":  "", "InputType":""},
+    "overlay": {"Command":  "", "InputType":""},
+    "quality": {"Command":  "", "InputType":""},
+    "focus_homing": {"Command":  "", "InputType":""},
+    "ip_address": {"Command":  "", "InputType":""},
+    "main_port": {"Command":  "", "InputType":""},
+    "ipv6_address": {"Command":  "", "InputType":""},
+    "motion_limit": {"Command":  "/settings/motion_limit?set=%s", "InputType":"number"},
+    "adet_limit": {"Command":  "/settings/adet_limit?set=%s", "InputType":"number"},
+    "night_vision": {"Command":  "/settings/night_vision?set=%s", "InputType":""},
+    "night_vision_average": {"Command":  "/settings/night_vision_average?set=%s", "InputType":""},
+    "night_vision_gain": {"Command":  "/settings/night_vision_gain?set=%s", "InputType":""},
+    "video_acquisition": {"Command":  "", "InputType":""},
+    "motion_detect": {"Command":  "", "InputType":""},
+    "motion_display": {"Command":  "", "InputType":""},
+    "video_chunk_len": {"Command":  "", "InputType":""},
+    "gps_active": {"Command":  "", "InputType":""},
+    "video_size": {"Command":  "", "InputType":""},
+    "mirror_flip": {"Command":  "", "InputType":""},
+    "ffc": {"Command":  "", "InputType":""},
+    "rtsp_video_formats": {"Command":  "", "InputType":""},
+    "rtsp_audio_formats": {"Command":  "", "InputType":""},
+    "video_connections": {"Command":  "", "InputType":"readonly"},
+    "audio_connections": {"Command":  "", "InputType":"readonly"},
+    "ivideon_streaming": {"Command":  "", "InputType":""},
+    "zoom": {"Command":  "/ptz?zoom=%s", "InputType":""},
+    "crop_x": {"Command":  "/settings/crop_x?set=%s", "InputType":"number"},
+    "crop_y": {"Command":  "/settings/crop_y?set=%s", "InputType":"number"},
+    "coloreffect": {"Command":  "/settings/coloreffect?set=%s", "InputType":""},
+    "scenemode": {"Command":  "/settings/scenemode?set=%s", "InputType":""},
+    "focusmode": {"Command":  "/settings/focusmode?set=%s", "InputType":""},
+    "whitebalance": {"Command":  "/settings/whitebalance?set=%s", "InputType":""},
+    "flashmode": {"Command":  "/settings/flashmode?set=%s", "InputType":""},
+    "antibanding": {"Command":  "/settings/antibanding?set=%s", "InputType":""},
+    "torch": {"Command":  "/settings/torch?set=%s", "InputType":""},
+    "focus_distance": {"Command":  "/settings/focus_distance?set=%s", "InputType":""},
+    "focal_length": {"Command":  "/settings/focal_length?set=%s", "InputType":""},
+    "aperture": {"Command":  "/settings/aperture?set=%s", "InputType":""},
+    "filter_density": {"Command":  "/settings/filter_density?set=%s", "InputType":""},
+    "exposure_ns": {"Command":  "/settings/exposure_ns?set=%s", "InputType":""},
+    "frame_duration": {"Command":  "/settings/frame_duration?set=%s", "InputType":""},
+    "iso": {"Command":  "/settings/iso?set=%s", "InputType":""},
+    "manual_sensor": {"Command":  "/settings/manual_sensor?set=%s", "InputType":""},
+    "photo_size": {"Command":  "/settings/photo_size?set=%s", "InputType":""},
+    "photo_rotation": {"Command":  "/settings/photo_rotation?set=%s", "InputType":""}
   }
 }

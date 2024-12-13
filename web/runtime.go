@@ -67,7 +67,7 @@ func Run(cfg *config.Config) (rt *RunTime) {
 	rt.mux.HandleFunc("/webhook", rt.WebSocket.Webhook)
 
 	rt.buildCameraServers()
-	rt.ControlHandlers = CreateNexigoHandlers(rt)
+	rt.ControlHandlers = rt.CreateV4LHandlers()
 
 	rt.serveCameras()
 	rt.handleCameras()
@@ -188,4 +188,20 @@ func (rt *RunTime) buildCameraServers() {
 		rt.CameraServers = append(rt.CameraServers, cameraServer)
 		rt.CameraMap[cameraServer.Config.Path] = cameraServer
 	}
+}
+
+func (rt *RunTime) CreateV4LHandlers() (handlers []*ControlHandler) {
+
+	handlers = make([]*ControlHandler, 0)
+	driver, ok := rt.Config.Drivers[UVCVideo]
+	if !ok {
+		log.Println("Driver not found", UVCVideo)
+		return
+	}
+
+	for _, d := range driver {
+		handlers = append(handlers,
+			NewControlHandler(d.Key, d.Controls, rt))
+	}
+	return
 }

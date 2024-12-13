@@ -24,7 +24,7 @@ type VideoRecordStatus struct {
 }
 
 type ValueMap map[string]string
-type RangeMap map[string][]string
+type OptionMap map[string][]string
 
 type CurVals struct {
 	Orientation        string `json:"orientation"`
@@ -147,14 +147,41 @@ type IPWebcamStatus struct {
 	VideoConnections int                `json:"video_connections"`
 	AudioConnections int                `json:"audio_connections"`
 	VideoStatus      *VideoRecordStatus `json:"video_status"`
-	ValueMap         ValueMap           `json:"curvals"`
-	RangeMap         RangeMap           `json:"avail"`
+	Options          ValueMap           `json:"curvals"`
+	OptionMap        OptionMap          `json:"avail"`
 	DeviceInfo       *DeviceInfo        `json:"deviceInfo"`
 }
 
-func LoadIpWebCamStatus(path string) (ipcw *IPWebcamStatus, err error) {
+type IPCWConfig struct {
+	Command   string
+	InputType string
+}
+
+type IpWebcamOptions struct {
+	Key       string
+	Value     string
+	Options   []string
+	Command   string
+	InputType string
+}
+
+type IPWebcam struct {
+	VideoConnections int
+	AudioConnections int
+	DeviceInfo       *DeviceInfo
+	Properties       map[string]*IpWebcamOptions
+}
+
+func NewIpWebCam() *IPWebcam {
+	return &IPWebcam{
+		Properties: make(map[string]*IpWebcamOptions),
+	}
+}
+
+func LoadIpWebCamStatus(url string) (ipcwStat *IPWebcamStatus, err error) {
+	ipcwStat = &IPWebcamStatus{}
+
 	var (
-		url    = path + "/status.json?show_avail=1"
 		client = &http.Client{}
 		req    *http.Request
 		resp   *http.Response
@@ -179,38 +206,60 @@ func LoadIpWebCamStatus(path string) (ipcw *IPWebcamStatus, err error) {
 		return
 	}
 
-	ipcw = &IPWebcamStatus{}
-	err = json.Unmarshal(buf, ipcw)
+	err = json.Unmarshal(buf, ipcwStat)
 	if err != nil {
 		log.Println("Unmarshal", url, err)
+		log.Println(string(buf))
 		return
 	}
 
 	return
+
 }
 
-func (ipwc *IPWebcamStatus) ShowValuesAndRanges() {
-	for k, v := range ipwc.ValueMap {
-		r := ipwc.RangeMap[k]
-		log.Println(k, v, r)
+func (ipcw *IPWebcam) Load(path string, configs map[string]*IPCWConfig) (err error) {
+	var (
+		ipcwStat *IPWebcamStatus
+		url      = path + "/status.json"
+		all      = len(ipcw.Properties) == 0
+	)
+
+	if all {
+		url += "?show_avail=1"
 	}
-}
 
-type ValueRange struct {
-	Key   string
-	Value string
-	Range []string
-}
-
-func (ipwc *IPWebcamStatus) ValuesAndRanges() (vrs []*ValueRange) {
-	vrs = make([]*ValueRange, 0)
-	for k, v := range ipwc.ValueMap {
-		r := ipwc.RangeMap[k]
-		vrs = append(vrs, &ValueRange{
-			Key:   k,
-			Value: v,
-			Range: r,
-		})
+	ipcwStat, err = LoadIpWebCamStatus(url)
+	if err != nil {
+		return err
 	}
+
+	if !all {
+		for k, v := range ipcwStat.Options {
+			ipcw.Properties[k].Value = v
+		}
+		return
+	}
+
+	ipcw.VideoConnections = ipcwStat.VideoConnections
+	ipcw.AudioConnections = ipcwStat.AudioConnections
+	ipcw.DeviceInfo = ipcwStat.DeviceInfo
+	ipcw.Properties = make(map[string]*IpWebcamOptions)
+
+	for k, v := range ipcwStat.Options {
+
+		opts := &IpWebcamOptions{
+			Key:     k,
+			Value:   v,
+			Options: ipcwStat.OptionMap[k],
+		}
+		c, ok := configs[k]
+		if ok {
+			opts.Command = c.Command
+			opts.InputType = c.InputType
+		}
+
+		ipcw.Properties[k] = opts
+	}
+
 	return
 }

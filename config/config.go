@@ -32,6 +32,12 @@ type Config struct {
 	ActionsHome   []*Action
 	ActionsChat   []*Action
 	Drivers       map[string][]*camera.ControlKey
+	IPWCCommands  map[string]*camera.IPCWConfig
+}
+
+type IPWCCameraData struct {
+	Action   *Action
+	IPWebcam *camera.IPWebcam
 }
 
 func (cfg *Config) NewActionMap() (m map[string]*Action) {

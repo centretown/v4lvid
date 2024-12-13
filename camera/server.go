@@ -48,6 +48,7 @@ type Server struct {
 	Id        int
 	Config    *VideoConfig
 	Source    VideoSource
+	Recording bool
 	Busy      bool
 	indicator StreamListener
 
@@ -58,7 +59,6 @@ type Server struct {
 
 	filters []Hook
 
-	Recording  bool
 	recordStop time.Time
 
 	captureCount  int64

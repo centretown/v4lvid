@@ -1,0 +1,3277 @@
+=== RUN   TestLoadTemplate
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="adet_limit">adet_limit</label>
+        <select name="adet_limit" id="adet_limit" class="form-input"
+            hx-put="/ipwc/adet_limit" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="antibanding">antibanding</label>
+        <select name="antibanding" id="antibanding" class="form-input"
+            hx-put="/ipwc/antibanding" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+                <option class="form-option" value="50hz"
+                    >50hz
+                </option>
+            
+                <option class="form-option" value="60hz"
+                    >60hz
+                </option>
+            
+                <option class="form-option" value="auto"
+                    >auto
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="aperture">aperture</label>
+        <select name="aperture" id="aperture" class="form-input"
+            hx-put="/ipwc/aperture" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="2.20"
+                    >2.20
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="audio_connections">audio_connections</label>
+        <select name="audio_connections" id="audio_connections" class="form-input"
+            hx-put="/ipwc/audio_connections" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="audio_only">audio_only</label>
+        <select name="audio_only" id="audio_only" class="form-input"
+            hx-put="/ipwc/audio_only" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="coloreffect">coloreffect</label>
+        <select name="coloreffect" id="coloreffect" class="form-input"
+            hx-put="/ipwc/coloreffect" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="none"
+                    selected>none
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="crop_x">crop_x</label>
+        <select name="crop_x" id="crop_x" class="form-input"
+            hx-put="/ipwc/crop_x" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="crop_y">crop_y</label>
+        <select name="crop_y" id="crop_y" class="form-input"
+            hx-put="/ipwc/crop_y" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="exposure_ns">exposure_ns</label>
+        <select name="exposure_ns" id="exposure_ns" class="form-input"
+            hx-put="/ipwc/exposure_ns" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="100000"
+                    selected>100000
+                </option>
+            
+                <option class="form-option" value="160099000"
+                    >160099000
+                </option>
+            
+                <option class="form-option" value="320098000"
+                    >320098000
+                </option>
+            
+                <option class="form-option" value="480097000"
+                    >480097000
+                </option>
+            
+                <option class="form-option" value="640096000"
+                    >640096000
+                </option>
+            
+                <option class="form-option" value="800095000"
+                    >800095000
+                </option>
+            
+                <option class="form-option" value="960094000"
+                    >960094000
+                </option>
+            
+                <option class="form-option" value="1120093000"
+                    >1120093000
+                </option>
+            
+                <option class="form-option" value="1280092000"
+                    >1280092000
+                </option>
+            
+                <option class="form-option" value="1440091000"
+                    >1440091000
+                </option>
+            
+                <option class="form-option" value="1600090000"
+                    >1600090000
+                </option>
+            
+                <option class="form-option" value="1760089000"
+                    >1760089000
+                </option>
+            
+                <option class="form-option" value="1920088000"
+                    >1920088000
+                </option>
+            
+                <option class="form-option" value="2080087000"
+                    >2080087000
+                </option>
+            
+                <option class="form-option" value="2240086000"
+                    >2240086000
+                </option>
+            
+                <option class="form-option" value="2400085000"
+                    >2400085000
+                </option>
+            
+                <option class="form-option" value="2560084000"
+                    >2560084000
+                </option>
+            
+                <option class="form-option" value="2720083000"
+                    >2720083000
+                </option>
+            
+                <option class="form-option" value="2880082000"
+                    >2880082000
+                </option>
+            
+                <option class="form-option" value="3040081000"
+                    >3040081000
+                </option>
+            
+                <option class="form-option" value="3200080000"
+                    >3200080000
+                </option>
+            
+                <option class="form-option" value="3360079000"
+                    >3360079000
+                </option>
+            
+                <option class="form-option" value="3520078000"
+                    >3520078000
+                </option>
+            
+                <option class="form-option" value="3680077000"
+                    >3680077000
+                </option>
+            
+                <option class="form-option" value="3840076000"
+                    >3840076000
+                </option>
+            
+                <option class="form-option" value="4000075000"
+                    >4000075000
+                </option>
+            
+                <option class="form-option" value="4160074000"
+                    >4160074000
+                </option>
+            
+                <option class="form-option" value="4320073000"
+                    >4320073000
+                </option>
+            
+                <option class="form-option" value="4480072000"
+                    >4480072000
+                </option>
+            
+                <option class="form-option" value="4640071000"
+                    >4640071000
+                </option>
+            
+                <option class="form-option" value="4800070000"
+                    >4800070000
+                </option>
+            
+                <option class="form-option" value="4960069000"
+                    >4960069000
+                </option>
+            
+                <option class="form-option" value="5120068000"
+                    >5120068000
+                </option>
+            
+                <option class="form-option" value="5280067000"
+                    >5280067000
+                </option>
+            
+                <option class="form-option" value="5440066000"
+                    >5440066000
+                </option>
+            
+                <option class="form-option" value="5600065000"
+                    >5600065000
+                </option>
+            
+                <option class="form-option" value="5760064000"
+                    >5760064000
+                </option>
+            
+                <option class="form-option" value="5920063000"
+                    >5920063000
+                </option>
+            
+                <option class="form-option" value="6080062000"
+                    >6080062000
+                </option>
+            
+                <option class="form-option" value="6240061000"
+                    >6240061000
+                </option>
+            
+                <option class="form-option" value="6400060000"
+                    >6400060000
+                </option>
+            
+                <option class="form-option" value="6560059000"
+                    >6560059000
+                </option>
+            
+                <option class="form-option" value="6720058000"
+                    >6720058000
+                </option>
+            
+                <option class="form-option" value="6880057000"
+                    >6880057000
+                </option>
+            
+                <option class="form-option" value="7040056000"
+                    >7040056000
+                </option>
+            
+                <option class="form-option" value="7200055000"
+                    >7200055000
+                </option>
+            
+                <option class="form-option" value="7360054000"
+                    >7360054000
+                </option>
+            
+                <option class="form-option" value="7520053000"
+                    >7520053000
+                </option>
+            
+                <option class="form-option" value="7680052000"
+                    >7680052000
+                </option>
+            
+                <option class="form-option" value="7840051000"
+                    >7840051000
+                </option>
+            
+                <option class="form-option" value="8000050000"
+                    >8000050000
+                </option>
+            
+                <option class="form-option" value="8160049000"
+                    >8160049000
+                </option>
+            
+                <option class="form-option" value="8320048000"
+                    >8320048000
+                </option>
+            
+                <option class="form-option" value="8480047000"
+                    >8480047000
+                </option>
+            
+                <option class="form-option" value="8640046000"
+                    >8640046000
+                </option>
+            
+                <option class="form-option" value="8800045000"
+                    >8800045000
+                </option>
+            
+                <option class="form-option" value="8960044000"
+                    >8960044000
+                </option>
+            
+                <option class="form-option" value="9120043000"
+                    >9120043000
+                </option>
+            
+                <option class="form-option" value="9280042000"
+                    >9280042000
+                </option>
+            
+                <option class="form-option" value="9440041000"
+                    >9440041000
+                </option>
+            
+                <option class="form-option" value="9600040000"
+                    >9600040000
+                </option>
+            
+                <option class="form-option" value="9760039000"
+                    >9760039000
+                </option>
+            
+                <option class="form-option" value="9920038000"
+                    >9920038000
+                </option>
+            
+                <option class="form-option" value="10080037000"
+                    >10080037000
+                </option>
+            
+                <option class="form-option" value="10240036000"
+                    >10240036000
+                </option>
+            
+                <option class="form-option" value="10400035000"
+                    >10400035000
+                </option>
+            
+                <option class="form-option" value="10560034000"
+                    >10560034000
+                </option>
+            
+                <option class="form-option" value="10720033000"
+                    >10720033000
+                </option>
+            
+                <option class="form-option" value="10880032000"
+                    >10880032000
+                </option>
+            
+                <option class="form-option" value="11040031000"
+                    >11040031000
+                </option>
+            
+                <option class="form-option" value="11200030000"
+                    >11200030000
+                </option>
+            
+                <option class="form-option" value="11360029000"
+                    >11360029000
+                </option>
+            
+                <option class="form-option" value="11520028000"
+                    >11520028000
+                </option>
+            
+                <option class="form-option" value="11680027000"
+                    >11680027000
+                </option>
+            
+                <option class="form-option" value="11840026000"
+                    >11840026000
+                </option>
+            
+                <option class="form-option" value="12000025000"
+                    >12000025000
+                </option>
+            
+                <option class="form-option" value="12160024000"
+                    >12160024000
+                </option>
+            
+                <option class="form-option" value="12320023000"
+                    >12320023000
+                </option>
+            
+                <option class="form-option" value="12480022000"
+                    >12480022000
+                </option>
+            
+                <option class="form-option" value="12640021000"
+                    >12640021000
+                </option>
+            
+                <option class="form-option" value="12800020000"
+                    >12800020000
+                </option>
+            
+                <option class="form-option" value="12960019000"
+                    >12960019000
+                </option>
+            
+                <option class="form-option" value="13120018000"
+                    >13120018000
+                </option>
+            
+                <option class="form-option" value="13280017000"
+                    >13280017000
+                </option>
+            
+                <option class="form-option" value="13440016000"
+                    >13440016000
+                </option>
+            
+                <option class="form-option" value="13600015000"
+                    >13600015000
+                </option>
+            
+                <option class="form-option" value="13760014000"
+                    >13760014000
+                </option>
+            
+                <option class="form-option" value="13920013000"
+                    >13920013000
+                </option>
+            
+                <option class="form-option" value="14080012000"
+                    >14080012000
+                </option>
+            
+                <option class="form-option" value="14240011000"
+                    >14240011000
+                </option>
+            
+                <option class="form-option" value="14400010000"
+                    >14400010000
+                </option>
+            
+                <option class="form-option" value="14560009000"
+                    >14560009000
+                </option>
+            
+                <option class="form-option" value="14720008000"
+                    >14720008000
+                </option>
+            
+                <option class="form-option" value="14880007000"
+                    >14880007000
+                </option>
+            
+                <option class="form-option" value="15040006000"
+                    >15040006000
+                </option>
+            
+                <option class="form-option" value="15200005000"
+                    >15200005000
+                </option>
+            
+                <option class="form-option" value="15360004000"
+                    >15360004000
+                </option>
+            
+                <option class="form-option" value="15520003000"
+                    >15520003000
+                </option>
+            
+                <option class="form-option" value="15680002000"
+                    >15680002000
+                </option>
+            
+                <option class="form-option" value="15840001000"
+                    >15840001000
+                </option>
+            
+                <option class="form-option" value="16000000000"
+                    >16000000000
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="ffc">ffc</label>
+        <select name="ffc" id="ffc" class="form-input"
+            hx-put="/ipwc/ffc" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="filter_density">filter_density</label>
+        <select name="filter_density" id="filter_density" class="form-input"
+            hx-put="/ipwc/filter_density" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="0.00"
+                    >0.00
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="flashmode">flashmode</label>
+        <select name="flashmode" id="flashmode" class="form-input"
+            hx-put="/ipwc/flashmode" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+                <option class="form-option" value="auto"
+                    >auto
+                </option>
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="red-eye"
+                    >red-eye
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="focal_length">focal_length</label>
+        <select name="focal_length" id="focal_length" class="form-input"
+            hx-put="/ipwc/focal_length" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="3.39"
+                    selected>3.39
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="focus_distance">focus_distance</label>
+        <select name="focus_distance" id="focus_distance" class="form-input"
+            hx-put="/ipwc/focus_distance" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="0.00"
+                    >0.00
+                </option>
+            
+                <option class="form-option" value="0.10"
+                    >0.10
+                </option>
+            
+                <option class="form-option" value="0.20"
+                    >0.20
+                </option>
+            
+                <option class="form-option" value="0.30"
+                    >0.30
+                </option>
+            
+                <option class="form-option" value="0.40"
+                    >0.40
+                </option>
+            
+                <option class="form-option" value="0.50"
+                    >0.50
+                </option>
+            
+                <option class="form-option" value="0.60"
+                    >0.60
+                </option>
+            
+                <option class="form-option" value="0.70"
+                    >0.70
+                </option>
+            
+                <option class="form-option" value="0.80"
+                    >0.80
+                </option>
+            
+                <option class="form-option" value="0.90"
+                    >0.90
+                </option>
+            
+                <option class="form-option" value="1.00"
+                    >1.00
+                </option>
+            
+                <option class="form-option" value="1.10"
+                    >1.10
+                </option>
+            
+                <option class="form-option" value="1.20"
+                    >1.20
+                </option>
+            
+                <option class="form-option" value="1.30"
+                    >1.30
+                </option>
+            
+                <option class="form-option" value="1.40"
+                    >1.40
+                </option>
+            
+                <option class="form-option" value="1.50"
+                    >1.50
+                </option>
+            
+                <option class="form-option" value="1.60"
+                    >1.60
+                </option>
+            
+                <option class="form-option" value="1.70"
+                    >1.70
+                </option>
+            
+                <option class="form-option" value="1.80"
+                    >1.80
+                </option>
+            
+                <option class="form-option" value="1.90"
+                    >1.90
+                </option>
+            
+                <option class="form-option" value="2.00"
+                    >2.00
+                </option>
+            
+                <option class="form-option" value="2.10"
+                    >2.10
+                </option>
+            
+                <option class="form-option" value="2.20"
+                    >2.20
+                </option>
+            
+                <option class="form-option" value="2.30"
+                    >2.30
+                </option>
+            
+                <option class="form-option" value="2.40"
+                    >2.40
+                </option>
+            
+                <option class="form-option" value="2.50"
+                    >2.50
+                </option>
+            
+                <option class="form-option" value="2.60"
+                    >2.60
+                </option>
+            
+                <option class="form-option" value="2.70"
+                    >2.70
+                </option>
+            
+                <option class="form-option" value="2.80"
+                    >2.80
+                </option>
+            
+                <option class="form-option" value="2.90"
+                    >2.90
+                </option>
+            
+                <option class="form-option" value="3.00"
+                    >3.00
+                </option>
+            
+                <option class="form-option" value="3.10"
+                    >3.10
+                </option>
+            
+                <option class="form-option" value="3.20"
+                    >3.20
+                </option>
+            
+                <option class="form-option" value="3.30"
+                    >3.30
+                </option>
+            
+                <option class="form-option" value="3.40"
+                    >3.40
+                </option>
+            
+                <option class="form-option" value="3.50"
+                    >3.50
+                </option>
+            
+                <option class="form-option" value="3.60"
+                    >3.60
+                </option>
+            
+                <option class="form-option" value="3.70"
+                    >3.70
+                </option>
+            
+                <option class="form-option" value="3.80"
+                    >3.80
+                </option>
+            
+                <option class="form-option" value="3.90"
+                    >3.90
+                </option>
+            
+                <option class="form-option" value="4.00"
+                    >4.00
+                </option>
+            
+                <option class="form-option" value="4.10"
+                    >4.10
+                </option>
+            
+                <option class="form-option" value="4.20"
+                    >4.20
+                </option>
+            
+                <option class="form-option" value="4.30"
+                    >4.30
+                </option>
+            
+                <option class="form-option" value="4.40"
+                    >4.40
+                </option>
+            
+                <option class="form-option" value="4.50"
+                    >4.50
+                </option>
+            
+                <option class="form-option" value="4.60"
+                    >4.60
+                </option>
+            
+                <option class="form-option" value="4.70"
+                    >4.70
+                </option>
+            
+                <option class="form-option" value="4.80"
+                    >4.80
+                </option>
+            
+                <option class="form-option" value="4.90"
+                    >4.90
+                </option>
+            
+                <option class="form-option" value="5.00"
+                    >5.00
+                </option>
+            
+                <option class="form-option" value="5.10"
+                    >5.10
+                </option>
+            
+                <option class="form-option" value="5.20"
+                    >5.20
+                </option>
+            
+                <option class="form-option" value="5.30"
+                    >5.30
+                </option>
+            
+                <option class="form-option" value="5.40"
+                    >5.40
+                </option>
+            
+                <option class="form-option" value="5.50"
+                    >5.50
+                </option>
+            
+                <option class="form-option" value="5.60"
+                    >5.60
+                </option>
+            
+                <option class="form-option" value="5.70"
+                    >5.70
+                </option>
+            
+                <option class="form-option" value="5.80"
+                    >5.80
+                </option>
+            
+                <option class="form-option" value="5.90"
+                    >5.90
+                </option>
+            
+                <option class="form-option" value="6.00"
+                    >6.00
+                </option>
+            
+                <option class="form-option" value="6.10"
+                    >6.10
+                </option>
+            
+                <option class="form-option" value="6.20"
+                    >6.20
+                </option>
+            
+                <option class="form-option" value="6.30"
+                    >6.30
+                </option>
+            
+                <option class="form-option" value="6.40"
+                    >6.40
+                </option>
+            
+                <option class="form-option" value="6.50"
+                    >6.50
+                </option>
+            
+                <option class="form-option" value="6.60"
+                    >6.60
+                </option>
+            
+                <option class="form-option" value="6.70"
+                    >6.70
+                </option>
+            
+                <option class="form-option" value="6.80"
+                    >6.80
+                </option>
+            
+                <option class="form-option" value="6.90"
+                    >6.90
+                </option>
+            
+                <option class="form-option" value="7.00"
+                    >7.00
+                </option>
+            
+                <option class="form-option" value="7.10"
+                    >7.10
+                </option>
+            
+                <option class="form-option" value="7.20"
+                    >7.20
+                </option>
+            
+                <option class="form-option" value="7.30"
+                    >7.30
+                </option>
+            
+                <option class="form-option" value="7.40"
+                    >7.40
+                </option>
+            
+                <option class="form-option" value="7.50"
+                    >7.50
+                </option>
+            
+                <option class="form-option" value="7.60"
+                    >7.60
+                </option>
+            
+                <option class="form-option" value="7.70"
+                    >7.70
+                </option>
+            
+                <option class="form-option" value="7.80"
+                    >7.80
+                </option>
+            
+                <option class="form-option" value="7.90"
+                    >7.90
+                </option>
+            
+                <option class="form-option" value="8.00"
+                    >8.00
+                </option>
+            
+                <option class="form-option" value="8.10"
+                    >8.10
+                </option>
+            
+                <option class="form-option" value="8.20"
+                    >8.20
+                </option>
+            
+                <option class="form-option" value="8.30"
+                    >8.30
+                </option>
+            
+                <option class="form-option" value="8.40"
+                    >8.40
+                </option>
+            
+                <option class="form-option" value="8.50"
+                    >8.50
+                </option>
+            
+                <option class="form-option" value="8.60"
+                    >8.60
+                </option>
+            
+                <option class="form-option" value="8.70"
+                    >8.70
+                </option>
+            
+                <option class="form-option" value="8.80"
+                    >8.80
+                </option>
+            
+                <option class="form-option" value="8.90"
+                    >8.90
+                </option>
+            
+                <option class="form-option" value="9.00"
+                    >9.00
+                </option>
+            
+                <option class="form-option" value="9.10"
+                    >9.10
+                </option>
+            
+                <option class="form-option" value="9.20"
+                    >9.20
+                </option>
+            
+                <option class="form-option" value="9.30"
+                    >9.30
+                </option>
+            
+                <option class="form-option" value="9.40"
+                    >9.40
+                </option>
+            
+                <option class="form-option" value="9.50"
+                    >9.50
+                </option>
+            
+                <option class="form-option" value="9.60"
+                    >9.60
+                </option>
+            
+                <option class="form-option" value="9.70"
+                    >9.70
+                </option>
+            
+                <option class="form-option" value="9.80"
+                    >9.80
+                </option>
+            
+                <option class="form-option" value="9.90"
+                    >9.90
+                </option>
+            
+                <option class="form-option" value="10.0"
+                    >10.0
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="focus_homing">focus_homing</label>
+        <select name="focus_homing" id="focus_homing" class="form-input"
+            hx-put="/ipwc/focus_homing" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="focusmode">focusmode</label>
+        <select name="focusmode" id="focusmode" class="form-input"
+            hx-put="/ipwc/focusmode" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="off"
+                    >off
+                </option>
+            
+                <option class="form-option" value="auto"
+                    >auto
+                </option>
+            
+                <option class="form-option" value="macro"
+                    >macro
+                </option>
+            
+                <option class="form-option" value="continuous-video"
+                    selected>continuous-video
+                </option>
+            
+                <option class="form-option" value="continuous-picture"
+                    >continuous-picture
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="frame_duration">frame_duration</label>
+        <select name="frame_duration" id="frame_duration" class="form-input"
+            hx-put="/ipwc/frame_duration" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="33333333"
+                    selected>33333333
+                </option>
+            
+                <option class="form-option" value="192999999"
+                    >192999999
+                </option>
+            
+                <option class="form-option" value="352666665"
+                    >352666665
+                </option>
+            
+                <option class="form-option" value="512333331"
+                    >512333331
+                </option>
+            
+                <option class="form-option" value="671999997"
+                    >671999997
+                </option>
+            
+                <option class="form-option" value="831666663"
+                    >831666663
+                </option>
+            
+                <option class="form-option" value="991333329"
+                    >991333329
+                </option>
+            
+                <option class="form-option" value="1150999995"
+                    >1150999995
+                </option>
+            
+                <option class="form-option" value="1310666661"
+                    >1310666661
+                </option>
+            
+                <option class="form-option" value="1470333327"
+                    >1470333327
+                </option>
+            
+                <option class="form-option" value="1629999993"
+                    >1629999993
+                </option>
+            
+                <option class="form-option" value="1789666659"
+                    >1789666659
+                </option>
+            
+                <option class="form-option" value="1949333325"
+                    >1949333325
+                </option>
+            
+                <option class="form-option" value="2108999991"
+                    >2108999991
+                </option>
+            
+                <option class="form-option" value="2268666657"
+                    >2268666657
+                </option>
+            
+                <option class="form-option" value="2428333323"
+                    >2428333323
+                </option>
+            
+                <option class="form-option" value="2587999989"
+                    >2587999989
+                </option>
+            
+                <option class="form-option" value="2747666655"
+                    >2747666655
+                </option>
+            
+                <option class="form-option" value="2907333321"
+                    >2907333321
+                </option>
+            
+                <option class="form-option" value="3066999987"
+                    >3066999987
+                </option>
+            
+                <option class="form-option" value="3226666653"
+                    >3226666653
+                </option>
+            
+                <option class="form-option" value="3386333319"
+                    >3386333319
+                </option>
+            
+                <option class="form-option" value="3545999985"
+                    >3545999985
+                </option>
+            
+                <option class="form-option" value="3705666651"
+                    >3705666651
+                </option>
+            
+                <option class="form-option" value="3865333317"
+                    >3865333317
+                </option>
+            
+                <option class="form-option" value="4024999983"
+                    >4024999983
+                </option>
+            
+                <option class="form-option" value="4184666649"
+                    >4184666649
+                </option>
+            
+                <option class="form-option" value="4344333315"
+                    >4344333315
+                </option>
+            
+                <option class="form-option" value="4503999981"
+                    >4503999981
+                </option>
+            
+                <option class="form-option" value="4663666647"
+                    >4663666647
+                </option>
+            
+                <option class="form-option" value="4823333313"
+                    >4823333313
+                </option>
+            
+                <option class="form-option" value="4982999979"
+                    >4982999979
+                </option>
+            
+                <option class="form-option" value="5142666645"
+                    >5142666645
+                </option>
+            
+                <option class="form-option" value="5302333311"
+                    >5302333311
+                </option>
+            
+                <option class="form-option" value="5461999977"
+                    >5461999977
+                </option>
+            
+                <option class="form-option" value="5621666643"
+                    >5621666643
+                </option>
+            
+                <option class="form-option" value="5781333309"
+                    >5781333309
+                </option>
+            
+                <option class="form-option" value="5940999975"
+                    >5940999975
+                </option>
+            
+                <option class="form-option" value="6100666641"
+                    >6100666641
+                </option>
+            
+                <option class="form-option" value="6260333307"
+                    >6260333307
+                </option>
+            
+                <option class="form-option" value="6419999973"
+                    >6419999973
+                </option>
+            
+                <option class="form-option" value="6579666639"
+                    >6579666639
+                </option>
+            
+                <option class="form-option" value="6739333305"
+                    >6739333305
+                </option>
+            
+                <option class="form-option" value="6898999971"
+                    >6898999971
+                </option>
+            
+                <option class="form-option" value="7058666637"
+                    >7058666637
+                </option>
+            
+                <option class="form-option" value="7218333303"
+                    >7218333303
+                </option>
+            
+                <option class="form-option" value="7377999969"
+                    >7377999969
+                </option>
+            
+                <option class="form-option" value="7537666635"
+                    >7537666635
+                </option>
+            
+                <option class="form-option" value="7697333301"
+                    >7697333301
+                </option>
+            
+                <option class="form-option" value="7856999967"
+                    >7856999967
+                </option>
+            
+                <option class="form-option" value="8016666633"
+                    >8016666633
+                </option>
+            
+                <option class="form-option" value="8176333299"
+                    >8176333299
+                </option>
+            
+                <option class="form-option" value="8335999965"
+                    >8335999965
+                </option>
+            
+                <option class="form-option" value="8495666631"
+                    >8495666631
+                </option>
+            
+                <option class="form-option" value="8655333297"
+                    >8655333297
+                </option>
+            
+                <option class="form-option" value="8814999963"
+                    >8814999963
+                </option>
+            
+                <option class="form-option" value="8974666629"
+                    >8974666629
+                </option>
+            
+                <option class="form-option" value="9134333295"
+                    >9134333295
+                </option>
+            
+                <option class="form-option" value="9293999961"
+                    >9293999961
+                </option>
+            
+                <option class="form-option" value="9453666627"
+                    >9453666627
+                </option>
+            
+                <option class="form-option" value="9613333293"
+                    >9613333293
+                </option>
+            
+                <option class="form-option" value="9772999959"
+                    >9772999959
+                </option>
+            
+                <option class="form-option" value="9932666625"
+                    >9932666625
+                </option>
+            
+                <option class="form-option" value="10092333291"
+                    >10092333291
+                </option>
+            
+                <option class="form-option" value="10251999957"
+                    >10251999957
+                </option>
+            
+                <option class="form-option" value="10411666623"
+                    >10411666623
+                </option>
+            
+                <option class="form-option" value="10571333289"
+                    >10571333289
+                </option>
+            
+                <option class="form-option" value="10730999955"
+                    >10730999955
+                </option>
+            
+                <option class="form-option" value="10890666621"
+                    >10890666621
+                </option>
+            
+                <option class="form-option" value="11050333287"
+                    >11050333287
+                </option>
+            
+                <option class="form-option" value="11209999953"
+                    >11209999953
+                </option>
+            
+                <option class="form-option" value="11369666619"
+                    >11369666619
+                </option>
+            
+                <option class="form-option" value="11529333285"
+                    >11529333285
+                </option>
+            
+                <option class="form-option" value="11688999951"
+                    >11688999951
+                </option>
+            
+                <option class="form-option" value="11848666617"
+                    >11848666617
+                </option>
+            
+                <option class="form-option" value="12008333283"
+                    >12008333283
+                </option>
+            
+                <option class="form-option" value="12167999949"
+                    >12167999949
+                </option>
+            
+                <option class="form-option" value="12327666615"
+                    >12327666615
+                </option>
+            
+                <option class="form-option" value="12487333281"
+                    >12487333281
+                </option>
+            
+                <option class="form-option" value="12646999947"
+                    >12646999947
+                </option>
+            
+                <option class="form-option" value="12806666613"
+                    >12806666613
+                </option>
+            
+                <option class="form-option" value="12966333279"
+                    >12966333279
+                </option>
+            
+                <option class="form-option" value="13125999945"
+                    >13125999945
+                </option>
+            
+                <option class="form-option" value="13285666611"
+                    >13285666611
+                </option>
+            
+                <option class="form-option" value="13445333277"
+                    >13445333277
+                </option>
+            
+                <option class="form-option" value="13604999943"
+                    >13604999943
+                </option>
+            
+                <option class="form-option" value="13764666609"
+                    >13764666609
+                </option>
+            
+                <option class="form-option" value="13924333275"
+                    >13924333275
+                </option>
+            
+                <option class="form-option" value="14083999941"
+                    >14083999941
+                </option>
+            
+                <option class="form-option" value="14243666607"
+                    >14243666607
+                </option>
+            
+                <option class="form-option" value="14403333273"
+                    >14403333273
+                </option>
+            
+                <option class="form-option" value="14562999939"
+                    >14562999939
+                </option>
+            
+                <option class="form-option" value="14722666605"
+                    >14722666605
+                </option>
+            
+                <option class="form-option" value="14882333271"
+                    >14882333271
+                </option>
+            
+                <option class="form-option" value="15041999937"
+                    >15041999937
+                </option>
+            
+                <option class="form-option" value="15201666603"
+                    >15201666603
+                </option>
+            
+                <option class="form-option" value="15361333269"
+                    >15361333269
+                </option>
+            
+                <option class="form-option" value="15520999935"
+                    >15520999935
+                </option>
+            
+                <option class="form-option" value="15680666601"
+                    >15680666601
+                </option>
+            
+                <option class="form-option" value="15840333267"
+                    >15840333267
+                </option>
+            
+                <option class="form-option" value="16000000000"
+                    >16000000000
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="gps_active">gps_active</label>
+        <select name="gps_active" id="gps_active" class="form-input"
+            hx-put="/ipwc/gps_active" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="idle">idle</label>
+        <select name="idle" id="idle" class="form-input"
+            hx-put="/ipwc/idle" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="ip_address">ip_address</label>
+        <select name="ip_address" id="ip_address" class="form-input"
+            hx-put="/ipwc/ip_address" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="ipv6_address">ipv6_address</label>
+        <select name="ipv6_address" id="ipv6_address" class="form-input"
+            hx-put="/ipwc/ipv6_address" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="iso">iso</label>
+        <select name="iso" id="iso" class="form-input"
+            hx-put="/ipwc/iso" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="100"
+                    selected>100
+                </option>
+            
+                <option class="form-option" value="115"
+                    >115
+                </option>
+            
+                <option class="form-option" value="130"
+                    >130
+                </option>
+            
+                <option class="form-option" value="145"
+                    >145
+                </option>
+            
+                <option class="form-option" value="160"
+                    >160
+                </option>
+            
+                <option class="form-option" value="175"
+                    >175
+                </option>
+            
+                <option class="form-option" value="190"
+                    >190
+                </option>
+            
+                <option class="form-option" value="205"
+                    >205
+                </option>
+            
+                <option class="form-option" value="220"
+                    >220
+                </option>
+            
+                <option class="form-option" value="235"
+                    >235
+                </option>
+            
+                <option class="form-option" value="250"
+                    >250
+                </option>
+            
+                <option class="form-option" value="265"
+                    >265
+                </option>
+            
+                <option class="form-option" value="280"
+                    >280
+                </option>
+            
+                <option class="form-option" value="295"
+                    >295
+                </option>
+            
+                <option class="form-option" value="310"
+                    >310
+                </option>
+            
+                <option class="form-option" value="325"
+                    >325
+                </option>
+            
+                <option class="form-option" value="340"
+                    >340
+                </option>
+            
+                <option class="form-option" value="355"
+                    >355
+                </option>
+            
+                <option class="form-option" value="370"
+                    >370
+                </option>
+            
+                <option class="form-option" value="385"
+                    >385
+                </option>
+            
+                <option class="form-option" value="400"
+                    >400
+                </option>
+            
+                <option class="form-option" value="415"
+                    >415
+                </option>
+            
+                <option class="form-option" value="430"
+                    >430
+                </option>
+            
+                <option class="form-option" value="445"
+                    >445
+                </option>
+            
+                <option class="form-option" value="460"
+                    >460
+                </option>
+            
+                <option class="form-option" value="475"
+                    >475
+                </option>
+            
+                <option class="form-option" value="490"
+                    >490
+                </option>
+            
+                <option class="form-option" value="505"
+                    >505
+                </option>
+            
+                <option class="form-option" value="520"
+                    >520
+                </option>
+            
+                <option class="form-option" value="535"
+                    >535
+                </option>
+            
+                <option class="form-option" value="550"
+                    >550
+                </option>
+            
+                <option class="form-option" value="565"
+                    >565
+                </option>
+            
+                <option class="form-option" value="580"
+                    >580
+                </option>
+            
+                <option class="form-option" value="595"
+                    >595
+                </option>
+            
+                <option class="form-option" value="610"
+                    >610
+                </option>
+            
+                <option class="form-option" value="625"
+                    >625
+                </option>
+            
+                <option class="form-option" value="640"
+                    >640
+                </option>
+            
+                <option class="form-option" value="655"
+                    >655
+                </option>
+            
+                <option class="form-option" value="670"
+                    >670
+                </option>
+            
+                <option class="form-option" value="685"
+                    >685
+                </option>
+            
+                <option class="form-option" value="700"
+                    >700
+                </option>
+            
+                <option class="form-option" value="715"
+                    >715
+                </option>
+            
+                <option class="form-option" value="730"
+                    >730
+                </option>
+            
+                <option class="form-option" value="745"
+                    >745
+                </option>
+            
+                <option class="form-option" value="760"
+                    >760
+                </option>
+            
+                <option class="form-option" value="775"
+                    >775
+                </option>
+            
+                <option class="form-option" value="790"
+                    >790
+                </option>
+            
+                <option class="form-option" value="805"
+                    >805
+                </option>
+            
+                <option class="form-option" value="820"
+                    >820
+                </option>
+            
+                <option class="form-option" value="835"
+                    >835
+                </option>
+            
+                <option class="form-option" value="850"
+                    >850
+                </option>
+            
+                <option class="form-option" value="865"
+                    >865
+                </option>
+            
+                <option class="form-option" value="880"
+                    >880
+                </option>
+            
+                <option class="form-option" value="895"
+                    >895
+                </option>
+            
+                <option class="form-option" value="910"
+                    >910
+                </option>
+            
+                <option class="form-option" value="925"
+                    >925
+                </option>
+            
+                <option class="form-option" value="940"
+                    >940
+                </option>
+            
+                <option class="form-option" value="955"
+                    >955
+                </option>
+            
+                <option class="form-option" value="970"
+                    >970
+                </option>
+            
+                <option class="form-option" value="985"
+                    >985
+                </option>
+            
+                <option class="form-option" value="1000"
+                    >1000
+                </option>
+            
+                <option class="form-option" value="1015"
+                    >1015
+                </option>
+            
+                <option class="form-option" value="1030"
+                    >1030
+                </option>
+            
+                <option class="form-option" value="1045"
+                    >1045
+                </option>
+            
+                <option class="form-option" value="1060"
+                    >1060
+                </option>
+            
+                <option class="form-option" value="1075"
+                    >1075
+                </option>
+            
+                <option class="form-option" value="1090"
+                    >1090
+                </option>
+            
+                <option class="form-option" value="1105"
+                    >1105
+                </option>
+            
+                <option class="form-option" value="1120"
+                    >1120
+                </option>
+            
+                <option class="form-option" value="1135"
+                    >1135
+                </option>
+            
+                <option class="form-option" value="1150"
+                    >1150
+                </option>
+            
+                <option class="form-option" value="1165"
+                    >1165
+                </option>
+            
+                <option class="form-option" value="1180"
+                    >1180
+                </option>
+            
+                <option class="form-option" value="1195"
+                    >1195
+                </option>
+            
+                <option class="form-option" value="1210"
+                    >1210
+                </option>
+            
+                <option class="form-option" value="1225"
+                    >1225
+                </option>
+            
+                <option class="form-option" value="1240"
+                    >1240
+                </option>
+            
+                <option class="form-option" value="1255"
+                    >1255
+                </option>
+            
+                <option class="form-option" value="1270"
+                    >1270
+                </option>
+            
+                <option class="form-option" value="1285"
+                    >1285
+                </option>
+            
+                <option class="form-option" value="1300"
+                    >1300
+                </option>
+            
+                <option class="form-option" value="1315"
+                    >1315
+                </option>
+            
+                <option class="form-option" value="1330"
+                    >1330
+                </option>
+            
+                <option class="form-option" value="1345"
+                    >1345
+                </option>
+            
+                <option class="form-option" value="1360"
+                    >1360
+                </option>
+            
+                <option class="form-option" value="1375"
+                    >1375
+                </option>
+            
+                <option class="form-option" value="1390"
+                    >1390
+                </option>
+            
+                <option class="form-option" value="1405"
+                    >1405
+                </option>
+            
+                <option class="form-option" value="1420"
+                    >1420
+                </option>
+            
+                <option class="form-option" value="1435"
+                    >1435
+                </option>
+            
+                <option class="form-option" value="1450"
+                    >1450
+                </option>
+            
+                <option class="form-option" value="1465"
+                    >1465
+                </option>
+            
+                <option class="form-option" value="1480"
+                    >1480
+                </option>
+            
+                <option class="form-option" value="1495"
+                    >1495
+                </option>
+            
+                <option class="form-option" value="1510"
+                    >1510
+                </option>
+            
+                <option class="form-option" value="1525"
+                    >1525
+                </option>
+            
+                <option class="form-option" value="1540"
+                    >1540
+                </option>
+            
+                <option class="form-option" value="1555"
+                    >1555
+                </option>
+            
+                <option class="form-option" value="1570"
+                    >1570
+                </option>
+            
+                <option class="form-option" value="1585"
+                    >1585
+                </option>
+            
+                <option class="form-option" value="1600"
+                    >1600
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="ivideon_streaming">ivideon_streaming</label>
+        <select name="ivideon_streaming" id="ivideon_streaming" class="form-input"
+            hx-put="/ipwc/ivideon_streaming" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    selected>on
+                </option>
+            
+                <option class="form-option" value="off"
+                    >off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="main_port">main_port</label>
+        <select name="main_port" id="main_port" class="form-input"
+            hx-put="/ipwc/main_port" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="manual_sensor">manual_sensor</label>
+        <select name="manual_sensor" id="manual_sensor" class="form-input"
+            hx-put="/ipwc/manual_sensor" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="mirror_flip">mirror_flip</label>
+        <select name="mirror_flip" id="mirror_flip" class="form-input"
+            hx-put="/ipwc/mirror_flip" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="none"
+                    selected>none
+                </option>
+            
+                <option class="form-option" value="mirror"
+                    >mirror
+                </option>
+            
+                <option class="form-option" value="flip"
+                    >flip
+                </option>
+            
+                <option class="form-option" value="mirror,flip"
+                    >mirror,flip
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="motion_detect">motion_detect</label>
+        <select name="motion_detect" id="motion_detect" class="form-input"
+            hx-put="/ipwc/motion_detect" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    selected>on
+                </option>
+            
+                <option class="form-option" value="off"
+                    >off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="motion_display">motion_display</label>
+        <select name="motion_display" id="motion_display" class="form-input"
+            hx-put="/ipwc/motion_display" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="motion_limit">motion_limit</label>
+        <select name="motion_limit" id="motion_limit" class="form-input"
+            hx-put="/ipwc/motion_limit" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="night_vision">night_vision</label>
+        <select name="night_vision" id="night_vision" class="form-input"
+            hx-put="/ipwc/night_vision" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="night_vision_average">night_vision_average</label>
+        <select name="night_vision_average" id="night_vision_average" class="form-input"
+            hx-put="/ipwc/night_vision_average" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="night_vision_gain">night_vision_gain</label>
+        <select name="night_vision_gain" id="night_vision_gain" class="form-input"
+            hx-put="/ipwc/night_vision_gain" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="0.5"
+                    >0.5
+                </option>
+            
+                <option class="form-option" value="1.0"
+                    selected>1.0
+                </option>
+            
+                <option class="form-option" value="1.5"
+                    >1.5
+                </option>
+            
+                <option class="form-option" value="2.0"
+                    >2.0
+                </option>
+            
+                <option class="form-option" value="2.5"
+                    >2.5
+                </option>
+            
+                <option class="form-option" value="3.0"
+                    >3.0
+                </option>
+            
+                <option class="form-option" value="4.0"
+                    >4.0
+                </option>
+            
+                <option class="form-option" value="7.0"
+                    >7.0
+                </option>
+            
+                <option class="form-option" value="10.0"
+                    >10.0
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="orientation">orientation</label>
+        <select name="orientation" id="orientation" class="form-input"
+            hx-put="/ipwc/orientation" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="landscape"
+                    selected>landscape
+                </option>
+            
+                <option class="form-option" value="portrait"
+                    >portrait
+                </option>
+            
+                <option class="form-option" value="upsidedown"
+                    >upsidedown
+                </option>
+            
+                <option class="form-option" value="upsidedown_portrait"
+                    >upsidedown_portrait
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="overlay">overlay</label>
+        <select name="overlay" id="overlay" class="form-input"
+            hx-put="/ipwc/overlay" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    selected>on
+                </option>
+            
+                <option class="form-option" value="off"
+                    >off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="photo_rotation">photo_rotation</label>
+        <select name="photo_rotation" id="photo_rotation" class="form-input"
+            hx-put="/ipwc/photo_rotation" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="0"
+                    >0
+                </option>
+            
+                <option class="form-option" value="90"
+                    >90
+                </option>
+            
+                <option class="form-option" value="180"
+                    >180
+                </option>
+            
+                <option class="form-option" value="270"
+                    >270
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="photo_size">photo_size</label>
+        <select name="photo_size" id="photo_size" class="form-input"
+            hx-put="/ipwc/photo_size" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="4160x3120"
+                    >4160x3120
+                </option>
+            
+                <option class="form-option" value="4160x2340"
+                    >4160x2340
+                </option>
+            
+                <option class="form-option" value="4160x1872"
+                    >4160x1872
+                </option>
+            
+                <option class="form-option" value="4096x2304"
+                    >4096x2304
+                </option>
+            
+                <option class="form-option" value="3840x2176"
+                    >3840x2176
+                </option>
+            
+                <option class="form-option" value="3840x2160"
+                    selected>3840x2160
+                </option>
+            
+                <option class="form-option" value="3264x2448"
+                    >3264x2448
+                </option>
+            
+                <option class="form-option" value="3120x3120"
+                    >3120x3120
+                </option>
+            
+                <option class="form-option" value="2560x1920"
+                    >2560x1920
+                </option>
+            
+                <option class="form-option" value="2560x1440"
+                    >2560x1440
+                </option>
+            
+                <option class="form-option" value="1920x1440"
+                    >1920x1440
+                </option>
+            
+                <option class="form-option" value="1920x1088"
+                    >1920x1088
+                </option>
+            
+                <option class="form-option" value="1920x1080"
+                    >1920x1080
+                </option>
+            
+                <option class="form-option" value="1920x864"
+                    >1920x864
+                </option>
+            
+                <option class="form-option" value="1600x720"
+                    >1600x720
+                </option>
+            
+                <option class="form-option" value="1560x720"
+                    >1560x720
+                </option>
+            
+                <option class="form-option" value="1520x720"
+                    >1520x720
+                </option>
+            
+                <option class="form-option" value="1440x1080"
+                    >1440x1080
+                </option>
+            
+                <option class="form-option" value="1440x720"
+                    >1440x720
+                </option>
+            
+                <option class="form-option" value="1280x960"
+                    >1280x960
+                </option>
+            
+                <option class="form-option" value="1280x720"
+                    >1280x720
+                </option>
+            
+                <option class="form-option" value="1080x720"
+                    >1080x720
+                </option>
+            
+                <option class="form-option" value="1072x1072"
+                    >1072x1072
+                </option>
+            
+                <option class="form-option" value="960x720"
+                    >960x720
+                </option>
+            
+                <option class="form-option" value="960x540"
+                    >960x540
+                </option>
+            
+                <option class="form-option" value="720x720"
+                    >720x720
+                </option>
+            
+                <option class="form-option" value="720x480"
+                    >720x480
+                </option>
+            
+                <option class="form-option" value="640x640"
+                    >640x640
+                </option>
+            
+                <option class="form-option" value="640x480"
+                    >640x480
+                </option>
+            
+                <option class="form-option" value="640x360"
+                    >640x360
+                </option>
+            
+                <option class="form-option" value="640x288"
+                    >640x288
+                </option>
+            
+                <option class="form-option" value="352x288"
+                    >352x288
+                </option>
+            
+                <option class="form-option" value="320x240"
+                    >320x240
+                </option>
+            
+                <option class="form-option" value="192x144"
+                    >192x144
+                </option>
+            
+                <option class="form-option" value="192x108"
+                    >192x108
+                </option>
+            
+                <option class="form-option" value="176x144"
+                    >176x144
+                </option>
+            
+                <option class="form-option" value="160x96"
+                    >160x96
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="quality">quality</label>
+        <select name="quality" id="quality" class="form-input"
+            hx-put="/ipwc/quality" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="rtsp_audio_formats">rtsp_audio_formats</label>
+        <select name="rtsp_audio_formats" id="rtsp_audio_formats" class="form-input"
+            hx-put="/ipwc/rtsp_audio_formats" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="pcm"
+                    >pcm
+                </option>
+            
+                <option class="form-option" value="alaw"
+                    >alaw
+                </option>
+            
+                <option class="form-option" value="ulaw"
+                    >ulaw
+                </option>
+            
+                <option class="form-option" value="opus"
+                    >opus
+                </option>
+            
+                <option class="form-option" value="noaudio"
+                    >noaudio
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="rtsp_video_formats">rtsp_video_formats</label>
+        <select name="rtsp_video_formats" id="rtsp_video_formats" class="form-input"
+            hx-put="/ipwc/rtsp_video_formats" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="h264"
+                    >h264
+                </option>
+            
+                <option class="form-option" value="jpeg"
+                    >jpeg
+                </option>
+            
+                <option class="form-option" value="novideo"
+                    >novideo
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="scenemode">scenemode</label>
+        <select name="scenemode" id="scenemode" class="form-input"
+            hx-put="/ipwc/scenemode" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="auto"
+                    >auto
+                </option>
+            
+                <option class="form-option" value="face_priority"
+                    >face_priority
+                </option>
+            
+                <option class="form-option" value="action"
+                    >action
+                </option>
+            
+                <option class="form-option" value="portrait"
+                    >portrait
+                </option>
+            
+                <option class="form-option" value="landscape"
+                    selected>landscape
+                </option>
+            
+                <option class="form-option" value="night"
+                    >night
+                </option>
+            
+                <option class="form-option" value="night-portrait"
+                    >night-portrait
+                </option>
+            
+                <option class="form-option" value="theatre"
+                    >theatre
+                </option>
+            
+                <option class="form-option" value="beach"
+                    >beach
+                </option>
+            
+                <option class="form-option" value="snow"
+                    >snow
+                </option>
+            
+                <option class="form-option" value="sunset"
+                    >sunset
+                </option>
+            
+                <option class="form-option" value="steadyphoto"
+                    >steadyphoto
+                </option>
+            
+                <option class="form-option" value="fireworks"
+                    >fireworks
+                </option>
+            
+                <option class="form-option" value="sports"
+                    >sports
+                </option>
+            
+                <option class="form-option" value="party"
+                    >party
+                </option>
+            
+                <option class="form-option" value="candlelight"
+                    >candlelight
+                </option>
+            
+                <option class="form-option" value="barcode"
+                    >barcode
+                </option>
+            
+                <option class="form-option" value="hdr"
+                    >hdr
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="torch">torch</label>
+        <select name="torch" id="torch" class="form-input"
+            hx-put="/ipwc/torch" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="on"
+                    >on
+                </option>
+            
+                <option class="form-option" value="off"
+                    selected>off
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="video_acquisition">video_acquisition</label>
+        <select name="video_acquisition" id="video_acquisition" class="form-input"
+            hx-put="/ipwc/video_acquisition" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="video_chunk_len">video_chunk_len</label>
+        <select name="video_chunk_len" id="video_chunk_len" class="form-input"
+            hx-put="/ipwc/video_chunk_len" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="video_connections">video_connections</label>
+        <select name="video_connections" id="video_connections" class="form-input"
+            hx-put="/ipwc/video_connections" hx-swap=none>
+
+            
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="video_size">video_size</label>
+        <select name="video_size" id="video_size" class="form-input"
+            hx-put="/ipwc/video_size" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="1920x1088"
+                    >1920x1088
+                </option>
+            
+                <option class="form-option" value="1920x1080"
+                    selected>1920x1080
+                </option>
+            
+                <option class="form-option" value="1920x864"
+                    >1920x864
+                </option>
+            
+                <option class="form-option" value="1600x720"
+                    >1600x720
+                </option>
+            
+                <option class="form-option" value="1560x720"
+                    >1560x720
+                </option>
+            
+                <option class="form-option" value="1520x720"
+                    >1520x720
+                </option>
+            
+                <option class="form-option" value="1440x1080"
+                    >1440x1080
+                </option>
+            
+                <option class="form-option" value="1440x720"
+                    >1440x720
+                </option>
+            
+                <option class="form-option" value="1280x960"
+                    >1280x960
+                </option>
+            
+                <option class="form-option" value="1280x720"
+                    >1280x720
+                </option>
+            
+                <option class="form-option" value="1080x720"
+                    >1080x720
+                </option>
+            
+                <option class="form-option" value="1072x1072"
+                    >1072x1072
+                </option>
+            
+                <option class="form-option" value="960x720"
+                    >960x720
+                </option>
+            
+                <option class="form-option" value="960x540"
+                    >960x540
+                </option>
+            
+                <option class="form-option" value="720x720"
+                    >720x720
+                </option>
+            
+                <option class="form-option" value="720x480"
+                    >720x480
+                </option>
+            
+                <option class="form-option" value="640x640"
+                    >640x640
+                </option>
+            
+                <option class="form-option" value="640x480"
+                    >640x480
+                </option>
+            
+                <option class="form-option" value="640x360"
+                    >640x360
+                </option>
+            
+                <option class="form-option" value="640x288"
+                    >640x288
+                </option>
+            
+                <option class="form-option" value="352x288"
+                    >352x288
+                </option>
+            
+                <option class="form-option" value="320x240"
+                    >320x240
+                </option>
+            
+                <option class="form-option" value="192x144"
+                    >192x144
+                </option>
+            
+                <option class="form-option" value="192x108"
+                    >192x108
+                </option>
+            
+                <option class="form-option" value="176x144"
+                    >176x144
+                </option>
+            
+                <option class="form-option" value="160x96"
+                    >160x96
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="whitebalance">whitebalance</label>
+        <select name="whitebalance" id="whitebalance" class="form-input"
+            hx-put="/ipwc/whitebalance" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="off"
+                    >off
+                </option>
+            
+                <option class="form-option" value="auto"
+                    selected>auto
+                </option>
+            
+                <option class="form-option" value="incandescent"
+                    >incandescent
+                </option>
+            
+                <option class="form-option" value="fluorescent"
+                    >fluorescent
+                </option>
+            
+                <option class="form-option" value="warm-fluorescent"
+                    >warm-fluorescent
+                </option>
+            
+                <option class="form-option" value="daylight"
+                    >daylight
+                </option>
+            
+                <option class="form-option" value="cloudy-daylight"
+                    >cloudy-daylight
+                </option>
+            
+                <option class="form-option" value="twilight"
+                    >twilight
+                </option>
+            
+                <option class="form-option" value="shade"
+                    >shade
+                </option>
+            
+        </select>
+    </div>
+
+    
+        
+    <div class="form-entry">
+        <span class="symbols-small">flare</span>
+        <label for="zoom">zoom</label>
+        <select name="zoom" id="zoom" class="form-input"
+            hx-put="/ipwc/zoom" hx-swap=none>
+
+            
+            
+                <option class="form-option" value="100"
+                    selected>100
+                </option>
+            
+                <option class="form-option" value="103"
+                    >103
+                </option>
+            
+                <option class="form-option" value="106"
+                    >106
+                </option>
+            
+                <option class="form-option" value="109"
+                    >109
+                </option>
+            
+                <option class="form-option" value="112"
+                    >112
+                </option>
+            
+                <option class="form-option" value="115"
+                    >115
+                </option>
+            
+                <option class="form-option" value="118"
+                    >118
+                </option>
+            
+                <option class="form-option" value="121"
+                    >121
+                </option>
+            
+                <option class="form-option" value="124"
+                    >124
+                </option>
+            
+                <option class="form-option" value="127"
+                    >127
+                </option>
+            
+                <option class="form-option" value="130"
+                    >130
+                </option>
+            
+                <option class="form-option" value="133"
+                    >133
+                </option>
+            
+                <option class="form-option" value="136"
+                    >136
+                </option>
+            
+                <option class="form-option" value="139"
+                    >139
+                </option>
+            
+                <option class="form-option" value="142"
+                    >142
+                </option>
+            
+                <option class="form-option" value="145"
+                    >145
+                </option>
+            
+                <option class="form-option" value="148"
+                    >148
+                </option>
+            
+                <option class="form-option" value="151"
+                    >151
+                </option>
+            
+                <option class="form-option" value="154"
+                    >154
+                </option>
+            
+                <option class="form-option" value="157"
+                    >157
+                </option>
+            
+                <option class="form-option" value="160"
+                    >160
+                </option>
+            
+                <option class="form-option" value="163"
+                    >163
+                </option>
+            
+                <option class="form-option" value="166"
+                    >166
+                </option>
+            
+                <option class="form-option" value="169"
+                    >169
+                </option>
+            
+                <option class="form-option" value="172"
+                    >172
+                </option>
+            
+                <option class="form-option" value="175"
+                    >175
+                </option>
+            
+                <option class="form-option" value="178"
+                    >178
+                </option>
+            
+                <option class="form-option" value="181"
+                    >181
+                </option>
+            
+                <option class="form-option" value="184"
+                    >184
+                </option>
+            
+                <option class="form-option" value="187"
+                    >187
+                </option>
+            
+                <option class="form-option" value="190"
+                    >190
+                </option>
+            
+                <option class="form-option" value="193"
+                    >193
+                </option>
+            
+                <option class="form-option" value="196"
+                    >196
+                </option>
+            
+                <option class="form-option" value="199"
+                    >199
+                </option>
+            
+                <option class="form-option" value="202"
+                    >202
+                </option>
+            
+                <option class="form-option" value="205"
+                    >205
+                </option>
+            
+                <option class="form-option" value="208"
+                    >208
+                </option>
+            
+                <option class="form-option" value="211"
+                    >211
+                </option>
+            
+                <option class="form-option" value="214"
+                    >214
+                </option>
+            
+                <option class="form-option" value="217"
+                    >217
+                </option>
+            
+                <option class="form-option" value="220"
+                    >220
+                </option>
+            
+                <option class="form-option" value="223"
+                    >223
+                </option>
+            
+                <option class="form-option" value="226"
+                    >226
+                </option>
+            
+                <option class="form-option" value="229"
+                    >229
+                </option>
+            
+                <option class="form-option" value="232"
+                    >232
+                </option>
+            
+                <option class="form-option" value="235"
+                    >235
+                </option>
+            
+                <option class="form-option" value="238"
+                    >238
+                </option>
+            
+                <option class="form-option" value="241"
+                    >241
+                </option>
+            
+                <option class="form-option" value="244"
+                    >244
+                </option>
+            
+                <option class="form-option" value="247"
+                    >247
+                </option>
+            
+                <option class="form-option" value="250"
+                    >250
+                </option>
+            
+                <option class="form-option" value="253"
+                    >253
+                </option>
+            
+                <option class="form-option" value="256"
+                    >256
+                </option>
+            
+                <option class="form-option" value="259"
+                    >259
+                </option>
+            
+                <option class="form-option" value="262"
+                    >262
+                </option>
+            
+                <option class="form-option" value="265"
+                    >265
+                </option>
+            
+                <option class="form-option" value="268"
+                    >268
+                </option>
+            
+                <option class="form-option" value="271"
+                    >271
+                </option>
+            
+                <option class="form-option" value="274"
+                    >274
+                </option>
+            
+                <option class="form-option" value="277"
+                    >277
+                </option>
+            
+                <option class="form-option" value="280"
+                    >280
+                </option>
+            
+                <option class="form-option" value="283"
+                    >283
+                </option>
+            
+                <option class="form-option" value="286"
+                    >286
+                </option>
+            
+                <option class="form-option" value="289"
+                    >289
+                </option>
+            
+                <option class="form-option" value="292"
+                    >292
+                </option>
+            
+                <option class="form-option" value="295"
+                    >295
+                </option>
+            
+                <option class="form-option" value="298"
+                    >298
+                </option>
+            
+                <option class="form-option" value="301"
+                    >301
+                </option>
+            
+                <option class="form-option" value="304"
+                    >304
+                </option>
+            
+                <option class="form-option" value="307"
+                    >307
+                </option>
+            
+                <option class="form-option" value="310"
+                    >310
+                </option>
+            
+                <option class="form-option" value="313"
+                    >313
+                </option>
+            
+                <option class="form-option" value="316"
+                    >316
+                </option>
+            
+                <option class="form-option" value="319"
+                    >319
+                </option>
+            
+                <option class="form-option" value="322"
+                    >322
+                </option>
+            
+                <option class="form-option" value="325"
+                    >325
+                </option>
+            
+                <option class="form-option" value="328"
+                    >328
+                </option>
+            
+                <option class="form-option" value="331"
+                    >331
+                </option>
+            
+                <option class="form-option" value="334"
+                    >334
+                </option>
+            
+                <option class="form-option" value="337"
+                    >337
+                </option>
+            
+                <option class="form-option" value="340"
+                    >340
+                </option>
+            
+                <option class="form-option" value="343"
+                    >343
+                </option>
+            
+                <option class="form-option" value="346"
+                    >346
+                </option>
+            
+                <option class="form-option" value="349"
+                    >349
+                </option>
+            
+                <option class="form-option" value="352"
+                    >352
+                </option>
+            
+                <option class="form-option" value="355"
+                    >355
+                </option>
+            
+                <option class="form-option" value="358"
+                    >358
+                </option>
+            
+                <option class="form-option" value="361"
+                    >361
+                </option>
+            
+                <option class="form-option" value="364"
+                    >364
+                </option>
+            
+                <option class="form-option" value="367"
+                    >367
+                </option>
+            
+                <option class="form-option" value="370"
+                    >370
+                </option>
+            
+                <option class="form-option" value="373"
+                    >373
+                </option>
+            
+                <option class="form-option" value="376"
+                    >376
+                </option>
+            
+                <option class="form-option" value="379"
+                    >379
+                </option>
+            
+                <option class="form-option" value="382"
+                    >382
+                </option>
+            
+                <option class="form-option" value="385"
+                    >385
+                </option>
+            
+                <option class="form-option" value="388"
+                    >388
+                </option>
+            
+                <option class="form-option" value="391"
+                    >391
+                </option>
+            
+                <option class="form-option" value="394"
+                    >394
+                </option>
+            
+                <option class="form-option" value="397"
+                    >397
+                </option>
+            
+                <option class="form-option" value="400"
+                    >400
+                </option>
+            
+        </select>
+    </div>
+
+    
+--- PASS: TestLoadTemplate (0.25s)
+PASS
+ok  	v4lvid/config	0.252s

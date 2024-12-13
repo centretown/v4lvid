@@ -6,9 +6,10 @@
         <span id="leftmenu" class="hide">
             {{range .ActionsCamera}}
                 <div id="{{.Name}}" class="hide"
-                    hx-get="/{{.Name}}" hx-swap="beforeend" 
+                    hx-put="/{{.Name}}" hx-swap="beforeend" 
                     hx-target="#slots" 
-                    hx-on::afterSwap="addDragHandlers('slot-{{.Name}}')">
+                    hx-on::afterSwap="addDragHandlers('slot-{{.Name}}')"
+                    hx-vals='js:{source: currentSource()}'>
                 </div>
                 <button class="action" hx-on:click="doAction('{{.Name}}')">
                     <span class="symbols">{{.Icon}}</span>

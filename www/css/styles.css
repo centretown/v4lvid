@@ -10,6 +10,7 @@
   --fgStatus: rgba(255,255, 0, .9);
   --slotWidth: 23rem;
   --slotImageWidth: 18rem;
+  --inputWidth: 8rem;
 }
 
 /* fallback */
@@ -273,8 +274,8 @@ h3 {
 
 .form-input {
   font-size: .85rem;
-  position: absolute;
-  left: 40%;
+  right: 1px;
+  width: var(--inputWidth);
   background-color: var(--bgTransparent);
   color: var(--fgOut);
 }
