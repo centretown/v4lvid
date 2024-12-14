@@ -37,7 +37,7 @@ type Config struct {
 
 type IPWCCameraData struct {
 	Action   *Action
-	IPWebcam *camera.IPWebcam
+	IPWebcam *camera.IpWebcam
 }
 
 func (cfg *Config) NewActionMap() (m map[string]*Action) {

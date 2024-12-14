@@ -165,15 +165,15 @@ type IpWebcamOptions struct {
 	InputType string
 }
 
-type IPWebcam struct {
+type IpWebcam struct {
 	VideoConnections int
 	AudioConnections int
 	DeviceInfo       *DeviceInfo
 	Properties       map[string]*IpWebcamOptions
 }
 
-func NewIpWebCam() *IPWebcam {
-	return &IPWebcam{
+func NewIpWebCam() *IpWebcam {
+	return &IpWebcam{
 		Properties: make(map[string]*IpWebcamOptions),
 	}
 }
@@ -217,7 +217,7 @@ func LoadIpWebCamStatus(url string) (ipcwStat *IPWebcamStatus, err error) {
 
 }
 
-func (ipcw *IPWebcam) Load(path string, configs map[string]*IPCWConfig) (err error) {
+func (ipcw *IpWebcam) Load(path string, configs map[string]*IPCWConfig) (err error) {
 	var (
 		ipcwStat *IPWebcamStatus
 		url      = path + "/status.json"

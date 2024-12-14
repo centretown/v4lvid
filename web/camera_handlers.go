@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -43,15 +44,81 @@ func (rt *RunTime) ipwcCameraHandler() func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		i := strings.LastIndex(r.RequestURI, "/")
-		if i == -1 {
-			log.Println("LastIndex /")
+		if cam.Config.Driver != IPWebcam {
+			log.Println("ipcwCameraHandler wrong driver", cam.Config.Driver)
 			return
 		}
 
-		fld := r.RequestURI[i+1:]
-		log.Println(fld, r.FormValue(fld), r.RequestURI)
-		log.Println("ipcwCameraHandler", cam.Config.Path)
+		ipcam, ok := cam.Source.(*camera.Ipcam)
+		if !ok {
+			log.Println("ipcwCameraHandler not an Ipcam")
+			return
+		}
+
+		ipwc, ok := ipcam.State.(*camera.IpWebcam)
+		if !ok {
+			log.Println("ipcwCameraHandler State not an IPWebcam")
+			return
+		}
+
+		i := strings.LastIndex(r.RequestURI, "/")
+		if i == -1 {
+			log.Println("ipcwCameraHandler trailing '/' not found")
+			return
+		}
+		propKey := r.RequestURI[i+1:]
+		prop, ok := ipwc.Properties[propKey]
+		if !ok {
+			log.Println("ipcwCameraHandler Property not found", propKey)
+			return
+		}
+
+		if len(prop.Command) == 0 {
+			log.Println("ipcwCameraHandler Command length zero", propKey)
+			return
+		}
+
+		val := r.FormValue(propKey)
+		if len(val) == 0 {
+			log.Println("FormValue not found", propKey)
+			return
+		}
+
+		if propKey == "zoom" {
+			ival, _ := strconv.Atoi(val)
+			val = strconv.Itoa((ival - 100) / 3)
+		}
+
+		url := cam.Config.Base + fmt.Sprintf(prop.Command, val)
+		log.Println(propKey, val, r.RequestURI)
+		log.Println(url)
+
+		var (
+			client = &http.Client{}
+			req    *http.Request
+			resp   *http.Response
+			buf    []byte
+		)
+
+		req, err = http.NewRequest(http.MethodPost, url, nil)
+		if err != nil {
+			log.Println("NewRequest", url, err)
+			return
+		}
+		resp, err = client.Do(req)
+		if err != nil {
+			log.Println("Do Request", url, err)
+			return
+		}
+
+		buf, err = io.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("ReadAll", url, err)
+			return
+		}
+
+		log.Println("RESPONSE", string(buf))
+
 	}
 }
 
@@ -105,7 +172,7 @@ func (rt *RunTime) controlCameraHandler() func(w http.ResponseWriter, r *http.Re
 func (rt *RunTime) ipwcHandler(cam *camera.Server, w http.ResponseWriter, r *http.Request) {
 	var (
 		ipcam *camera.Ipcam
-		ipwc  *camera.IPWebcam
+		ipwc  *camera.IpWebcam
 		err   error
 		ok    bool
 	)
@@ -116,15 +183,15 @@ func (rt *RunTime) ipwcHandler(cam *camera.Server, w http.ResponseWriter, r *htt
 		return
 	}
 
-	if ipcam.State != nil {
-		ipwc, ok = ipcam.State.(*camera.IPWebcam)
+	if ipcam.State == nil {
+		ipwc = camera.NewIpWebCam()
+		ipcam.State = ipwc
+	} else {
+		ipwc, ok = ipcam.State.(*camera.IpWebcam)
 		if !ok {
 			log.Println("ipwcHandler", "not an ipwebcam camera")
 			return
 		}
-	} else {
-		ipwc = camera.NewIpWebCam()
-		ipcam.State = ipwc
 	}
 
 	err = ipwc.Load(cam.Config.Base, rt.Config.IPWCCommands)

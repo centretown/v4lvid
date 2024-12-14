@@ -113,7 +113,7 @@ func TestLoadTemplate(t *testing.T) {
 		t.Fatal("Config Load", err)
 	}
 
-	url := "http://192.168.10.131:8080"
+	url := "http://192.168.10.92:8080"
 	ipcw := camera.NewIpWebCam()
 	err = ipcw.Load(url, cfg.IPWCCommands)
 	if err != nil {
