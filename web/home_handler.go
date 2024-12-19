@@ -9,7 +9,7 @@ import (
 	"v4lvid/homeasst"
 )
 
-func (rt *RunTime) handleHomeData() {
+func (rt *RunTime) homeHandler() {
 	mux := rt.mux
 	mux.HandleFunc("/sun", rt.handleSun())
 	mux.HandleFunc("/weather", rt.handleWeather())
@@ -30,17 +30,18 @@ func (rt *RunTime) handleSun() func(http.ResponseWriter, *http.Request) {
 }
 
 func (rt *RunTime) handleWeather() func(http.ResponseWriter, *http.Request) {
-	sub := homeasst.NewSubcription(&homeasst.Weather{}, func(c homeasst.Consumer) {
-		w, ok := c.(*homeasst.Weather)
-		if ok {
-			log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
-			rt.Home.Temperature = w.Attributes.Temperature
-			rt.Home.TemperatureUnit = w.Attributes.TemperatureUnit
-			text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
-			message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
-			rt.WebSocket.Broadcast(message)
-		}
-	})
+	sub := homeasst.NewSubcription(&homeasst.Weather{},
+		func(c homeasst.Consumer) {
+			w, ok := c.(*homeasst.Weather)
+			if ok {
+				log.Println("Temperature", w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+				rt.Home.Temperature = w.Attributes.Temperature
+				rt.Home.TemperatureUnit = w.Attributes.TemperatureUnit
+				text := fmt.Sprint(w.Attributes.Temperature, w.Attributes.TemperatureUnit)
+				message := `<span id="clock-temp" hx-swap-oob="outerHTML">` + text + `</span>`
+				rt.WebSocket.Broadcast(message)
+			}
+		})
 	rt.Home.Subscribe("weather.forecast_home", sub)
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +64,7 @@ func (rt *RunTime) handleWifi() func(http.ResponseWriter, *http.Request) {
 		}
 	}
 }
+
 func (rt *RunTime) handleLights() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Cache-Control", "no-cache")

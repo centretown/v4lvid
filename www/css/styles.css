@@ -271,6 +271,9 @@ h3 {
 .header {
   padding-bottom: .5rem;
 }
+.form-label {
+  min-width: 15rem;
+}
 
 .form-input {
   font-size: .85rem;

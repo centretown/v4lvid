@@ -65,6 +65,11 @@
       "Name": "camera_list",
       "Title": "Cameras",
       "Icon": "videocam"
+    },
+    {
+      "Name": "camera_details",
+      "Title": "Camera Details",
+      "Icon": "library_books"
     }
   ],
   "ActionsHome": [
@@ -184,53 +189,217 @@
       }
     ]
   },
+  "IPWCControls": {
+    "/zoomin": "zoom",
+    "/zoomout": "zoom",
+    "/panleft": "crop_x",
+    "/panright": "crop_x",
+    "/tiltup": "crop_y",
+    "/tiltdown": "crop_y",
+    "/brightnessup": "",
+    "/brightnessdown": "",
+    "/contrastup": "",
+    "/contrastdown": "",
+    "/saturationup": "",
+    "/saturationdown": ""
+  },
   "IPWCCommands": {
-    "orientation": {"Command": "/settings/orientation?set=%s", "InputType":""},
-    "idle": {"Command":  "", "InputType":"readonly"},
-    "audio_only": {"Command":  "/settings/audio_only?set=%s", "InputType":""},
-    "overlay": {"Command":  "/settings/overlay?set=%s", "InputType":""},
-    "quality": {"Command":  "/settings/quality?set=%s", "InputType":"number"},
-    "focus_homing": {"Command":  "", "InputType":"readonly"},
-    "ip_address": {"Command":  "", "InputType":"readonly"},
-    "main_port": {"Command":  "", "InputType":"readonly"},
-    "ipv6_address": {"Command":  "", "InputType":"readonly"},
-    "motion_limit": {"Command":  "/settings/motion_limit?set=%s", "InputType":"number"},
-    "adet_limit": {"Command":  "/settings/adet_limit?set=%s", "InputType":"number"},
-    "night_vision": {"Command":  "/settings/night_vision?set=%s", "InputType":""},
-    "night_vision_average": {"Command":  "/settings/night_vision_average?set=%s", "InputType":"number"},
-    "night_vision_gain": {"Command":  "/settings/night_vision_gain?set=%s", "InputType":"number"},
-    "video_acquisition": {"Command":  "/settings/video_acquisition?set=%s", "InputType":""},
-    "motion_detect": {"Command":  "/settings/motion_detect?set=%s", "InputType":""},
-    "motion_display": {"Command":  "/settings/motion_display?set=%s", "InputType":""},
-    "video_chunk_len": {"Command":  "/settings/video_chunk_len?set=%s", "InputType":""},
-    "gps_active": {"Command":  "/settings/gps_active?set=%s", "InputType":""},
-    "video_size": {"Command":  "/settings/video_size?set=%s", "InputType":""},
-    "mirror_flip": {"Command":  "/settings/mirror_flip?set=%s", "InputType":""},
-    "ffc": {"Command":  "/settings/ffc?set=%s", "InputType":""},
-    "rtsp_video_formats": {"Command":  "/settings/rtsp_video_formats?set=%s", "InputType":""},
-    "rtsp_audio_formats": {"Command":  "/settings/rtsp_audio_formats?set=%s", "InputType":""},
-    "video_connections": {"Command":  "/settings/video_connections?set=%s", "InputType":"readonly"},
-    "audio_connections": {"Command":  "/settings/audio_connections?set=%s", "InputType":"readonly"},
-    "ivideon_streaming": {"Command":  "/settings/ivideon_streaming?set=%s", "InputType":""},
-    "zoom": {"Command":  "/ptz?zoom=%s", "InputType":""},
-    "crop_x": {"Command":  "/settings/crop_x?set=%s", "InputType":"number"},
-    "crop_y": {"Command":  "/settings/crop_y?set=%s", "InputType":"number"},
-    "coloreffect": {"Command":  "/settings/coloreffect?set=%s", "InputType":""},
-    "scenemode": {"Command":  "/settings/scenemode?set=%s", "InputType":""},
-    "focusmode": {"Command":  "/settings/focusmode?set=%s", "InputType":""},
-    "whitebalance": {"Command":  "/settings/whitebalance?set=%s", "InputType":""},
-    "flashmode": {"Command":  "/settings/flashmode?set=%s", "InputType":""},
-    "antibanding": {"Command":  "/settings/antibanding?set=%s", "InputType":""},
-    "torch": {"Command":  "/settings/torch?set=%s", "InputType":""},
-    "focus_distance": {"Command":  "/settings/focus_distance?set=%s", "InputType":""},
-    "focal_length": {"Command":  "/settings/focal_length?set=%s", "InputType":""},
-    "aperture": {"Command":  "/settings/aperture?set=%s", "InputType":""},
-    "filter_density": {"Command":  "/settings/filter_density?set=%s", "InputType":""},
-    "exposure_ns": {"Command":  "/settings/exposure_ns?set=%s", "InputType":""},
-    "frame_duration": {"Command":  "/settings/frame_duration?set=%s", "InputType":""},
-    "iso": {"Command":  "/settings/iso?set=%s", "InputType":""},
-    "manual_sensor": {"Command":  "/settings/manual_sensor?set=%s", "InputType":""},
-    "photo_size": {"Command":  "/settings/photo_size?set=%s", "InputType":""},
-    "photo_rotation": {"Command":  "/settings/photo_rotation?set=%s", "InputType":""}
+    "orientation": {
+      "Command": "/settings/orientation?set=%s",
+      "InputType": ""
+    },
+    "idle": {
+      "Command": "",
+      "InputType": "readonly"
+    },
+    "audio_only": {
+      "Command": "/settings/audio_only?set=%s",
+      "InputType": ""
+    },
+    "overlay": {
+      "Command": "/settings/overlay?set=%s",
+      "InputType": ""
+    },
+    "quality": {
+      "Command": "/settings/quality?set=%s",
+      "InputType": "number"
+    },
+    "focus_homing": {
+      "Command": "",
+      "InputType": "readonly"
+    },
+    "ip_address": {
+      "Command": "",
+      "InputType": "readonly"
+    },
+    "main_port": {
+      "Command": "",
+      "InputType": "readonly"
+    },
+    "ipv6_address": {
+      "Command": "",
+      "InputType": "readonly"
+    },
+    "motion_limit": {
+      "Command": "/settings/motion_limit?set=%s",
+      "InputType": "number"
+    },
+    "adet_limit": {
+      "Command": "/settings/adet_limit?set=%s",
+      "InputType": "number"
+    },
+    "night_vision": {
+      "Command": "/settings/night_vision?set=%s",
+      "InputType": ""
+    },
+    "night_vision_average": {
+      "Command": "/settings/night_vision_average?set=%s",
+      "InputType": "number"
+    },
+    "night_vision_gain": {
+      "Command": "/settings/night_vision_gain?set=%s",
+      "InputType": "number"
+    },
+    "video_acquisition": {
+      "Command": "/settings/video_acquisition?set=%s",
+      "InputType": ""
+    },
+    "motion_detect": {
+      "Command": "/settings/motion_detect?set=%s",
+      "InputType": ""
+    },
+    "motion_display": {
+      "Command": "/settings/motion_display?set=%s",
+      "InputType": ""
+    },
+    "video_chunk_len": {
+      "Command": "/settings/video_chunk_len?set=%s",
+      "InputType": ""
+    },
+    "gps_active": {
+      "Command": "/settings/gps_active?set=%s",
+      "InputType": ""
+    },
+    "video_size": {
+      "Command": "/settings/video_size?set=%s",
+      "InputType": ""
+    },
+    "mirror_flip": {
+      "Command": "/settings/mirror_flip?set=%s",
+      "InputType": ""
+    },
+    "ffc": {
+      "Command": "/settings/ffc?set=%s",
+      "InputType": ""
+    },
+    "rtsp_video_formats": {
+      "Command": "/settings/rtsp_video_formats?set=%s",
+      "InputType": ""
+    },
+    "rtsp_audio_formats": {
+      "Command": "/settings/rtsp_audio_formats?set=%s",
+      "InputType": ""
+    },
+    "video_connections": {
+      "Command": "/settings/video_connections?set=%s",
+      "InputType": "readonly"
+    },
+    "audio_connections": {
+      "Command": "/settings/audio_connections?set=%s",
+      "InputType": "readonly"
+    },
+    "ivideon_streaming": {
+      "Command": "/settings/ivideon_streaming?set=%s",
+      "InputType": ""
+    },
+    "zoom": {
+      "Command": "/ptz?zoom=%s",
+      "InputType": "",
+      "Min": 0,
+      "Max": 100,
+      "Step": 10
+    },
+    "crop_x": {
+      "Command": "/settings/crop_x?set=%s",
+      "InputType": "number",
+      "Min": 0,
+      "Max": 100,
+      "Step": 10
+    },
+    "crop_y": {
+      "Command": "/settings/crop_y?set=%s",
+      "InputType": "number",
+      "Min": 0,
+      "Max": 100,
+      "Step": 10
+    },
+    "coloreffect": {
+      "Command": "/settings/coloreffect?set=%s",
+      "InputType": ""
+    },
+    "scenemode": {
+      "Command": "/settings/scenemode?set=%s",
+      "InputType": ""
+    },
+    "focusmode": {
+      "Command": "/settings/focusmode?set=%s",
+      "InputType": ""
+    },
+    "whitebalance": {
+      "Command": "/settings/whitebalance?set=%s",
+      "InputType": ""
+    },
+    "flashmode": {
+      "Command": "/settings/flashmode?set=%s",
+      "InputType": ""
+    },
+    "antibanding": {
+      "Command": "/settings/antibanding?set=%s",
+      "InputType": ""
+    },
+    "torch": {
+      "Command": "/settings/torch?set=%s",
+      "InputType": ""
+    },
+    "focus_distance": {
+      "Command": "/settings/focus_distance?set=%s",
+      "InputType": ""
+    },
+    "focal_length": {
+      "Command": "/settings/focal_length?set=%s",
+      "InputType": ""
+    },
+    "aperture": {
+      "Command": "/settings/aperture?set=%s",
+      "InputType": ""
+    },
+    "filter_density": {
+      "Command": "/settings/filter_density?set=%s",
+      "InputType": ""
+    },
+    "exposure_ns": {
+      "Command": "/settings/exposure_ns?set=%s",
+      "InputType": ""
+    },
+    "frame_duration": {
+      "Command": "/settings/frame_duration?set=%s",
+      "InputType": ""
+    },
+    "iso": {
+      "Command": "/settings/iso?set=%s",
+      "InputType": ""
+    },
+    "manual_sensor": {
+      "Command": "/settings/manual_sensor?set=%s",
+      "InputType": ""
+    },
+    "photo_size": {
+      "Command": "/settings/photo_size?set=%s",
+      "InputType": ""
+    },
+    "photo_rotation": {
+      "Command": "/settings/photo_rotation?set=%s",
+      "InputType": ""
+    }
   }
 }

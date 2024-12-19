@@ -32,6 +32,7 @@ func (rt *RunTime) handleCameras() {
 	rt.mux.HandleFunc("/camera_list", rt.listCameraHandler())
 	rt.mux.HandleFunc("/camera_connect", rt.connectCameraHandler())
 	rt.mux.HandleFunc("/camera_primary", rt.setPrimaryCamera())
+	rt.mux.HandleFunc("/camera_details", rt.cameraDetailHandler())
 	rt.mux.HandleFunc("/ipwc/", rt.ipwcCameraHandler())
 
 }
@@ -57,7 +58,7 @@ func (rt *RunTime) ipwcCameraHandler() func(w http.ResponseWriter, r *http.Reque
 
 		ipwc, ok := ipcam.State.(*camera.IpWebcam)
 		if !ok {
-			log.Println("ipcwCameraHandler State not an IPWebcam")
+			log.Println("ipcwCameraHandler State not an IPWebcam", ipwc)
 			return
 		}
 
@@ -155,59 +156,66 @@ func (rt *RunTime) controlCameraHandler() func(w http.ResponseWriter, r *http.Re
 		log.Println("controlCameraHandler", cam.Config.Driver)
 		w.Header().Add("Cache-Control", "no-cache")
 
-		if cam.Config.Driver == "uvcvideo" {
-			err = rt.template.Lookup("layout.controls").Execute(w,
-				&CameraData{
-					Action:         rt.ActionMap["camera"],
-					WebcamHandlers: rt.ControlHandlers})
-			if err != nil {
-				log.Fatal("/camera", err)
-			}
-		} else if cam.Config.Driver == "ipwebcam" {
-			rt.ipwcHandler(cam, w, r)
+		// if cam.Config.Driver == "uvcvideo" {
+		err = rt.template.Lookup("layout.controls").Execute(w,
+			&CameraData{
+				Action:         rt.ActionMap["camera"],
+				WebcamHandlers: rt.ControlHandlers})
+		if err != nil {
+			log.Fatal("/camera", err)
 		}
+		// } else if cam.Config.Driver == "ipwebcam" {
+		// 	rt.ipwcHandler(cam, w, r)
+		// }
 	}
 }
 
-func (rt *RunTime) ipwcHandler(cam *camera.Server, w http.ResponseWriter, r *http.Request) {
-	var (
-		ipcam *camera.Ipcam
-		ipwc  *camera.IpWebcam
-		err   error
-		ok    bool
-	)
-
-	ipcam, ok = cam.Source.(*camera.Ipcam)
-	if !ok {
-		log.Println("ipwcHandler", "not an ip camera")
-		return
-	}
-
-	if ipcam.State == nil {
-		ipwc = camera.NewIpWebCam()
-		ipcam.State = ipwc
-	} else {
-		ipwc, ok = ipcam.State.(*camera.IpWebcam)
-		if !ok {
-			log.Println("ipwcHandler", "not an ipwebcam camera")
+func (rt *RunTime) cameraDetailHandler() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var (
+			cam   *camera.Server
+			ipcam *camera.Ipcam
+			ipwc  *camera.IpWebcam
+			err   error
+			ok    bool
+		)
+		cam, err = rt.parseSourceId(r)
+		if err != nil {
+			log.Println("cameraDetailHandler", err)
 			return
 		}
-	}
 
-	err = ipwc.Load(cam.Config.Base, rt.Config.IPWCCommands)
-	if err != nil {
-		log.Println("LoadIpWebCamStatus", err)
-		return
-	}
+		ipcam, ok = cam.Source.(*camera.Ipcam)
+		if !ok {
+			log.Println("cameraDetailHandler", "not an ip camera")
+			return
+		}
 
-	err = rt.template.Lookup("layout.ipwebcam").Execute(w, &config.IPWCCameraData{
-		Action:   rt.ActionMap["camera"],
-		IPWebcam: ipwc,
-	})
-	if err != nil {
-		log.Fatal("Lookup", err)
-	}
+		if ipcam.State == nil {
+			ipwc = camera.NewIpWebCam()
+			ipcam.State = ipwc
+		} else {
+			ipwc, ok = ipcam.State.(*camera.IpWebcam)
+			if !ok {
+				log.Println("cameraDetailHandler", "not an ipwebcam camera")
+				return
+			}
+		}
 
+		err = ipwc.Load(cam.Config.Base, rt.Config.IPWCCommands)
+		if err != nil {
+			log.Println("LoadIpWebCamStatus", err)
+			return
+		}
+
+		err = rt.template.Lookup("layout.ipwebcam").Execute(w, &config.IPWCCameraData{
+			Action:   rt.ActionMap["camera_details"],
+			IPWebcam: ipwc,
+		})
+		if err != nil {
+			log.Fatal("cameraDetailHandler Lookup", err)
+		}
+	}
 }
 
 func (rt *RunTime) addCameraHandler() func(w http.ResponseWriter, r *http.Request) {

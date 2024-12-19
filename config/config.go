@@ -32,6 +32,7 @@ type Config struct {
 	ActionsHome   []*Action
 	ActionsChat   []*Action
 	Drivers       map[string][]*camera.ControlKey
+	IPWCControls  map[string]string
 	IPWCCommands  map[string]*camera.IPCWConfig
 }
 

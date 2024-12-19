@@ -9,7 +9,7 @@
                 <span>{{.Attributes.Name}}</span>
             </div> 
             <div class="form-entry">
-                <label for="state">
+                <label for="state" class="form-label">
                     <span class="symbols-small">power_settings_new</span>
                     State</label>
                 <input id="state" class="form-input" type="checkbox" 
@@ -20,7 +20,7 @@
                 
             </div>
             <div class="form-entry">
-                <label for="bright">
+                <label for="bright" class="form-label">
                     <span class="symbols-small">light_mode</span>
                     Brightness</label>
                 <input hx-post="/light/brightness" hx-swap="none"
@@ -31,7 +31,7 @@
                     value="{{.Attributes.Brightness}}" />
            </div>
             <div class="form-entry">
-                <label for="color">
+                <label for="color" class="form-label">
                     <span class="symbols-small">palette</span>
                     Color</label>
                 <input hx-post="/light/color" hx-swap="none" 
@@ -41,13 +41,12 @@
                     type="color" value="{{.HexColor}}" />
             </div>
             <div class="form-entry">
-                <label for="effect">
+                <label for="effect" class="form-label">
                     <span class="symbols-small">flare</span>
                     Effect</label>
                 <select hx-post="/light/effect" hx-swap="none" 
                     hx-vals='{"id": "{{.EntityID}}"}'
                     name="effect" id="effect" class="form-input">
-
                     {{$eff:=.Attributes.Effect}}
                     {{range .Attributes.EffectList}}
                         <option class="form-option" value="{{.}}"

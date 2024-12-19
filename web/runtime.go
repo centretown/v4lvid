@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 	"v4lvid/camera"
 	"v4lvid/config"
@@ -74,7 +75,7 @@ func Run(cfg *config.Config) (rt *RunTime) {
 	rt.Home, err = homeasst.NewHomeRuntime()
 	if err == nil {
 		rt.serveHomeData()
-		rt.handleHomeData()
+		rt.homeHandler()
 	}
 
 	rt.handleFiles()
@@ -203,5 +204,48 @@ func (rt *RunTime) CreateV4LHandlers() (handlers []*ControlHandler) {
 		handlers = append(handlers,
 			NewControlHandler(d.Key, d.Controls, rt))
 	}
+	return
+}
+
+func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *camera.Server, err error) {
+	var id int
+	err = r.ParseForm()
+	if err != nil {
+		log.Println("ParseForm", err)
+		return
+	}
+
+	source := r.FormValue("source")
+	last := strings.LastIndex(source, Prefix)
+	if last == -1 {
+		err = fmt.Errorf("prefix '%s' not found in source %s", Prefix, source)
+		log.Println(err)
+		return
+	}
+	offset := last + len(Prefix)
+	if offset >= len(source) {
+		err = fmt.Errorf("source too short %s", source)
+		log.Println(err)
+		return
+	}
+
+	count, err := fmt.Sscan(source[offset:], &id)
+	if err != nil {
+		log.Println("scan", err)
+		return
+	}
+	if count != 1 {
+		err = fmt.Errorf("not a valid source, count = %d '%s'", count, source)
+		log.Println(err)
+		return
+	}
+
+	if id >= len(rt.CameraServers) {
+		log.Printf("Camera id = %d in source id out of range limit (%d)\n",
+			id, len(rt.CameraServers))
+		return
+	}
+
+	camsrv = rt.CameraServers[id]
 	return
 }

@@ -5,7 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
+	"strconv"
 	"v4lvid/camera"
 
 	"github.com/korandiz/v4l"
@@ -63,6 +63,14 @@ func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	camsrv, err := rt.parseSourceId(r)
+	if err != nil {
+		return
+	}
+
+	if camsrv.Config.Driver == IPWebcam {
+		err = ctlh.handleIPWebcam(camsrv, control, w, r)
+		return
+	}
 
 	if camsrv.Config.Driver != UVCVideo {
 		err = fmt.Errorf("wrong driver '%s' for %s", camsrv.Config.Driver, r.RequestURI)
@@ -70,32 +78,109 @@ func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, ok = camsrv.Source.(*camera.Ipcam)
-	if ok {
+	webcam, ok := camsrv.Source.(*camera.Webcam)
+	if !ok {
 		err = handleRemoteV4L(camsrv, w, r)
 		return
 	}
 
-	webcam, ok := camsrv.Source.(*camera.Webcam)
-	if ok {
-		if !ctlh.validValue {
-			ctlh.Value = webcam.GetControlValue(ctlh.Key)
-			ctlh.validValue = true
-		}
-		info, err = webcam.GetControlInfo(ctlh.Key)
-		if err != nil {
-			return
-		}
-		// some steps don't take on the device (tilt) so we assume we have
-		// the correct value even when we don't to skip the "holes"
-		val := ctlh.Value + info.Step*control.Multiplier
-		if val >= info.Min && val <= info.Max {
-			ctlh.Value = val
-			webcam.SetControlValue(ctlh.Key, val)
-		}
+	if !ctlh.validValue {
+		ctlh.Value = webcam.GetControlValue(ctlh.Key)
+		ctlh.validValue = true
+	}
+	info, err = webcam.GetControlInfo(ctlh.Key)
+	if err != nil {
+		return
+	}
+	// some steps don't take on the device (tilt) so we assume we have
+	// the correct value even when we don't to skip the "holes"
+	val := ctlh.Value + info.Step*control.Multiplier
+	if val >= info.Min && val <= info.Max {
+		ctlh.Value = val
+		webcam.SetControlValue(ctlh.Key, val)
 	}
 
 	rt.template.ExecuteTemplate(w, "layout.response", ctlh.Value)
+}
+
+func (ctlh *ControlHandler) handleIPWebcam(camsrv *camera.Server, control *camera.Control,
+	w http.ResponseWriter, r *http.Request) (err error) {
+	var (
+		ipcam *camera.Ipcam
+		ipwc  *camera.IpWebcam
+		ok    bool
+	)
+
+	ipcam, ok = camsrv.Source.(*camera.Ipcam)
+	if !ok {
+		err = fmt.Errorf("not an ip camera")
+		log.Println("ipwcHandler", err)
+		return
+	}
+
+	if ipcam.State == nil {
+		ipwc = camera.NewIpWebCam()
+		ipcam.State = ipwc
+		err = ipwc.Load(camsrv.Config.Base, ctlh.rt.Config.IPWCCommands)
+		if err != nil {
+			log.Println("LoadIpWebCamStatus", err)
+			return
+		}
+	}
+
+	ipwc, ok = ipcam.State.(*camera.IpWebcam)
+	if !ok {
+		err = fmt.Errorf("not an ipwebcam camera")
+		log.Println("ipwcHandler", err)
+		return
+	}
+
+	log.Println("handleIPWebcam", r.RequestURI, len(ipwc.Properties), ctlh.Key)
+	// "/zoomin"
+	// "/zoomout"
+	// "/panleft"
+	// "/panright"
+	// "/tiltup"
+	// "/tiltdown"
+	// "/brightnessup"
+	// "/brightnessdown"
+	// "/contrastup"
+	// "/contrastdown"
+	// "/saturationup"
+	// "/saturationdown"
+	rt := ctlh.rt
+	key, ok := rt.Config.IPWCControls[r.RequestURI]
+	if !ok {
+		err = fmt.Errorf("not an ipwebcam camera")
+		log.Println("ipwcHandler", err)
+		return
+	}
+	log.Println(key)
+	command, ok := rt.Config.IPWCCommands[key]
+	if !ok {
+		err = fmt.Errorf("not an ipwebcam camera")
+		log.Println("ipwcHandler", err)
+		return
+	}
+
+	log.Println(command.InputType, command.Max, command.Step, command.Command)
+	prop, ok := ipwc.Properties[key]
+	if !ok {
+		err = fmt.Errorf("not an ipwebcam camera property `%s`", key)
+		log.Println("ipwcHandler", err)
+		return
+	}
+
+	val, _ := strconv.Atoi(prop.Value)
+	val += command.Step * int(control.Multiplier)
+	if val < command.Min {
+		val = command.Min
+	} else if val > command.Max {
+		val = command.Max
+	}
+	log.Println(key, val, prop.Value, control.Multiplier)
+	rt.template.ExecuteTemplate(w, "layout.response", val)
+	return
 }
 
 func handleRemoteV4L(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {
@@ -130,48 +215,5 @@ func handleRemoteV4L(camsrv *camera.Server, w http.ResponseWriter, r *http.Reque
 		log.Println("Write", err)
 		return
 	}
-	return
-}
-
-func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *camera.Server, err error) {
-	var id int
-	err = r.ParseForm()
-	if err != nil {
-		log.Println("ParseForm", err)
-		return
-	}
-
-	source := r.FormValue("source")
-	last := strings.LastIndex(source, Prefix)
-	if last == -1 {
-		err = fmt.Errorf("prefix '%s' not found in source %s", Prefix, source)
-		log.Println(err)
-		return
-	}
-	offset := last + len(Prefix)
-	if offset >= len(source) {
-		err = fmt.Errorf("source too short %s", source)
-		log.Println(err)
-		return
-	}
-
-	count, err := fmt.Sscan(source[offset:], &id)
-	if err != nil {
-		log.Println("scan", err)
-		return
-	}
-	if count != 1 {
-		err = fmt.Errorf("not a valid source, count = %d '%s'", count, source)
-		log.Println(err)
-		return
-	}
-
-	if id >= len(rt.CameraServers) {
-		log.Printf("Camera id = %d in source id out of range limit (%d)\n",
-			id, len(rt.CameraServers))
-		return
-	}
-
-	camsrv = rt.CameraServers[id]
 	return
 }

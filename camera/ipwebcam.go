@@ -155,6 +155,10 @@ type IPWebcamStatus struct {
 type IPCWConfig struct {
 	Command   string
 	InputType string
+	Min       int
+	Max       int
+	Step      int
+	Translate func(string) int32
 }
 
 type IpWebcamOptions struct {
@@ -163,19 +167,6 @@ type IpWebcamOptions struct {
 	Options   []string
 	Command   string
 	InputType string
-}
-
-type IpWebcam struct {
-	VideoConnections int
-	AudioConnections int
-	DeviceInfo       *DeviceInfo
-	Properties       map[string]*IpWebcamOptions
-}
-
-func NewIpWebCam() *IpWebcam {
-	return &IpWebcam{
-		Properties: make(map[string]*IpWebcamOptions),
-	}
 }
 
 func LoadIpWebCamStatus(url string) (ipcwStat *IPWebcamStatus, err error) {
@@ -217,11 +208,24 @@ func LoadIpWebCamStatus(url string) (ipcwStat *IPWebcamStatus, err error) {
 
 }
 
-func (ipcw *IpWebcam) Load(path string, configs map[string]*IPCWConfig) (err error) {
+type IpWebcam struct {
+	VideoConnections int
+	AudioConnections int
+	DeviceInfo       *DeviceInfo
+	Properties       map[string]*IpWebcamOptions
+}
+
+func NewIpWebCam() *IpWebcam {
+	return &IpWebcam{
+		Properties: make(map[string]*IpWebcamOptions),
+	}
+}
+
+func (ipwc *IpWebcam) Load(path string, configs map[string]*IPCWConfig) (err error) {
 	var (
 		ipcwStat *IPWebcamStatus
 		url      = path + "/status.json"
-		all      = len(ipcw.Properties) == 0
+		all      = len(ipwc.Properties) == 0
 	)
 
 	if all {
@@ -235,15 +239,15 @@ func (ipcw *IpWebcam) Load(path string, configs map[string]*IPCWConfig) (err err
 
 	if !all {
 		for k, v := range ipcwStat.Options {
-			ipcw.Properties[k].Value = v
+			ipwc.Properties[k].Value = v
 		}
 		return
 	}
 
-	ipcw.VideoConnections = ipcwStat.VideoConnections
-	ipcw.AudioConnections = ipcwStat.AudioConnections
-	ipcw.DeviceInfo = ipcwStat.DeviceInfo
-	ipcw.Properties = make(map[string]*IpWebcamOptions)
+	ipwc.VideoConnections = ipcwStat.VideoConnections
+	ipwc.AudioConnections = ipcwStat.AudioConnections
+	ipwc.DeviceInfo = ipcwStat.DeviceInfo
+	ipwc.Properties = make(map[string]*IpWebcamOptions)
 
 	for k, v := range ipcwStat.Options {
 
@@ -258,7 +262,7 @@ func (ipcw *IpWebcam) Load(path string, configs map[string]*IPCWConfig) (err err
 			opts.InputType = c.InputType
 		}
 
-		ipcw.Properties[k] = opts
+		ipwc.Properties[k] = opts
 	}
 
 	return
