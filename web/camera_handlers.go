@@ -346,7 +346,7 @@ func (rt *RunTime) postCameraHandler() func(w http.ResponseWriter, r *http.Reque
 		}
 
 		id := rt.Config.AddCamera(vc)
-		ws, err = newCameraServer(id, vc, rt.WebSocket)
+		ws, err = newCameraServer(id, vc, rt.AudioMgr, rt.WebSocket)
 		// add even if error
 		rt.CameraMap[path] = ws
 		rt.CameraServers = append(rt.CameraServers, ws)

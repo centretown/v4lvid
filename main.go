@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 	"path/filepath"
-	"v4lvid/camera"
 	"v4lvid/config"
+	"v4lvid/namer"
 	"v4lvid/web"
 )
 
@@ -21,12 +21,12 @@ func main() {
 	if len(*base) > 0 {
 		var err error
 
-		camera.VideoBase, err = filepath.Abs(*base)
+		namer.OutputBase, err = filepath.Abs(*base)
 		if err != nil {
 			log.Println("Abs", err)
 		}
 
-		log.Println("video.VideoBase", camera.VideoBase)
+		log.Println("namer.VideoBase", namer.OutputBase)
 	}
 
 	web.Run(cfg)

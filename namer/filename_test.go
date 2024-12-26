@@ -1,4 +1,4 @@
-package camera
+package namer
 
 import (
 	"testing"
@@ -13,7 +13,10 @@ func TestFileName(t *testing.T) {
 }
 
 func TestNextFileName(t *testing.T) {
-	name, err := NextFileName(VideoBase, "mp4")
+	var (
+		base = "./output/"
+	)
+	name, err := NextFileName(base, "mp4")
 	if err != nil {
 		t.Log(err)
 		t.Fatal(err)

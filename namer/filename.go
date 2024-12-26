@@ -1,4 +1,4 @@
-package camera
+package namer
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	VideoBase = "./output/"
+	OutputBase = "./output/"
 )
 
 func NextFileName(parent, ext string) (string, error) {

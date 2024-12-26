@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"time"
+	"v4lvid/namer"
 
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
@@ -25,7 +26,7 @@ func Capture(stop <-chan int, img <-chan []byte,
 			log.Fatal(err)
 		}
 	}()
-	fname, _ := NextFileName(VideoBase, "mp4")
+	fname, _ := namer.NextFileName(namer.OutputBase, "mp4")
 	done := make(chan error)
 	go func() {
 		err = ffmpeg.

@@ -2,10 +2,8 @@ package web
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"strings"
 	"v4lvid/homeasst"
 )
 
@@ -78,31 +76,11 @@ func (rt *RunTime) handleLights() func(http.ResponseWriter, *http.Request) {
 
 func (rt *RunTime) handleLightProperties() {
 	home := rt.Home
-	readBody := func(r *http.Request) (id string, key string, val string) {
-		buf, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Fatal("handleLights.readBody", err)
-		}
-		lines := strings.Split(string(buf), "&")
-		var k, v string
-		for _, line := range lines {
-			blanksep := strings.Replace(line, "=", " ", 1)
-			fmt.Sscan(blanksep, &k, &v)
-			if k == "id" {
-				id = v
-			} else {
-				key = k
-				val = v
-			}
-		}
-		log.Println("id:", id, "key:", key, "value:", val)
-		return
-	}
 
 	rt.mux.HandleFunc("/light/state",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/state")
-			id, key, _ := readBody(r)
+			id, key, _ := ReadBody(r)
 			if key == "state" {
 				home.CallService(LightCmd(id))
 			} else {
@@ -113,14 +91,14 @@ func (rt *RunTime) handleLightProperties() {
 	rt.mux.HandleFunc("/light/brightness",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/brightness")
-			id, key, val := readBody(r)
+			id, key, val := ReadBody(r)
 			home.CallService(LightCmd(id, ServiceData{Key: key, Value: val}))
 		})
 
 	rt.mux.HandleFunc("/light/color",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/color")
-			id, key, val := readBody(r)
+			id, key, val := ReadBody(r)
 			length := len(val)
 			if length > 6 {
 				val := val[length-6:]
@@ -135,7 +113,7 @@ func (rt *RunTime) handleLightProperties() {
 	rt.mux.HandleFunc("/light/effect",
 		func(w http.ResponseWriter, r *http.Request) {
 			log.Println("/light/effect")
-			id, key, val := readBody(r)
+			id, key, val := ReadBody(r)
 			home.CallService(LightCmd(id, ServiceData{Key: key,
 				Value: `"` + val + `"`}))
 		})

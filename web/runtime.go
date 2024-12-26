@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"strings"
 	"time"
+	"v4lvid/audio"
 	"v4lvid/camera"
 	"v4lvid/config"
 	"v4lvid/homeasst"
@@ -30,6 +31,7 @@ type RunTime struct {
 	template        *template.Template
 	Home            *homeasst.HomeRuntime
 	WebSocket       *socket.Server
+	AudioMgr        *audio.AudioMgr
 }
 
 func Run(cfg *config.Config) (rt *RunTime) {
@@ -43,6 +45,7 @@ func Run(cfg *config.Config) (rt *RunTime) {
 		CameraMap:     make(map[string]*camera.Server),
 		CameraServers: make([]*camera.Server, 0, len(cfg.Cameras)),
 		mux:           &http.ServeMux{},
+		AudioMgr:      audio.NewAudio(),
 	}
 	var (
 		err        error
@@ -77,6 +80,8 @@ func Run(cfg *config.Config) (rt *RunTime) {
 		rt.serveHomeData()
 		rt.homeHandler()
 	}
+
+	rt.handleAudio()
 
 	rt.handleFiles()
 
@@ -162,7 +167,7 @@ func (rt *RunTime) serveHomeData() (err error) {
 	return
 }
 
-func newCameraServer(id int, vcfg *camera.VideoConfig,
+func newCameraServer(id int, vcfg *camera.VideoConfig, audio audio.AudioSource,
 	indicator camera.StreamListener) (cameraServer *camera.Server, err error) {
 
 	var source camera.VideoSource
@@ -174,7 +179,7 @@ func newCameraServer(id int, vcfg *camera.VideoConfig,
 	default:
 		return
 	}
-	cameraServer = camera.NewVideoServer(id, source, vcfg, indicator)
+	cameraServer = camera.NewVideoServer(id, source, vcfg, audio, indicator)
 	err = cameraServer.Open()
 	return
 }
@@ -182,7 +187,7 @@ func newCameraServer(id int, vcfg *camera.VideoConfig,
 func (rt *RunTime) buildCameraServers() {
 
 	for id, vcfg := range rt.Config.Cameras {
-		cameraServer, err := newCameraServer(id, vcfg, rt.WebSocket)
+		cameraServer, err := newCameraServer(id, vcfg, rt.AudioMgr, rt.WebSocket)
 		if err != nil {
 			log.Println(err)
 		}

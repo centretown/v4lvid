@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"v4lvid/audio"
 )
 
 type Verb uint16
@@ -48,6 +49,7 @@ type Server struct {
 	Id        int
 	Config    *VideoConfig
 	Source    VideoSource
+	Audio     audio.AudioSource
 	Recording bool
 	Busy      bool
 	indicator StreamListener
@@ -64,9 +66,13 @@ type Server struct {
 	captureCount  int64
 	captureStop   chan int
 	captureSource chan []byte
+
+	audioStop      chan int
+	audioRecording bool
 }
 
-func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator StreamListener) *Server {
+func NewVideoServer(id int, source VideoSource, config *VideoConfig,
+	audioSource audio.AudioSource, indicator StreamListener) *Server {
 
 	cam := &Server{
 		Source:        source,
@@ -79,6 +85,8 @@ func NewVideoServer(id int, source VideoSource, config *VideoConfig, indicator S
 		filters:       make([]Hook, 0),
 		captureStop:   make(chan int),
 		captureSource: make(chan []byte),
+		audioStop:     make(chan int),
+		Audio:         audioSource,
 	}
 
 	return cam
@@ -148,6 +156,17 @@ func (vs *Server) startRecording(duration int) {
 	go Capture(vs.captureStop, vs.captureSource,
 		config.Width, config.Height, config.FPS)
 
+	if vs.Audio != nil {
+		if vs.Audio.IsEnabled() {
+			vs.audioRecording = true
+			go vs.Audio.Record(vs.audioStop)
+		} else {
+			log.Println("Audio Not Enabled")
+		}
+	} else {
+		log.Println("Audio Nil")
+	}
+
 	now := time.Now()
 	vs.recordStop = now.Add(time.Second * time.Duration(duration))
 	log.Println("recording started...")
@@ -158,6 +177,11 @@ func (vs *Server) stopRecording() {
 	if !vs.Recording {
 		log.Println("stopRecording already stopped")
 		return
+	}
+
+	if vs.audioRecording {
+		vs.audioStop <- 1
+		vs.audioRecording = false
 	}
 
 	vs.captureStop <- 1
