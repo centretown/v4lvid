@@ -5,7 +5,8 @@ import (
 	"io"
 	"log"
 	"os"
-	"v4lvid/camera"
+
+	"github.com/centretown/avcam"
 )
 
 type ActionGroup int
@@ -27,18 +28,18 @@ type Action struct {
 type Config struct {
 	Output        string
 	HttpUrl       string
-	Cameras       []*camera.VideoConfig
+	Cameras       []*avcam.VideoConfig
 	ActionsCamera []*Action
 	ActionsHome   []*Action
 	ActionsChat   []*Action
-	Drivers       map[string][]*camera.ControlKey
+	Drivers       map[string][]*avcam.ControlKey
 	IPWCControls  map[string]string
-	IPWCCommands  map[string]*camera.IPCWConfig
+	IPWCCommands  map[string]*avcam.IPCWConfig
 }
 
 type IPWCCameraData struct {
 	Action   *Action
-	IPWebcam *camera.IpWebcam
+	IPWebcam *avcam.IpWebcam
 }
 
 func (cfg *Config) NewActionMap() (m map[string]*Action) {
@@ -55,7 +56,7 @@ func (cfg *Config) NewActionMap() (m map[string]*Action) {
 	return
 }
 
-func (cfg *Config) AddCamera(vc *camera.VideoConfig) int {
+func (cfg *Config) AddCamera(vc *avcam.VideoConfig) int {
 	cfg.Cameras = append(cfg.Cameras, vc)
 	return len(cfg.Cameras) - 1
 }

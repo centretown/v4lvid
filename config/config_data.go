@@ -1,13 +1,13 @@
 package config
 
-import "v4lvid/camera"
+import "github.com/centretown/avcam"
 
 var DefaultConfig = Config{
 	Output:  "/mnt/molly/output/",
 	HttpUrl: "192.168.10.7:9000",
-	Cameras: []*camera.VideoConfig{
+	Cameras: []*avcam.VideoConfig{
 		{
-			CameraType: camera.LOCAL_CAMERA,
+			CameraType: avcam.LOCAL_CAMERA,
 			Path:       "/dev/video0",
 			Codec:      "MJPG",
 			Width:      1920,
@@ -15,7 +15,7 @@ var DefaultConfig = Config{
 			FPS:        30,
 		},
 		{
-			CameraType: camera.REMOTE_CAMERA,
+			CameraType: avcam.REMOTE_CAMERA,
 			Path:       "http://192.168.10.30:8080",
 			Codec:      "MJPG",
 			Width:      1024,
@@ -40,35 +40,35 @@ var DefaultConfig = Config{
 		{Name: "record", Title: "Record", Icon: "radio_button_checked"},
 	},
 
-	Drivers: map[string][]*camera.ControlKey{
+	Drivers: map[string][]*avcam.ControlKey{
 		// DeviceName NexiGo N660 FHD Webcam: NexiGo  DriverName uvcvideo
 		"uvcvideo": {
-			{Key: "Zoom, Absolute", Controls: []*camera.Control{
+			{Key: "Zoom, Absolute", Controls: []*avcam.Control{
 				{Url: "/zoomin", Icon: "zoom_in", Multiplier: 1},
 				{Url: "/zoomout", Icon: "zoom_out", Multiplier: -1},
 			}},
 
-			{Key: "Pan, Absolute", Controls: []*camera.Control{
+			{Key: "Pan, Absolute", Controls: []*avcam.Control{
 				{Url: "/panleft", Icon: "arrow_back", Multiplier: -1},
 				{Url: "/panright", Icon: "arrow_forward", Multiplier: 1},
 			}},
 
-			{Key: "Tilt, Absolute", Controls: []*camera.Control{
+			{Key: "Tilt, Absolute", Controls: []*avcam.Control{
 				{Url: "/tiltup", Icon: "arrow_upward", Multiplier: 1},
 				{Url: "/tiltdown", Icon: "arrow_downward", Multiplier: -1},
 			}},
 
-			{Key: "Brightness", Controls: []*camera.Control{
+			{Key: "Brightness", Controls: []*avcam.Control{
 				{Url: "/brightnessup", Icon: "brightness_high", Multiplier: 10},
 				{Url: "/brightnessdown", Icon: "brightness_low", Multiplier: -10},
 			}},
 
-			{Key: "Contrast", Controls: []*camera.Control{
+			{Key: "Contrast", Controls: []*avcam.Control{
 				{Url: "/contrastup", Icon: "contrast_square", Multiplier: 10},
 				{Url: "/contrastdown", Icon: "exposure", Multiplier: -10},
 			}},
 
-			{Key: "Saturation", Controls: []*camera.Control{
+			{Key: "Saturation", Controls: []*avcam.Control{
 				{Url: "/saturationup", Icon: "backlight_high", Multiplier: 10},
 				{Url: "/saturationdown", Icon: "backlight_low", Multiplier: -10},
 			}},

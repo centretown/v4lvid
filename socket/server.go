@@ -10,7 +10,8 @@ import (
 	"os"
 	"sync"
 	"time"
-	"v4lvid/camera"
+
+	"github.com/centretown/avcam"
 )
 
 type Server struct {
@@ -80,7 +81,7 @@ func (s *Server) SaveMessages() (err error) {
 	return
 }
 
-var _ camera.StreamListener = (*Server)(nil)
+var _ avcam.StreamListener = (*Server)(nil)
 
 const (
 	streamOff     = `<span id="streamer" hx-swap-oob="outerHTML" class="symbols">radio_button_checked</span>`

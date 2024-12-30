@@ -7,7 +7,8 @@ import (
 	"os"
 	"testing"
 	"text/template"
-	"v4lvid/camera"
+
+	"github.com/centretown/avcam"
 	// "honnef.co/go/tools/config"
 )
 
@@ -49,14 +50,14 @@ func TestStatus(t *testing.T) {
 
 	t.Log(string(buf))
 
-	var status camera.IPWebcamVariant
+	var status avcam.IPWebcamVariant
 	err = json.Unmarshal(buf, &status)
 	if err != nil {
 		t.Fatal("Unmarshal", url, err)
 	}
 	t.Log(status)
 
-	var statusM camera.IPWebcamStatus
+	var statusM avcam.IPWebcamStatus
 	err = json.Unmarshal(buf, &statusM)
 	if err != nil {
 		t.Fatal("Unmarshal", url, err)
@@ -95,7 +96,7 @@ func TestLoadStatus(t *testing.T) {
 		t.Fatal("Config Load", err)
 	}
 
-	ipcw := camera.NewIpWebCam()
+	ipcw := avcam.NewIpWebCam()
 	err = ipcw.Load(url, cfg.IPWCCommands)
 	if err != nil {
 		t.Fatal("Unmarshal", url, err)
@@ -114,7 +115,7 @@ func TestLoadTemplate(t *testing.T) {
 	}
 
 	url := "http://192.168.10.92:8080"
-	ipcw := camera.NewIpWebCam()
+	ipcw := avcam.NewIpWebCam()
 	err = ipcw.Load(url, cfg.IPWCCommands)
 	if err != nil {
 		t.Fatal("Load", url, err)

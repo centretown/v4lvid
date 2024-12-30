@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"v4lvid/camera"
 	"v4lvid/config"
+
+	"github.com/centretown/avcam"
 )
 
 type CameraListData struct {
 	Action  *config.Action
-	Cameras []*camera.Server
+	Cameras []*avcam.Server
 }
 
 type CameraData struct {
@@ -50,13 +51,13 @@ func (rt *RunTime) ipwcCameraHandler() func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		ipcam, ok := cam.Source.(*camera.Ipcam)
+		ipcam, ok := cam.Source.(*avcam.Ipcam)
 		if !ok {
 			log.Println("ipcwCameraHandler not an Ipcam")
 			return
 		}
 
-		ipwc, ok := ipcam.State.(*camera.IpWebcam)
+		ipwc, ok := ipcam.State.(*avcam.IpWebcam)
 		if !ok {
 			log.Println("ipcwCameraHandler State not an IPWebcam", ipwc)
 			return
@@ -123,7 +124,7 @@ func (rt *RunTime) ipwcCameraHandler() func(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (rt *RunTime) parseCameraPath(r *http.Request) (cam *camera.Server,
+func (rt *RunTime) parseCameraPath(r *http.Request) (cam *avcam.Server,
 	path string, err error) {
 
 	err = r.ParseForm()
@@ -173,9 +174,9 @@ func (rt *RunTime) controlCameraHandler() func(w http.ResponseWriter, r *http.Re
 func (rt *RunTime) cameraDetailHandler() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
-			cam   *camera.Server
-			ipcam *camera.Ipcam
-			ipwc  *camera.IpWebcam
+			cam   *avcam.Server
+			ipcam *avcam.Ipcam
+			ipwc  *avcam.IpWebcam
 			err   error
 			ok    bool
 		)
@@ -185,17 +186,17 @@ func (rt *RunTime) cameraDetailHandler() func(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		ipcam, ok = cam.Source.(*camera.Ipcam)
+		ipcam, ok = cam.Source.(*avcam.Ipcam)
 		if !ok {
 			log.Println("cameraDetailHandler", "not an ip camera")
 			return
 		}
 
 		if ipcam.State == nil {
-			ipwc = camera.NewIpWebCam()
+			ipwc = avcam.NewIpWebCam()
 			ipcam.State = ipwc
 		} else {
-			ipwc, ok = ipcam.State.(*camera.IpWebcam)
+			ipwc, ok = ipcam.State.(*avcam.IpWebcam)
 			if !ok {
 				log.Println("cameraDetailHandler", "not an ipwebcam camera")
 				return
@@ -336,9 +337,9 @@ func (rt *RunTime) postCameraHandler() func(w http.ResponseWriter, r *http.Reque
 		width, _ := strconv.Atoi(r.FormValue("camera_width"))
 		height, _ := strconv.Atoi(r.FormValue("camera_height"))
 		fps, _ := strconv.Atoi(r.FormValue("camera_fps"))
-		vc := &camera.VideoConfig{
+		vc := &avcam.VideoConfig{
 			Path:       path,
-			CameraType: camera.REMOTE_CAMERA,
+			CameraType: avcam.REMOTE_CAMERA,
 			Codec:      r.FormValue("camera_codec"),
 			Width:      width,
 			Height:     height,
@@ -361,7 +362,7 @@ func (rt *RunTime) postCameraHandler() func(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-func (rt *RunTime) serveCamera(camServer *camera.Server) {
+func (rt *RunTime) serveCamera(camServer *avcam.Server) {
 	rt.mux.Handle(camServer.Url(), camServer.Stream())
 	go camServer.Serve()
 }
@@ -395,7 +396,7 @@ func (rt *RunTime) serveCameras() {
 				return
 			}
 
-			_, ok := camsrv.Source.(*camera.Ipcam)
+			_, ok := camsrv.Source.(*avcam.Ipcam)
 			if ok && camsrv.Config.Driver == UVCVideo {
 				err = handleRemoteV4L(camsrv, w, r)
 				if err != nil {
@@ -404,14 +405,14 @@ func (rt *RunTime) serveCameras() {
 				return
 			}
 
-			webcam, ok := camsrv.Source.(*camera.Webcam)
+			webcam, ok := camsrv.Source.(*avcam.Webcam)
 			if ok {
 				rt.ResetControls(webcam)
 			}
 		})
 }
 
-func (rt *RunTime) ResetControls(webcam *camera.Webcam) {
+func (rt *RunTime) ResetControls(webcam *avcam.Webcam) {
 	for _, ctlh := range rt.ControlHandlers {
 		info, err := webcam.GetControlInfo(ctlh.Key)
 		if err != nil {

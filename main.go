@@ -5,8 +5,9 @@ import (
 	"log"
 	"path/filepath"
 	"v4lvid/config"
-	"v4lvid/namer"
 	"v4lvid/web"
+
+	"github.com/centretown/avcam"
 )
 
 func main() {
@@ -21,12 +22,12 @@ func main() {
 	if len(*base) > 0 {
 		var err error
 
-		namer.OutputBase, err = filepath.Abs(*base)
+		avcam.OutputBase, err = filepath.Abs(*base)
 		if err != nil {
 			log.Println("Abs", err)
 		}
 
-		log.Println("namer.VideoBase", namer.OutputBase)
+		log.Println("camera.VideoBase", avcam.OutputBase)
 	}
 
 	web.Run(cfg)

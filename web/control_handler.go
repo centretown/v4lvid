@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"v4lvid/camera"
+
+	"github.com/centretown/avcam"
 
 	"github.com/korandiz/v4l"
 )
@@ -23,17 +24,17 @@ type ControlHandler struct {
 	Key        string
 	Value      int32
 	validValue bool
-	Controls   []*camera.Control
-	controlMap map[string]*camera.Control
+	Controls   []*avcam.Control
+	controlMap map[string]*avcam.Control
 	rt         *RunTime
 }
 
-func NewControlHandler(key string, ctls []*camera.Control,
+func NewControlHandler(key string, ctls []*avcam.Control,
 	rt *RunTime) *ControlHandler {
 	ctlh := &ControlHandler{
 		Key:        key,
 		Controls:   ctls,
-		controlMap: make(map[string]*camera.Control),
+		controlMap: make(map[string]*avcam.Control),
 		rt:         rt,
 	}
 
@@ -78,7 +79,7 @@ func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	webcam, ok := camsrv.Source.(*camera.Webcam)
+	webcam, ok := camsrv.Source.(*avcam.Webcam)
 	if !ok {
 		err = handleRemoteV4L(camsrv, w, r)
 		return
@@ -103,15 +104,15 @@ func (ctlh *ControlHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	rt.template.ExecuteTemplate(w, "layout.response", ctlh.Value)
 }
 
-func (ctlh *ControlHandler) handleIPWebcam(camsrv *camera.Server, control *camera.Control,
+func (ctlh *ControlHandler) handleIPWebcam(camsrv *avcam.Server, control *avcam.Control,
 	w http.ResponseWriter, r *http.Request) (err error) {
 	var (
-		ipcam *camera.Ipcam
-		ipwc  *camera.IpWebcam
+		ipcam *avcam.Ipcam
+		ipwc  *avcam.IpWebcam
 		ok    bool
 	)
 
-	ipcam, ok = camsrv.Source.(*camera.Ipcam)
+	ipcam, ok = camsrv.Source.(*avcam.Ipcam)
 	if !ok {
 		err = fmt.Errorf("not an ip camera")
 		log.Println("ipwcHandler", err)
@@ -119,7 +120,7 @@ func (ctlh *ControlHandler) handleIPWebcam(camsrv *camera.Server, control *camer
 	}
 
 	if ipcam.State == nil {
-		ipwc = camera.NewIpWebCam()
+		ipwc = avcam.NewIpWebCam()
 		ipcam.State = ipwc
 		err = ipwc.Load(camsrv.Config.Base, ctlh.rt.Config.IPWCCommands)
 		if err != nil {
@@ -128,7 +129,7 @@ func (ctlh *ControlHandler) handleIPWebcam(camsrv *camera.Server, control *camer
 		}
 	}
 
-	ipwc, ok = ipcam.State.(*camera.IpWebcam)
+	ipwc, ok = ipcam.State.(*avcam.IpWebcam)
 	if !ok {
 		err = fmt.Errorf("not an ipwebcam camera")
 		log.Println("ipwcHandler", err)
@@ -183,7 +184,7 @@ func (ctlh *ControlHandler) handleIPWebcam(camsrv *camera.Server, control *camer
 	return
 }
 
-func handleRemoteV4L(camsrv *camera.Server, w http.ResponseWriter, r *http.Request) (err error) {
+func handleRemoteV4L(camsrv *avcam.Server, w http.ResponseWriter, r *http.Request) (err error) {
 	var (
 		url    = camsrv.Config.Base + r.RequestURI
 		client = &http.Client{}

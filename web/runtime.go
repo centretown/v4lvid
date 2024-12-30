@@ -10,11 +10,11 @@ import (
 	"os/signal"
 	"strings"
 	"time"
-	"v4lvid/audio"
-	"v4lvid/camera"
 	"v4lvid/config"
 	"v4lvid/homeasst"
 	"v4lvid/socket"
+
+	"github.com/centretown/avcam"
 )
 
 type RunTime struct {
@@ -25,13 +25,13 @@ type RunTime struct {
 	ActionsChat     []*config.Action
 	ActionMap       map[string]*config.Action
 	ControlHandlers []*ControlHandler
-	CameraServers   []*camera.Server
-	CameraMap       map[string]*camera.Server
+	CameraServers   []*avcam.Server
+	CameraMap       map[string]*avcam.Server
 	mux             *http.ServeMux
 	template        *template.Template
 	Home            *homeasst.HomeRuntime
 	WebSocket       *socket.Server
-	AudioMgr        *audio.AudioMgr
+	AudioMgr        *avcam.AudioMgr
 }
 
 func Run(cfg *config.Config) (rt *RunTime) {
@@ -42,10 +42,10 @@ func Run(cfg *config.Config) (rt *RunTime) {
 		ActionsHome:   cfg.ActionsHome,
 		ActionsChat:   cfg.ActionsChat,
 		ActionMap:     cfg.NewActionMap(),
-		CameraMap:     make(map[string]*camera.Server),
-		CameraServers: make([]*camera.Server, 0, len(cfg.Cameras)),
+		CameraMap:     make(map[string]*avcam.Server),
+		CameraServers: make([]*avcam.Server, 0, len(cfg.Cameras)),
 		mux:           &http.ServeMux{},
-		AudioMgr:      audio.NewAudio(),
+		AudioMgr:      avcam.NewAudio(),
 	}
 	var (
 		err        error
@@ -167,19 +167,19 @@ func (rt *RunTime) serveHomeData() (err error) {
 	return
 }
 
-func newCameraServer(id int, vcfg *camera.VideoConfig, audio audio.AudioSource,
-	indicator camera.StreamListener) (cameraServer *camera.Server, err error) {
+func newCameraServer(id int, vcfg *avcam.VideoConfig, audio avcam.AudioSource,
+	indicator avcam.StreamListener) (cameraServer *avcam.Server, err error) {
 
-	var source camera.VideoSource
+	var source avcam.VideoSource
 	switch vcfg.CameraType {
-	case camera.LOCAL_CAMERA:
-		source = camera.NewWebcam(vcfg.Path)
-	case camera.REMOTE_CAMERA:
-		source = camera.NewIpcam(vcfg.Path)
+	case avcam.LOCAL_CAMERA:
+		source = avcam.NewWebcam(vcfg.Path)
+	case avcam.REMOTE_CAMERA:
+		source = avcam.NewIpcam(vcfg.Path)
 	default:
 		return
 	}
-	cameraServer = camera.NewVideoServer(id, source, vcfg, audio, indicator)
+	cameraServer = avcam.NewVideoServer(id, source, vcfg, audio, indicator)
 	err = cameraServer.Open()
 	return
 }
@@ -212,7 +212,7 @@ func (rt *RunTime) CreateV4LHandlers() (handlers []*ControlHandler) {
 	return
 }
 
-func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *camera.Server, err error) {
+func (rt *RunTime) parseSourceId(r *http.Request) (camsrv *avcam.Server, err error) {
 	var id int
 	err = r.ParseForm()
 	if err != nil {
