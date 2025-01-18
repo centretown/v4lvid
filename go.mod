@@ -2,6 +2,8 @@ module v4lvid
 
 go 1.23.4
 
+replace github.com/centretown/avcam => /home/dave/src/avcam
+
 require (
 	github.com/centretown/avcam v0.0.0-20241230132927-25104bab9114
 	github.com/google/flatbuffers v24.3.25+incompatible

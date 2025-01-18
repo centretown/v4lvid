@@ -2,3 +2,6 @@ output/*
 Material_Symbols*
 token.go
 *.aiff
+inspect.v4l2src.txt
+recording.ogg
+v4lvid

@@ -45,7 +45,7 @@ func Run(cfg *config.Config) (rt *RunTime) {
 		CameraMap:     make(map[string]*avcam.Server),
 		CameraServers: make([]*avcam.Server, 0, len(cfg.Cameras)),
 		mux:           &http.ServeMux{},
-		AudioMgr:      avcam.NewAudio(),
+		AudioMgr:      avcam.NewAudioMgr(),
 	}
 	var (
 		err        error
@@ -168,7 +168,7 @@ func (rt *RunTime) serveHomeData() (err error) {
 }
 
 func newCameraServer(id int, vcfg *avcam.VideoConfig, audio avcam.AudioSource,
-	indicator avcam.StreamListener) (cameraServer *avcam.Server, err error) {
+	listener avcam.StreamListener) (cameraServer *avcam.Server, err error) {
 
 	var source avcam.VideoSource
 	switch vcfg.CameraType {
@@ -179,7 +179,7 @@ func newCameraServer(id int, vcfg *avcam.VideoConfig, audio avcam.AudioSource,
 	default:
 		return
 	}
-	cameraServer = avcam.NewVideoServer(id, source, vcfg, audio, indicator)
+	cameraServer = avcam.NewVideoServer(id, source, vcfg, audio, listener)
 	err = cameraServer.Open()
 	return
 }
